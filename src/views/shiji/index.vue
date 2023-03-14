@@ -122,7 +122,26 @@
           </div>
         </div>
         <div style="text-align:center">
-          <el-button type="primary" @click="sumbitShiji">新增关联</el-button>
+          <el-button type="primary" @click="addguanlian">新增关联</el-button>
+        </div>
+      </el-form>
+    </el-dialog>
+    <el-dialog v-if="addbdVisible" title="药剂绑定" :append-to-body="true" :visible="addbdVisible" width="50%"
+      :close-on-click-modal="false" @close="addbdVisible=false">
+      <el-form ref="form1" :model="form" label-width="140px" :rules="rules">
+        <el-form-item label="试剂名称" prop="reagentName">
+          <el-input v-model="form.reagentName" placeholder="请输入试剂名称" :readonly="true" />
+        </el-form-item>
+        <el-form-item label="药剂名称">
+          <treeselect v-model="pharmaceuticalId" :multiple="false" :options="allyjList" :normalizer="normalizer"
+            placeholder="请选择药剂" />
+        </el-form-item>
+        <el-form-item label="所需药剂数量">
+          <el-input v-model="pharmaceuticalNum" placeholder="请输入所需药剂数量" />
+        </el-form-item>
+        <div style="text-align:center">
+          <el-button @click="addbdVisible=false">取 消</el-button>
+          <el-button type="primary" @click="addbdSumbit">确 定</el-button>
         </div>
       </el-form>
     </el-dialog>
@@ -142,7 +161,8 @@
     getReagent,
     updateReagent,
     updateReagentPharmaceutical,
-    removeReagentPharmaceutical
+    removeReagentPharmaceutical,
+    addReagentPharmaceutical
   } from '@/api/table'
   import {
     mapGetters
@@ -165,12 +185,14 @@
         total: 0,
         records: [],
         reagentName: '',
+        bangdingId: '',
         deviceName: '',
         instrumentName: '',
         addVisible: false,
         editVisible: false,
         listLoading: false,
         bangdingVisible: false,
+        addbdVisible: false,
         form: {},
         allyjList: [], //全部药剂列表
         yaojiChoose: [], //全部药剂列表
@@ -212,6 +234,8 @@
           }],
 
         },
+        pharmaceuticalId: '',
+        pharmaceuticalNum: '',
         normalizer(node) {
           return {
             id: node.id,
@@ -380,8 +404,9 @@
         this.form.reagentPharmaceuticalList = newarr
       },
       bangding(e) {
+        this.bangdingId = e.id
         getReagent({
-          id: e.id
+          id: this.bangdingId
         }).then(res => {
           this.bangdingVisible = true
           this.form = res.retData
@@ -417,6 +442,41 @@
               message: res.retMsg
             })
           })
+        })
+      },
+      addguanlian() {
+        console.log("添加关联")
+        this.addbdVisible = true
+        this.pharmaceuticalId = null
+        this.pharmaceuticalNum = ""
+      },
+      addbdSumbit() {
+        if (!this.pharmaceuticalId || this.pharmaceuticalNum == '') {
+          this.$notify({
+            type: "warning",
+            message: "选项不能为空"
+          })
+          return
+
+        }
+        addReagentPharmaceutical({
+          reagentId: this.form.id,
+          pharmaceuticalId: this.pharmaceuticalId,
+          pharmaceuticalNum: this.pharmaceuticalNum,
+        }).then(res => {
+
+          this.$notify({
+            type: "success",
+            message: res.retMsg
+          })
+
+          getReagent({
+            id: this.form.id
+          }).then(res => {
+            this.form = res.retData
+            this.addbdVisible = false
+          })
+
         })
       }
     }

@@ -20,7 +20,7 @@
           <svg-icon icon-class="password" />
         </span>
         <el-input :key="passwordType" ref="password" v-model="loginForm.password" :type="passwordType"
-          placeholder="Password" name="password" tabindex="2" auto-complete="on" @keyup.enter.native="handleLogin" />
+          placeholder="密码" name="password" tabindex="2" auto-complete="on" @keyup.enter.native="handleLogin" />
         <span class="show-pwd" @click="showPwd">
           <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
         </span>
@@ -56,11 +56,13 @@
         loginRules: {
           username: [{
             required: true,
-            trigger: 'blur'
+            trigger: 'blur',
+             message: '请输入手机号'
           }],
           password: [{
             required: true,
-            trigger: 'blur'
+            trigger: 'blur',
+             message: '请输入密码'
           }],
           verificationCode: [{
             required: true,

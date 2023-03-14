@@ -156,3 +156,10 @@ export function removeReagentPharmaceutical(data) { //药剂列表
     data
   })
 }
+export function addReagentPharmaceutical(data) { //药剂列表
+  return request({
+    url: setting.baseUrl + '/reagent/addReagentPharmaceutical',
+    method: 'post',
+    data
+  })
+}
