@@ -30,8 +30,7 @@ import Layout from '@/layout'
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
-export const constantRoutes = [
-  {
+export const constantRoutes = [{
     path: '/login',
     component: () => import('@/views/login/index'),
     hidden: true
@@ -51,43 +50,81 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: '工作台', icon: 'dashboard' }
+      meta: {
+        title: '工作台',
+        icon: 'dashboard'
+      }
     }]
   },
 
   {
     path: '/testPaper',
     component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'TestPaper',
-        component: () => import('@/views/testPaper/index'),
-        meta: { title: '试卷管理', icon: 'shijuan' }
+    children: [{
+      path: 'index',
+      name: 'TestPaper',
+      component: () => import('@/views/testPaper/index'),
+      meta: {
+        title: '试卷管理',
+        icon: 'shijuan'
       }
-    ]
+    }]
   },
 
   {
     path: '/video',
     component: Layout,
-    children: [
+    children: [{
+      path: 'index',
+      name: 'Video',
+      component: () => import('@/views/video/index'),
+      meta: {
+        title: '视频管理',
+        icon: 'video'
+      }
+    }]
+  },
+  {
+    path: '/sjby',
+    component: Layout,
+    meta: {
+      title: '标液试剂管理',
+      icon: 'pf'
+    },
+    children: [{
+        path: 'yaoji',
+        name: 'Yaoji',
+        component: () => import('@/views/yaoji/index'),
+        meta: {
+          title: '药剂管理',
+          icon: 'yaoji'
+        }
+      },
       {
-        path: 'index',
-        name: 'Video',
-        component: () => import('@/views/video/index'),
-        meta: { title: '视频管理', icon: 'video' }
+        path: 'shiji',
+        name: 'Shiji',
+        component: () => import('@/views/shiji/index'),
+        meta: {
+          title: '试剂管理',
+          icon: 'shiji'
+        }
       }
     ]
   },
 
   // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
+  {
+    path: '*',
+    redirect: '/404',
+    hidden: true
+  }
 ]
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support
-  scrollBehavior: () => ({ y: 0 }),
+  scrollBehavior: () => ({
+    y: 0
+  }),
   routes: constantRoutes
 })
 
