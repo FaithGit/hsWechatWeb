@@ -95,7 +95,7 @@
   } from 'vuex'
   // import moment from 'moment'
   export default {
-    name: 'Shiji',
+    name: 'Yaoji',
     computed: {
       ...mapGetters([
         'userId'

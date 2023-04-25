@@ -196,7 +196,7 @@ import {
 } from '@/utils/auth'
 
 export default {
-  name: 'TestPaper',
+  name: 'Video',
   computed: {
     ...mapGetters([
       'userId'

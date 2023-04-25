@@ -31,126 +31,130 @@ import Layout from '@/layout'
  * all roles can be accessed
  */
 export const constantRoutes = [{
-    path: '/login',
-    component: () => import('@/views/login/index'),
-    hidden: true
-  },
-
-  {
-    path: '/404',
-    component: () => import('@/views/404'),
-    hidden: true
-  },
-
-  {
-    path: '/',
-    component: Layout,
-    redirect: '/dashboard',
-    children: [{
-      path: 'dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/dashboard/index'),
-      meta: {
-        title: '工作台',
-        icon: 'dashboard'
-      }
-    }]
-  },
-
-  {
-    path: '/testPaper',
-    component: Layout,
-    children: [{
-      path: 'index',
-      name: 'TestPaper',
-      component: () => import('@/views/testPaper/index'),
-      meta: {
-        title: '试卷管理',
-        icon: 'shijuan'
-      }
-    }]
-  },
-
-  {
-    path: '/video',
-    component: Layout,
-    children: [{
-      path: 'index',
-      name: 'Video',
-      component: () => import('@/views/video/index'),
-      meta: {
-        title: '视频管理',
-        icon: 'video'
-      }
-    }]
-  },
-  {
-    path: '/sjby',
-    component: Layout,
+  path: '/login',
+  component: () => import('@/views/login/index'),
+  hidden: true
+},
+{
+  path: '/redirect', // 跳转页
+  component: Layout,
+  hidden: true,
+  children: [{
+    path: '/redirect/:path*',
+    component: () => import('@/views/redirect/index.vue')
+  }]
+},
+{
+  path: '/',
+  component: Layout,
+  redirect: '/dashboard',
+  children: [{
+    path: 'dashboard',
+    name: 'Dashboard',
+    component: () => import('@/views/dashboard/index'),
     meta: {
-      title: '标液试剂管理',
-      icon: 'pf'
-    },
-    children: [{
-        path: 'yaoji',
-        name: 'Yaoji',
-        component: () => import('@/views/yaoji/index'),
-        meta: {
-          title: '药剂管理',
-          icon: 'yaoji'
-        }
-      },
-      {
-        path: 'shiji',
-        name: 'Shiji',
-        component: () => import('@/views/shiji/index'),
-        meta: {
-          title: '试剂管理',
-          icon: 'shiji'
-        }
-      },
-      {
-        path: 'biaoye',
-        name: 'Biaoye',
-        component: () => import('@/views/biaoye/index'),
-        meta: {
-          title: '标液管理',
-          icon: 'biaoye'
-        }
-      },
-    ]
-  },
-  {
-    path: '/system',
-    component: Layout,
-    meta: {
-      title: '系统管理',
+      title: '工作台',
       icon: 'dashboard'
-    },
-    children: [{
-      path: 'company',
-      name: 'Company',
-      component: () => import('@/views/company/index'),
-      meta: {
-        title: '企业管理',
-        icon: 'company'
-      }
-    }, {
-      path: 'ponit',
-      name: 'Ponit',
-      component: () => import('@/views/company/ponit'),
-      meta: {
-        title: '点位管理',
-        icon: 'biaoye'
-      }
-    }, ]
+    }
+  }]
+},
+
+{
+  path: '/testPaper',
+  component: Layout,
+  children: [{
+    path: 'index',
+    name: 'TestPaper',
+    component: () => import('@/views/testPaper/index'),
+    meta: {
+      title: '试卷管理',
+      icon: 'shijuan'
+    }
+  }]
+},
+
+{
+  path: '/video',
+  component: Layout,
+  children: [{
+    path: 'index',
+    name: 'Video',
+    component: () => import('@/views/video/index'),
+    meta: {
+      title: '视频管理',
+      icon: 'video'
+    }
+  }]
+},
+{
+  path: '/sjby',
+  component: Layout,
+  meta: {
+    title: '标液试剂管理',
+    icon: 'pf'
   },
-  // 404 page must be placed at the end !!!
+  children: [{
+    path: 'yaoji',
+    name: 'Yaoji',
+    component: () => import('@/views/yaoji/index'),
+    meta: {
+      title: '药剂管理',
+      icon: 'yaoji'
+    }
+  },
   {
-    path: '*',
-    redirect: '/404',
-    hidden: true
+    path: 'shiji',
+    name: 'Shiji',
+    component: () => import('@/views/shiji/index'),
+    meta: {
+      title: '试剂管理',
+      icon: 'shiji'
+    }
+  },
+  {
+    path: 'biaoye',
+    name: 'Biaoye',
+    component: () => import('@/views/biaoye/index'),
+    meta: {
+      title: '标液管理',
+      icon: 'biaoye'
+    }
   }
+  ]
+},
+{
+  path: '/system',
+  component: Layout,
+  meta: {
+    title: '系统管理',
+    icon: 'dashboard'
+  },
+  children: [{
+    path: 'company',
+    name: 'Company',
+    component: () => import('@/views/company/index'),
+    meta: {
+      title: '企业管理',
+      icon: 'company'
+    }
+  },
+  {
+    path: 'ponit',
+    name: 'Ponit',
+    component: () => import('@/views/company/ponit'),
+    meta: {
+      title: '点位管理',
+      icon: 'Ponit'
+    }
+  }
+  ]
+},
+// 404 page must be placed at the end !!!
+{
+  path: '*',
+  redirect: '/404',
+  hidden: true
+}
 ]
 
 const createRouter = () => new Router({

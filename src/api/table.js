@@ -86,142 +86,163 @@ export function reagentList(data) {
     data
   })
 }
-export function listPharmaceuticalPage(data) { //药剂列表
+export function listPharmaceuticalPage(data) { // 药剂列表
   return request({
     url: setting.baseUrl + '/reagent/listPharmaceuticalPage',
     method: 'post',
     data
   })
 }
-export function addReagent(data) { //药剂列表
+export function addReagent(data) { // 药剂列表
   return request({
     url: setting.baseUrl + '/reagent/addReagent',
     method: 'post',
     data
   })
 }
-export function removeReagent(data) { //药剂列表
+export function removeReagent(data) { // 药剂列表
   return request({
     url: setting.baseUrl + '/reagent/removeReagent',
     method: 'post',
     data
   })
 }
-export function getReagent(data) { //药剂列表
+export function getReagent(data) { // 药剂列表
   return request({
     url: setting.baseUrl + '/reagent/getReagent',
     method: 'post',
     data
   })
 }
-export function addPharmaceutical(data) { //药剂列表
+export function addPharmaceutical(data) { // 药剂列表
   return request({
     url: setting.baseUrl + '/reagent/addPharmaceutical',
     method: 'post',
     data
   })
 }
-export function updatePharmaceutical(data) { //药剂列表
+export function updatePharmaceutical(data) { // 药剂列表
   return request({
     url: setting.baseUrl + '/reagent/updatePharmaceutical',
     method: 'post',
     data
   })
 }
-export function deletePharmaceutical(data) { //药剂列表
+export function deletePharmaceutical(data) { // 药剂列表
   return request({
     url: setting.baseUrl + '/reagent/deletePharmaceutical',
     method: 'post',
     data
   })
 }
-export function updateReagent(data) { //药剂列表
+export function updateReagent(data) { // 药剂列表
   return request({
     url: setting.baseUrl + '/reagent/updateReagent',
     method: 'post',
     data
   })
 }
-export function updateReagentPharmaceutical(data) { //药剂列表
+export function updateReagentPharmaceutical(data) { // 药剂列表
   return request({
     url: setting.baseUrl + '/reagent/updateReagentPharmaceutical',
     method: 'post',
     data
   })
 }
-export function removeReagentPharmaceutical(data) { //药剂列表
+export function removeReagentPharmaceutical(data) { // 药剂列表
   return request({
     url: setting.baseUrl + '/reagent/removeReagentPharmaceutical',
     method: 'post',
     data
   })
 }
-export function addReagentPharmaceutical(data) { //药剂列表
+export function addReagentPharmaceutical(data) { // 药剂列表
   return request({
     url: setting.baseUrl + '/reagent/addReagentPharmaceutical',
     method: 'post',
     data
   })
 }
-export function listStandardSolution(data) { //药剂列表
+export function listStandardSolution(data) { // 药剂列表
   return request({
     url: setting.baseUrl + '/standardSolution/listStandardSolution',
     method: 'post',
     data
   })
 }
-export function addStandardSolution(data) { //药剂列表
+export function addStandardSolution(data) { // 药剂列表
   return request({
     url: setting.baseUrl + '/standardSolution/addStandardSolution',
     method: 'post',
     data
   })
 }
-export function updateStandardSolution(data) { //药剂列表
+export function updateStandardSolution(data) { // 药剂列表
   return request({
     url: setting.baseUrl + '/standardSolution/updateStandardSolution',
     method: 'post',
     data
   })
 }
-export function removeStandardSolution(data) { //药剂列表
+export function removeStandardSolution(data) { // 药剂列表
   return request({
     url: setting.baseUrl + '/standardSolution/removeStandardSolution',
     method: 'post',
     data
   })
 }
-export function exportPreparationReagent(data) { //药剂列表
+export function exportPreparationReagent(data) { // 药剂列表
   return request({
     url: setting.baseUrl + '/reagent/exportPreparationReagent',
     method: 'post',
     data
   })
 }
-export function getAreaCodeTree(data) { //药剂列表
+export function getAreaCodeTree(data) { // 药剂列表
   return request({
     url: setting.baseUrl + '/company/getAreaCodeTree',
     method: 'post',
     data
   })
 }
-export function listCompanyPage(data) { //药剂列表
+export function listCompanyPage(data) { // 药剂列表
   return request({
     url: setting.baseUrl + '/company/listCompanyPage',
     method: 'post',
     data
   })
 }
-export function addCompany(data) { //药剂列表
+export function addCompany(data) { // 药剂列表
   return request({
     url: setting.baseUrl + '/company/addCompany',
     method: 'post',
     data
   })
 }
-export function updateCompany(data) { //药剂列表
+export function updateCompany(data) { // 药剂列表
   return request({
     url: setting.baseUrl + '/company/updateCompany',
+    method: 'post',
+    data
+  })
+}
+export function listPointPage(data) { // 药剂列表
+  return request({
+    url: setting.baseUrl + '/point/listPointPage',
+    method: 'post',
+    data
+  })
+}
+export function listCompanySel(data) { // 药剂列表
+  return request({
+    url: setting.baseUrl + '/company/listCompanySel',
+    method: 'post',
+    data
+  })
+}
+export function listGroupSel(data) { // 药剂列表
+  return request({
+    url: setting.baseUrl + '/group/listGroupSel',
     method: 'post',
     data
   })
