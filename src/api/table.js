@@ -163,3 +163,66 @@ export function addReagentPharmaceutical(data) { //药剂列表
     data
   })
 }
+export function listStandardSolution(data) { //药剂列表
+  return request({
+    url: setting.baseUrl + '/standardSolution/listStandardSolution',
+    method: 'post',
+    data
+  })
+}
+export function addStandardSolution(data) { //药剂列表
+  return request({
+    url: setting.baseUrl + '/standardSolution/addStandardSolution',
+    method: 'post',
+    data
+  })
+}
+export function updateStandardSolution(data) { //药剂列表
+  return request({
+    url: setting.baseUrl + '/standardSolution/updateStandardSolution',
+    method: 'post',
+    data
+  })
+}
+export function removeStandardSolution(data) { //药剂列表
+  return request({
+    url: setting.baseUrl + '/standardSolution/removeStandardSolution',
+    method: 'post',
+    data
+  })
+}
+export function exportPreparationReagent(data) { //药剂列表
+  return request({
+    url: setting.baseUrl + '/reagent/exportPreparationReagent',
+    method: 'post',
+    data
+  })
+}
+export function getAreaCodeTree(data) { //药剂列表
+  return request({
+    url: setting.baseUrl + '/company/getAreaCodeTree',
+    method: 'post',
+    data
+  })
+}
+export function listCompanyPage(data) { //药剂列表
+  return request({
+    url: setting.baseUrl + '/company/listCompanyPage',
+    method: 'post',
+    data
+  })
+}
+export function addCompany(data) { //药剂列表
+  return request({
+    url: setting.baseUrl + '/company/addCompany',
+    method: 'post',
+    data
+  })
+}
+export function updateCompany(data) { //药剂列表
+  return request({
+    url: setting.baseUrl + '/company/updateCompany',
+    method: 'post',
+    data
+  })
+}

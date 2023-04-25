@@ -108,10 +108,43 @@ export const constantRoutes = [{
           title: '试剂管理',
           icon: 'shiji'
         }
-      }
+      },
+      {
+        path: 'biaoye',
+        name: 'Biaoye',
+        component: () => import('@/views/biaoye/index'),
+        meta: {
+          title: '标液管理',
+          icon: 'biaoye'
+        }
+      },
     ]
   },
-
+  {
+    path: '/system',
+    component: Layout,
+    meta: {
+      title: '系统管理',
+      icon: 'dashboard'
+    },
+    children: [{
+      path: 'company',
+      name: 'Company',
+      component: () => import('@/views/company/index'),
+      meta: {
+        title: '企业管理',
+        icon: 'company'
+      }
+    }, {
+      path: 'ponit',
+      name: 'Ponit',
+      component: () => import('@/views/company/ponit'),
+      meta: {
+        title: '点位管理',
+        icon: 'biaoye'
+      }
+    }, ]
+  },
   // 404 page must be placed at the end !!!
   {
     path: '*',

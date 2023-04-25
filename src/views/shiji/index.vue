@@ -10,6 +10,7 @@
       <el-input v-model="instrumentName" class="seachInput" placeholder="请选择输入关键字" clearable />
       <el-button type="primary" @click="seach">搜索</el-button>
       <el-button type="primary" @click="addShiji">新增试剂</el-button>
+      <el-button v-loading="downloading" type="primary" plain @click="xlsxDownload">试剂记录</el-button>
     </div>
 
     <!-- 表格 -->
@@ -162,7 +163,8 @@
     updateReagent,
     updateReagentPharmaceutical,
     removeReagentPharmaceutical,
-    addReagentPharmaceutical
+    addReagentPharmaceutical,
+    exportPreparationReagent
   } from '@/api/table'
   import {
     mapGetters
@@ -193,6 +195,7 @@
         listLoading: false,
         bangdingVisible: false,
         addbdVisible: false,
+        downloading: false,
         form: {},
         allyjList: [], //全部药剂列表
         yaojiChoose: [], //全部药剂列表
@@ -477,6 +480,14 @@
             this.addbdVisible = false
           })
 
+        })
+      },
+      xlsxDownload() {
+        this.downloading = true
+        exportPreparationReagent({}).then(res => {
+          console.log(res)
+          this.downloading = false
+          window.open(res.retData)
         })
       }
     }
