@@ -247,3 +247,87 @@ export function listGroupSel(data) { // 药剂列表
     data
   })
 }
+export function addPoint(data) { // 药剂列表
+  return request({
+    url: setting.baseUrl + '/point/addPoint',
+    method: 'post',
+    data
+  })
+}
+export function updatePoint(data) { // 药剂列表
+  return request({
+    url: setting.baseUrl + '/point/updatePoint',
+    method: 'post',
+    data
+  })
+}
+export function listInstrumentTypeSel(data) { // 药剂列表
+  return request({
+    url: setting.baseUrl + '/instrument/listInstrumentTypeSel',
+    method: 'post',
+    data
+  })
+}
+export function listShortPointSel(data) { // 药剂列表
+  return request({
+    url: setting.baseUrl + '/point/listShortPointSel',
+    method: 'post',
+    data
+  })
+}
+export function listInstrumentPage(data) { // 药剂列表
+  return request({
+    url: setting.baseUrl + '/instrument/listInstrumentPage',
+    method: 'post',
+    data
+  })
+}
+export function addInstrument(data) { // 药剂列表
+  return request({
+    url: setting.baseUrl + '/instrument/addInstrument',
+    method: 'post',
+    data
+  })
+}
+export function updateInstrument(data) { // 药剂列表
+  return request({
+    url: setting.baseUrl + '/instrument/updateInstrument',
+    method: 'post',
+    data
+  })
+}
+export function listPointFactorPage(data) { // 药剂列表
+  return request({
+    url: setting.baseUrl + '/point/listPointFactorPage',
+    method: 'post',
+    data
+  })
+}
+export function listFactorSel(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/point/listFactorSel',
+    method: 'post',
+    data
+  })
+}
+export function addPointFactor(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/point/addPointFactor',
+    method: 'post',
+    data
+  })
+}
+export function updatePointFactor(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/point/updatePointFactor',
+    method: 'post',
+    data
+  })
+}
+export function deletePointFactor(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/point/deletePointFactor',
+    method: 'post',
+    data
+  })
+}

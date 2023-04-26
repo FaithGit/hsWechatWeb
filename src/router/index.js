@@ -146,6 +146,24 @@ export const constantRoutes = [{
       title: '点位管理',
       icon: 'Ponit'
     }
+  },
+  {
+    path: 'shebei',
+    name: 'Shebei',
+    component: () => import('@/views/company/shebei'),
+    meta: {
+      title: '设备管理',
+      icon: 'shebei'
+    }
+  },
+  {
+    path: 'yinziList',
+    name: 'YinziList',
+    component: () => import('@/views/company/yinziList'),
+    meta: {
+      title: '点位因子管理',
+      icon: 'yinzi'
+    }
   }
   ]
 },

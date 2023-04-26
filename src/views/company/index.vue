@@ -57,7 +57,7 @@
         <template slot-scope="scope">
           <el-button @click="editShiji(scope.row)">编辑</el-button>
           <el-button @click="gotoPoint(scope.row)">点位管理</el-button>
-          <el-button type="danger" @click="remove(scope.row)"> 删除</el-button>
+          <!-- <el-button type="danger" @click="remove(scope.row)"> 删除</el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -192,11 +192,6 @@ export default {
   components: {
     Treeselect
   },
-  computed: {
-    ...mapGetters([
-      'userId'
-    ])
-  },
   data() {
     return {
       pageIndex: 1,
@@ -259,6 +254,11 @@ export default {
 
     }
   },
+  computed: {
+    ...mapGetters([
+      'userId'
+    ])
+  },
   mounted() {
     this.getAreaCodeTree()
     this.listCompanyPage()
@@ -298,10 +298,10 @@ export default {
     },
     editShiji(e) {
       this.editVisible = true
-      if (e.areaCode === 0) {
-        e.areaCode = null
+      this.form = Object.assign({}, e)
+      if (this.form.areaCode === 0) {
+        this.form.areaCode = null
       }
-      this.form = e
       console.log('🚀 ~ editShiji ~   this.form:', this.form)
     },
     remove(e) {
@@ -373,6 +373,12 @@ export default {
     },
     gotoPoint(e) {
       console.log(e)
+      this.$router.push({
+        name: 'Ponit',
+        params: {
+          companyId: e.companyId
+        }
+      })
     }
   }
 }
