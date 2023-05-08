@@ -195,7 +195,7 @@
 
     <el-dialog
       v-if="editVisible"
-      title="编辑药剂"
+      title="编辑点位"
       :append-to-body="true"
       :visible="editVisible"
       width="40%"
@@ -205,13 +205,7 @@
 
       <el-form ref="form1" :model="form" label-width="140px" :rules="rules">
         <el-form-item label="企业名称">
-          <treeselect
-            v-model="form.companyId"
-            :multiple="false"
-            :options="comlist"
-            :normalizer="normalizer"
-            placeholder="请选择企业"
-          />
+          <el-input v-model="form.comName" placeholder="请输入点位名称" readonly="" />
         </el-form-item>
         <el-form-item label="点位名称" prop="pointName">
           <el-input v-model="form.pointName" placeholder="请输入点位名称" />
@@ -436,14 +430,14 @@ export default {
         return {
           id: node.companyId,
           label: node.comName,
-          children: node.children
+          children: node.children && node.children.length ? node.children : 0
         }
       },
       normalizer2(node) {
         return {
           id: node.groupId,
           label: node.groupName,
-          children: node.children
+          children: node.children && node.children.length ? node.children : 0
         }
       }
 

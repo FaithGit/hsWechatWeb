@@ -295,7 +295,7 @@ export default {
         return {
           id: node.id,
           label: node.pharmaceuticalName,
-          children: node.subOptions
+          children: node.subOptions && node.subOptions.length ? node.subOptions : 0
         }
       }
     }

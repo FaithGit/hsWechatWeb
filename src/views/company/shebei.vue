@@ -19,12 +19,12 @@
         :multiple="false"
         :options="dianweiList"
         :normalizer="normalizer2"
-        placeholder="请选择企业"
+        placeholder="请选择点位名称"
         class="seachInput"
         style="width:300px"
       />
       设备类型：
-      <el-select v-model="pointStatus" placeholder="请选择站点状态" class="seachInput" clearable>
+      <el-select v-model="pointStatus" placeholder="请选择设备类型" class="seachInput" clearable>
         <el-option
           v-for="item in shebeilist"
           :key="item.instrumentType+item.instrumentTypeName"
@@ -161,7 +161,7 @@
 
     <el-dialog
       v-if="editVisible"
-      title="编辑药剂"
+      title="编辑设备"
       :append-to-body="true"
       :visible="editVisible"
       width="40%"
@@ -324,14 +324,14 @@ export default {
         return {
           id: node.companyId,
           label: node.comName,
-          children: node.children
+          children: node.children && node.children.length ? node.children : 0
         }
       },
       normalizer2(node) {
         return {
           id: node.pointId,
           label: node.pointName,
-          children: node.children
+          children: node.children && node.children.length ? node.children : 0
         }
       }
 
@@ -404,7 +404,7 @@ export default {
       listInstrumentPage({
         companyId: this.companyId || '',
         pointId: this.pointId || '',
-        instrumentType: this.instrumentType || '',
+        instrumentType: this.pointStatus || '',
         pageIndex: this.pageIndex,
         pageSize: this.pageSize
       }).then(res => {

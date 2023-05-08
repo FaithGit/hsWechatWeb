@@ -19,7 +19,7 @@
         :multiple="false"
         :options="dianweiList"
         :normalizer="normalizer2"
-        placeholder="请选择企业"
+        placeholder="请选择点位"
         class="seachInput"
         style="width:300px"
       />
@@ -29,12 +29,12 @@
         :multiple="false"
         :options="factorList"
         :normalizer="normalizer3"
-        placeholder="请选择企业"
+        placeholder="请选择因子"
         class="seachInput"
         style="width:300px"
       />
       <el-button type="primary" @click="seach">搜索</el-button>
-      <el-button type="primary" @click="addShebei">新增设备</el-button>
+      <el-button type="primary" @click="addShebei">新增因子</el-button>
     </div>
 
     <!-- 表格 -->
@@ -142,7 +142,7 @@
             :multiple="false"
             :options="factorList"
             :normalizer="normalizer3"
-            placeholder="请选择企业"
+            placeholder="请选择因子"
           />
         </el-form-item>
         <el-form-item label="浓度报警上限值" prop="alarmUpperLimit">
@@ -203,7 +203,7 @@
 
     <el-dialog
       v-if="editVisible"
-      title="编辑药剂"
+      title="编辑因子"
       :append-to-body="true"
       :visible="editVisible"
       width="40%"
@@ -375,21 +375,21 @@ export default {
         return {
           id: node.companyId,
           label: node.comName,
-          children: node.children
+          children: node.children && node.children.length ? node.children : 0
         }
       },
       normalizer2(node) {
         return {
           id: node.pointId,
           label: node.pointName,
-          children: node.children
+          children: node.children && node.children.length ? node.children : 0
         }
       },
       normalizer3(node) {
         return {
           id: node.factorCode,
           label: node.factorName,
-          children: node.children
+          children: node.children && node.children.length ? node.children : 0
         }
       }
 
@@ -469,7 +469,7 @@ export default {
       listPointFactorPage({
         companyId: this.companyId || '',
         pointId: this.pointId || '',
-        factorId: this.factorId || '',
+        factorCode: this.factorId || '',
         pageIndex: this.pageIndex,
         pageSize: this.pageSize
       }).then(res => {

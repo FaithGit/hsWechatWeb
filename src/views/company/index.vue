@@ -4,14 +4,15 @@
     <div class="headClass">
       企业名称：
       <el-input v-model="comName" class="seachInput" placeholder="请选择输入关键字" clearable />
-      区域code：
+      区域：
       <treeselect
         v-model="areaCode"
         :multiple="false"
         :options="allAreacode"
         :normalizer="normalizer"
-        placeholder="请选择区域code"
+        placeholder="请选择区域"
         class="seachInput"
+        no-children-text="暂无数据"
       />
       <el-button type="primary" @click="seach">搜索</el-button>
       <el-button type="primary" @click="addCom">新增企业</el-button>
@@ -90,13 +91,13 @@
         <el-form-item label="社会信用代码" prop="socialCreditCode">
           <el-input v-model="form.socialCreditCode" placeholder="请输入社会信用代码" />
         </el-form-item>
-        <el-form-item label="区域code" prop="unit">
+        <el-form-item label="区域" prop="unit">
           <treeselect
             v-model="form.areaCode"
             :multiple="false"
             :options="allAreacode"
             :normalizer="normalizer"
-            placeholder="请选择区域code"
+            placeholder="请选择区域"
             class="seachInput"
             style="margin:0"
           />
@@ -122,7 +123,7 @@
 
     <el-dialog
       v-if="editVisible"
-      title="编辑药剂"
+      title="编辑企业"
       :append-to-body="true"
       :visible="editVisible"
       width="40%"
@@ -137,13 +138,13 @@
         <el-form-item label="社会信用代码" prop="socialCreditCode">
           <el-input v-model="form.socialCreditCode" placeholder="请输入社会信用代码" />
         </el-form-item>
-        <el-form-item label="区域code" prop="unit">
+        <el-form-item label="区域" prop="unit">
           <treeselect
             v-model="form.areaCode"
             :multiple="false"
             :options="allAreacode"
             :normalizer="normalizer"
-            placeholder="请选择区域code"
+            placeholder="请选择区域"
             class="seachInput"
             style="margin:0"
           />
@@ -245,10 +246,11 @@ export default {
         }]
       },
       normalizer(node) {
+        // if (!node.children.length) delete node.children
         return {
           id: node.value,
           label: node.label,
-          children: node.children
+          children: node.children && node.children.length ? node.children : 0
         }
       }
 
