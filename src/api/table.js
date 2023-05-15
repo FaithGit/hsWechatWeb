@@ -331,3 +331,59 @@ export function deletePointFactor(data) { // 获取所有因子
     data
   })
 }
+export function listRoleSel(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/sysUser/listRoleSel',
+    method: 'post',
+    data
+  })
+}
+export function listQuestionPage(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/exam/listQuestionPage',
+    method: 'post',
+    data
+  })
+}
+export function removeQuestion(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/exam/removeQuestion',
+    method: 'post',
+    data
+  })
+}
+export function addQuestion(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/exam/addQuestion',
+    method: 'post',
+    data
+  })
+}
+export function getQuestionDetail(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/exam/getQuestionDetail',
+    method: 'post',
+    data
+  })
+}
+export function updateQuestion(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/exam/updateQuestion',
+    method: 'post',
+    data
+  })
+}
+export function listEssayQuestionPage(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/exam/listEssayQuestionPage',
+    method: 'post',
+    data
+  })
+}
+export function readOverQuestion(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/exam/readOverQuestion',
+    method: 'post',
+    data
+  })
+}

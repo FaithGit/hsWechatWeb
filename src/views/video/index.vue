@@ -4,10 +4,6 @@
     <div>
       视频名称：
       <el-input v-model="videoName" class="seachInput" placeholder="请选择输入关键字" clearable />
-      学习人员：
-      <el-select v-model="licensedStatus" placeholder="请选择考试人员" class="seachInput" clearable>
-        <el-option v-for="item in licensedStatusoptions" :key="item.value" :label="item.label" :value="item.value" />
-      </el-select>
       状态：
       <el-select v-model="status" placeholder="请选择状态" class="seachInput" clearable>
         <el-option v-for="item in statusoptions" :key="item.value+'状态'" :label="item.label" :value="item.value" />
@@ -33,11 +29,6 @@
       </el-table-column>
       <el-table-column align="center" label="视频名称" prop="videoName" />
 
-      <el-table-column align="center" label="考试人员">
-        <template slot-scope="scope">
-          {{ scope.row.licensedStatus==1?"组长":scope.row.licensedStatus==2?"组员":"全部" }}
-        </template>
-      </el-table-column>
       <el-table-column align="center" label="开始时间" prop="startTime" />
       <el-table-column align="center" label="结束时间" prop="endTime" />
       <el-table-column align="center" label="状态" prop="status" />
@@ -74,16 +65,6 @@
       <el-form ref="form1" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="视频名称" prop="videoName">
           <el-input v-model="form.videoName" placeholder="请输入视频名称" />
-        </el-form-item>
-        <el-form-item label="学习人员" prop="licensedStatus">
-          <el-select v-model="form.licensedStatus" placeholder="请选择学习人员">
-            <el-option
-              v-for="item in licensedStatusoptions"
-              :key="item.value+'学习人员'"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
         </el-form-item>
         <el-form-item label="开始时间" prop="startTime">
           <el-date-picker v-model="form.startTime" type="datetime" placeholder="选择发布时间" />
@@ -146,16 +127,6 @@
       <el-form ref="form1" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="视频名称" prop="videoName">
           <el-input v-model="form.videoName" placeholder="请输入视频名称" :readonly="true" />
-        </el-form-item>
-        <el-form-item label="学习人员" prop="licensedStatus">
-          <el-select v-model="form.licensedStatus" placeholder="请选择学习人员" :readonly="true">
-            <el-option
-              v-for="item in licensedStatusoptions"
-              :key="item.value+'学习人员'"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
         </el-form-item>
         <el-form-item label="开始时间" prop="startTime">
           <el-date-picker v-model="form.startTime" :readonly="true" type="datetime" placeholder="选择发布时间" />
@@ -303,7 +274,7 @@ export default {
       listVideo({
         pageNo: this.pageNo,
         pageSize: this.pageSize,
-        licensedStatus: this.licensedStatus,
+        licensedStatus: '',
         status: this.status,
         videoName: this.videoName
       }).then(res => {
@@ -379,7 +350,7 @@ export default {
             formData.append('file', this.uplist[0].raw)
             formData.append('cover', this.uplist2[0].raw)
             formData.append('videoName', this.form.videoName)
-            formData.append('licensedStatus', this.form.licensedStatus)
+            formData.append('licensedStatus', '')
             formData.append('startTime', moment(this.form.startTime).format('YYYY-MM-DD HH:mm:ss'))
             formData.append('endTime', moment(this.form.endTime).format('YYYY-MM-DD HH:mm:ss'))
             formData.append('introduction', this.form.introduction)

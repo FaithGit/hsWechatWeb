@@ -4,24 +4,14 @@
     <div>
       试卷名称：
       <el-input v-model="examName" class="seachInput" placeholder="请选择输入关键字" clearable />
-      考试人员：
-      <el-select v-model="licensedStatus" placeholder="请选择考试人员" class="seachInput" clearable>
-        <el-option v-for="item in licensedStatusoptions" :key="item.value" :label="item.label" :value="item.value" />
-      </el-select>
       状态：
       <el-select v-model="status" placeholder="请选择状态" class="seachInput" clearable>
         <el-option v-for="item in statusoptions" :key="item.value+'状态'" :label="item.label" :value="item.value" />
       </el-select>
       <el-button type="primary" @click="seach">搜索</el-button>
-
-    </div>
-    <!-- 功能 -->
-    <div style="margin-top:10px">
-      <el-button type="primary" @click="download">下载模板</el-button>
-      <el-button type="primary" @click="openTimu">导入题目</el-button>
-      <el-button type="primary" @click="openShijuan">导入试卷</el-button>
       <el-button type="primary" @click="openSj">随机生成试卷</el-button>
     </div>
+
     <!-- 表格 -->
     <el-table
       v-loading="listLoading"
@@ -38,16 +28,7 @@
         </template>
       </el-table-column>
       <el-table-column align="center" label="试卷名" prop="examName" />
-
-      <el-table-column align="center" label="考试人员">
-        <template slot-scope="scope">
-          {{ scope.row.licensedStatus==1?"组长":scope.row.licensedStatus==2?"组员":"全部" }}
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="难度" prop="examDifficulty" />
       <el-table-column align="center" label="总分" prop="examTotalScore" />
-      <el-table-column align="center" label="合格分" prop="passScore" />
       <el-table-column align="center" label="答题限时/分" prop="examAnswerTime" />
       <el-table-column align="center" label="发布时间" prop="examPublishTime" />
       <el-table-column align="center" label="截止时间" prop="examDeadlineTime" />
@@ -80,7 +61,7 @@
       title="查看试卷"
       :append-to-body="true"
       :visible="examVisible"
-      width="70%"
+      width="80%"
       :close-on-click-modal="false"
       @close="examVisible=false"
     >
@@ -90,15 +71,6 @@
         <el-col :span="10">
           {{ examObj.examName }}
         </el-col>
-        <el-col :span="2">考试人员：</el-col>
-        <el-col :span="10">
-          {{ examObj.licensedStatus==1?"组长":examObj.licensedStatus==2?"组员":"全部" }}
-        </el-col>
-        <el-col :span="2">试卷难度：</el-col>
-        <el-col :span="10">
-          {{ examObj.examDifficulty }}
-        </el-col>
-
         <el-col :span="2">答题限时：</el-col>
         <el-col :span="10">
           {{ examObj.examAnswerTime }}分
@@ -107,22 +79,19 @@
         <el-col :span="10">
           {{ examObj.examTotalScore }}
         </el-col>
-        <el-col :span="2">合格分数：</el-col>
-        <el-col :span="10">
-          {{ examObj.passScore }}
-        </el-col>
         <el-col :span="2">开始时间：</el-col>
         <el-col :span="10">
           {{ examObj.examPublishTime }}
-        </el-col>
-        <el-col :span="2">结束时间：</el-col>
-        <el-col :span="10">
-          {{ examObj.examDeadlineTime }}
         </el-col>
         <el-col :span="2">试卷状态：</el-col>
         <el-col :span="10">
           {{ examObj.examStatus==1?'未开始':examObj.examStatus==2?'已开始':'已过期失效' }}
         </el-col>
+        <el-col :span="2">结束时间：</el-col>
+        <el-col :span="10">
+          {{ examObj.examDeadlineTime }}
+        </el-col>
+
       </el-row>
 
       <el-table
@@ -145,7 +114,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="标准答案" prop="questionAnswer" align="center" width="80" />
+        <el-table-column label="标准答案" prop="questionAnswer" align="center" />
         <el-table-column align="right" width="160">
           <template slot="header" slot-scope="scope">
             <el-input v-model="search1" size="mini" placeholder="输入试题内容搜索" clearable />
@@ -198,110 +167,23 @@
         <el-button type="primary" :loading="loading" @click="upFile">确认</el-button>
       </div>
     </el-dialog>
-
-    <!-- 导入试卷 -->
-    <el-dialog
-      v-if="shijuanVisible"
-      title="导入试卷"
-      :append-to-body="true"
-      :visible="shijuanVisible"
-      width="50%"
-      :close-on-click-modal="false"
-      @close="shijuanVisible=false"
-    >
-      <el-form ref="form1" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="试卷名称" prop="examName">
-          <el-input v-model="form.examName" placeholder="请输入试卷名称" />
-        </el-form-item>
-        <el-form-item label="考试人员" prop="licensedStatus">
-          <el-select v-model="form.licensedStatus" placeholder="请选择考试人员">
-            <el-option
-              v-for="item in licensedStatusoptions"
-              :key="item.value+'考试人员'"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="试卷难度" prop="examDifficultyCode">
-          <el-select v-model="form.examDifficultyCode" placeholder="请选择试卷难度">
-            <el-option
-              v-for="item in examDifficultyCodeList"
-              :key="item.value+'考试难度'"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="发布时间" prop="examPublishTime">
-          <el-date-picker v-model="form.examPublishTime" type="datetime" placeholder="选择发布时间" />
-        </el-form-item>
-        <el-form-item label="截止时间" prop="examDeadlineTime">
-          <el-date-picker v-model="form.examDeadlineTime" type="datetime" placeholder="选择截止时间" />
-        </el-form-item>
-
-        <el-form-item label="答题限时" prop="examAnswerTime">
-          <el-input-number v-model="form.examAnswerTime" :min="0" placeholder="请输入试卷答题限时时间(分钟)" />
-        </el-form-item>
-        <el-form-item label="合格分数" prop="passScore">
-          <el-input-number v-model="form.passScore" :min="0" placeholder="请输入合格通过分数" />
-        </el-form-item>
-
-        <el-form-item label="试卷附件">
-          <el-upload
-            style="width:30%"
-            class="upload-demo"
-            action="#"
-            :on-remove="upRemove"
-            :limit="1"
-            :file-list="uplist"
-            accept=".xlsx"
-            :auto-upload="false"
-            :on-change="upChangeFile"
-          >
-            <el-button size="small" type="primary">点击上传</el-button>
-            <div slot="tip" class="el-upload__tip">限单个xlsx文件</div>
-          </el-upload>
-        </el-form-item>
-      </el-form>
-      <div style="text-align:center">
-        <el-button @click="shijuanVisible=false">取消</el-button>
-        <el-button type="primary" :loading="loading" @click="upTest">确认</el-button>
-      </div>
-    </el-dialog>
-
     <!-- 随机生成试卷 -->
     <el-dialog
       v-if="sjVisible"
       title="随机生成试卷"
       :append-to-body="true"
       :visible="sjVisible"
-      width="50%"
+      width="70%"
       :close-on-click-modal="false"
       @close="sjVisible=false"
     >
-      <el-form ref="form1" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form1" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="试卷名称" prop="examName">
-          <el-input v-model="form.examName" placeholder="请输入试卷名称" />
+          <el-input v-model="form.examName" placeholder="请输入试卷名称" style="width:220px" />
         </el-form-item>
-        <el-form-item label="考试人员" prop="licensedStatus">
-          <el-select v-model="form.licensedStatus" placeholder="请选择考试人员">
-            <el-option
-              v-for="item in licensedStatusoptions"
-              :key="item.value+'考试人员'"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="试卷难度" prop="examDifficultyCode">
-          <el-select v-model="form.examDifficultyCode" placeholder="请选择试卷难度">
-            <el-option
-              v-for="item in examDifficultyCodeList"
-              :key="item.value+'考试难度'"
-              :label="item.label"
-              :value="item.value"
-            />
+        <el-form-item label="对应考试角色" prop="roleIds">
+          <el-select v-model="form.roleIds" placeholder="请选择对应考试角色" style="width:220px" multiple>
+            <el-option v-for="item in roleIdList" :key="item.roleId" :label="item.roleName" :value="item.roleId" />
           </el-select>
         </el-form-item>
         <el-form-item label="发布时间" prop="examPublishTime">
@@ -310,16 +192,58 @@
         <el-form-item label="截止时间" prop="examDeadlineTime">
           <el-date-picker v-model="form.examDeadlineTime" type="datetime" placeholder="选择截止时间" />
         </el-form-item>
-
         <el-form-item label="答题限时" prop="examAnswerTime">
-          <el-input-number v-model="form.examAnswerTime" :min="0" placeholder="请输入试卷答题限时时间(分钟)" />
+          <el-input-number v-model="form.examAnswerTime" :min="0" placeholder="请输入试卷答题限时时间(分钟)" /> 分钟
         </el-form-item>
-        <el-form-item label="合格分数" prop="passScore">
-          <el-input-number v-model="form.passScore" :min="0" placeholder="请输入合格通过分数" />
-        </el-form-item>
-
+        <el-row :gutter="20">
+          <el-col :span="4" :offset="2" style="text-align:center">
+            <div style="margin-bottom:15px">单选题选项</div>
+            <div style="margin-bottom:5px">数量：
+              <el-input-number v-model="form.singleAnswerNum" size="small" style="width:140px" :min="0" />
+            </div>
+            <div>分数：
+              <el-input-number v-model="form.singleAnswerScores" size="small" style="width:140px" :min="0" />
+            </div>
+          </el-col>
+          <el-col :span="4" style="text-align:center">
+            <div style="margin-bottom:15px">多选题选项</div>
+            <div style="margin-bottom:5px">数量：
+              <el-input-number v-model="form.multipleAnswerNum" size="small" style="width:140px" :min="0" />
+            </div>
+            <div>分数：
+              <el-input-number v-model="form.multipleAnswerScores" size="small" style="width:140px" :min="0" />
+            </div>
+          </el-col>
+          <el-col :span="4" style="text-align:center">
+            <div style="margin-bottom:15px">判断题选项</div>
+            <div style="margin-bottom:5px">数量：
+              <el-input-number v-model="form.trueFalseQuestionNum" size="small" style="width:140px" :min="0" />
+            </div>
+            <div>分数：
+              <el-input-number v-model="form.trueFalseQuestionScores" size="small" style="width:140px" :min="0" />
+            </div>
+          </el-col>
+          <el-col :span="4" style="text-align:center">
+            <div style="margin-bottom:15px">填空题选项</div>
+            <div style="margin-bottom:5px">数量：
+              <el-input-number v-model="form.fillInTheBlankNum" size="small" style="width:140px" :min="0" />
+            </div>
+            <div>分数：
+              <el-input-number v-model="form.fillInTheBlankScores" size="small" style="width:140px" :min="0" />
+            </div>
+          </el-col>
+          <el-col :span="4" style="text-align:center">
+            <div style="margin-bottom:15px">问答题选项</div>
+            <div style="margin-bottom:5px">数量：
+              <el-input-number v-model="form.essayQuestionNum" size="small" style="width:140px" :min="0" />
+            </div>
+            <div>分数：
+              <el-input-number v-model="form.essayQuestionScores" size="small" style="width:140px" :min="0" />
+            </div>
+          </el-col>
+        </el-row>
       </el-form>
-      <div style="text-align:center">
+      <div style="text-align:center;margin-top:30px">
         <el-button @click="sjVisible=false">取消</el-button>
         <el-button type="primary" :loading="loading" @click="upSuiji">确认</el-button>
       </div>
@@ -334,7 +258,8 @@ import {
   exportExcelDemo,
   getExam,
   randomGenerateExam,
-  removeExam
+  removeExam,
+  listRoleSel
 } from '@/api/table'
 import {
   mapGetters
@@ -349,27 +274,13 @@ import {
 
 export default {
   name: 'TestPaper',
-  computed: {
-    ...mapGetters([
-      'userId'
-    ])
-  },
+
   data() {
     return {
       pageNo: 1,
       pageSize: 10,
       total: 0,
       records: [],
-      licensedStatusoptions: [{
-        value: 1,
-        label: '组长'
-      }, {
-        value: 2,
-        label: '组员'
-      }, {
-        value: 3,
-        label: '全部'
-      }],
       statusoptions: [{
         value: 1,
         label: '未开始'
@@ -380,25 +291,6 @@ export default {
         value: 3,
         label: '已过期失效'
       }],
-      examDifficultyCodeList: [{
-        value: 1,
-        label: '易'
-      }, {
-        value: 2,
-        label: '较易'
-      }, {
-        value: 3,
-        label: '中等'
-      }, {
-        value: 4,
-        label: '较难'
-      }, {
-        value: 5,
-        label: '难'
-      }
-
-      ],
-      licensedStatus: '',
       status: '',
       examName: '',
       search1: '',
@@ -409,14 +301,12 @@ export default {
       timuVisible: false,
       examObj: {},
       uplist: [], // 题目列表
+      roleIdList: [], // 题目列表
       form: {
         examName: '',
-        licensedStatus: '',
-        examDifficultyCode: '',
         examPublishTime: '',
         examDeadlineTime: '',
-        examAnswerTime: 60,
-        passScore: 60
+        examAnswerTime: 60
       },
       rules: {
         examName: [{
@@ -424,14 +314,9 @@ export default {
           message: '请输入试卷名称',
           trigger: 'blur'
         }],
-        licensedStatus: [{
+        roleIds: [{
           required: true,
           message: '请选择考试人员',
-          trigger: 'change'
-        }],
-        examDifficultyCode: [{
-          required: true,
-          message: '请选择试卷难度',
           trigger: 'change'
         }],
         examPublishTime: [{
@@ -448,25 +333,33 @@ export default {
           required: true,
           message: '请输入试卷答题限时时间(分钟)',
           trigger: 'change'
-        }],
-        passScore: [{
-          required: true,
-          message: '请输入合格分数',
-          trigger: 'change'
         }]
       },
       sjVisible: false
     }
   },
+  computed: {
+    ...mapGetters([
+      'userId'
+    ])
+  },
   mounted() {
+    this.listRoleSel()
     this.listExam()
   },
   methods: {
+    listRoleSel() {
+      listRoleSel({
+        departmentIds: []
+      }).then(res => {
+        console.log(res)
+        this.roleIdList = res.retData
+      })
+    },
     listExam() { // 试卷列表
       listExam({
         pageNo: this.pageNo,
         pageSize: this.pageSize,
-        licensedStatus: this.licensedStatus,
         status: this.status,
         examName: this.examName
       }).then(res => {
@@ -523,25 +416,30 @@ export default {
       this.shijuanVisible = true
       this.form = {
         examName: '',
-        licensedStatus: '',
-        examDifficultyCode: '',
         examPublishTime: '',
         examDeadlineTime: '',
-        examAnswerTime: 60,
-        passScore: 60
+        examAnswerTime: 60
       }
     },
-    openSj() { // 新建试卷
+    openSj() { // 新建随机试卷
       this.loading = false
       this.sjVisible = true
       this.form = {
         examName: '',
-        licensedStatus: '',
-        examDifficultyCode: '',
+        roleIds: [],
         examPublishTime: '',
         examDeadlineTime: '',
         examAnswerTime: 60,
-        passScore: 60
+        singleAnswerNum: 0,
+        singleAnswerScores: 0,
+        multipleAnswerNum: 0,
+        multipleAnswerScores: 0,
+        trueFalseQuestionNum: 0,
+        trueFalseQuestionScores: 0,
+        fillInTheBlankNum: 0,
+        fillInTheBlankScores: 0,
+        essayQuestionNum: 0,
+        essayQuestionScores: 0
       }
     },
     upFile() { // 上传题目
@@ -604,16 +502,9 @@ export default {
             var formData = new FormData()
             formData.append('file', this.uplist[0].raw)
             formData.append('examName', this.form.examName)
-            formData.append('licensedStatus', this.form.licensedStatus)
-            formData.append('examDifficulty', this.form.examDifficultyCode == 1 ? '易' : this.form
-              .examDifficultyCode == 2 ? '较易' : this.form.examDifficultyCode == 3 ? '中等' : this.form
-                .examDifficultyCode == 4 ? '较难' : '难'
-            )
-            formData.append('examDifficultyCode', this.form.examDifficultyCode)
             formData.append('examPublishTime', moment(this.form.examPublishTime).format('YYYY-MM-DD HH:mm:ss'))
             formData.append('examDeadlineTime', moment(this.form.examDeadlineTime).format('YYYY-MM-DD HH:mm:ss'))
             formData.append('examAnswerTime', this.form.examAnswerTime)
-            formData.append('passScore', this.form.passScore)
 
             // return
             axios.post(setting.baseUrl + '/exam/importExcelAndGenerateExam', formData, {
@@ -655,15 +546,20 @@ export default {
           this.loading = true
           const _obj = {
             examName: this.form.examName,
-            licensedStatus: this.form.licensedStatus,
-            examDifficultyCode: this.form.examDifficultyCode,
+            roleIds: this.form.roleIds,
             examPublishTime: moment(this.form.examPublishTime).format('YYYY-MM-DD HH:mm:ss'),
             examDeadlineTime: moment(this.form.examDeadlineTime).format('YYYY-MM-DD HH:mm:ss'),
             examAnswerTime: this.form.examAnswerTime,
-            passScore: this.form.passScore,
-            examDifficulty: this.form.examDifficultyCode == 1 ? '易' : this.form
-              .examDifficultyCode == 2 ? '较易' : this.form.examDifficultyCode == 3 ? '中等' : this.form
-                .examDifficultyCode == 4 ? '较难' : '难'
+            singleAnswerNum: this.form.singleAnswerNum,
+            singleAnswerScores: this.form.singleAnswerScores,
+            multipleAnswerNum: this.form.multipleAnswerNum,
+            multipleAnswerScores: this.form.multipleAnswerScores,
+            trueFalseQuestionNum: this.form.trueFalseQuestionNum,
+            trueFalseQuestionScores: this.form.trueFalseQuestionScores,
+            fillInTheBlankNum: this.form.fillInTheBlankNum,
+            fillInTheBlankScores: this.form.fillInTheBlankScores,
+            essayQuestionNum: this.form.essayQuestionNum,
+            essayQuestionScores: this.form.essayQuestionScores
           }
 
           randomGenerateExam(_obj).then(res => {
@@ -682,6 +578,8 @@ export default {
                 message: res.retMsg
               })
             }
+            this.loading = false
+          }).catch(() => {
             this.loading = false
           })
         }

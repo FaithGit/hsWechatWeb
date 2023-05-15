@@ -16,7 +16,7 @@ const state = {
   token: '',
   name: '',
   avatar: '',
-  userId: ""
+  userId: ''
 }
 
 const mutations = {
@@ -52,7 +52,7 @@ const actions = {
         verificationCode,
         verificationImageId
       }).then(response => {
-        console.log("🚀 ~ returnnewPromise ~ response", response)
+        console.log('🚀 ~ returnnewPromise ~ response', response)
         commit('SET_TOKEN', response.retData)
         setToken(response.retData)
         resolve()
@@ -72,8 +72,8 @@ const actions = {
         token: getToken()
       }).then(res => {
         console.log('res', res)
-        commit("SET_userInfo", res.retData)
-        resolve()
+        commit('SET_userInfo', res.retData)
+        resolve(res.retData.roleId)
       }).catch(error => {
         reject(error)
       })
@@ -87,6 +87,10 @@ const actions = {
   }) {
     return new Promise((resolve, reject) => {
       removeToken() // must remove  token  first
+      commit('SET_userInfo', '')
+      commit('SET_TOKEN', '')
+      commit('SET_AVATAR', '')
+      commit('SET_NAME', '')
       resetRouter()
       resolve()
     })
