@@ -30,6 +30,8 @@
       <el-table-column align="center" label="试卷名" prop="examName" />
       <el-table-column align="center" label="总分" prop="examTotalScore" />
       <el-table-column align="center" label="答题限时/分" prop="examAnswerTime" />
+      <el-table-column align="center" label="考核角色" prop="roleName" />
+      <el-table-column align="center" label="创建人" prop="generateUserName" />
       <el-table-column align="center" label="发布时间" prop="examPublishTime" />
       <el-table-column align="center" label="截止时间" prop="examDeadlineTime" />
       <el-table-column align="center" label="试卷状态" prop="examStatusName" />
@@ -545,6 +547,7 @@ export default {
         if (valid) {
           this.loading = true
           const _obj = {
+            userId: this.userId,
             examName: this.form.examName,
             roleIds: this.form.roleIds,
             examPublishTime: moment(this.form.examPublishTime).format('YYYY-MM-DD HH:mm:ss'),
@@ -591,7 +594,7 @@ export default {
       console.log(options)
       let str = ''
       options.forEach((e, i) => {
-        if (i == options.length - 1) {
+        if (i === options.length - 1) {
           str += e.value
         } else {
           str += e.value + '|'

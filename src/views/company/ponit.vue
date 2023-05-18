@@ -151,7 +151,7 @@
           <el-select v-model="form.pointStatus" placeholder="请选择站点状态">
             <el-option label="在用" :value="1" />
             <el-option label="停运" :value="2" />
-            <el-option label="建设" :value="3" />
+            <el-option label="建设(调试)" :value="3" />
             <el-option label="合同转包" :value="4" />
             <el-option label="合同终止" :value="5" />
             <el-option label="拆除" :value="6" />
@@ -242,7 +242,7 @@
           <el-select v-model="form.pointStatus" placeholder="请选择站点状态">
             <el-option label="在用" :value="1" />
             <el-option label="停运" :value="2" />
-            <el-option label="建设" :value="3" />
+            <el-option label="建设(调试)" :value="3" />
             <el-option label="合同转包" :value="4" />
             <el-option label="合同终止" :value="5" />
             <el-option label="拆除" :value="6" />
@@ -339,7 +339,7 @@ export default {
         label: '停运'
       }, {
         value: 3,
-        label: '建设'
+        label: '建设(调试)'
       }, {
         value: 4,
         label: '合同转包'
@@ -362,12 +362,12 @@ export default {
           trigger: 'blur'
         }],
         dciMn: [{
-          required: true,
+          required: false,
           message: '请输入数采仪编码 mn号',
           trigger: 'blur'
         }],
         dciIp: [{
-          required: true,
+          required: false,
           message: '请输入数采仪ip',
           trigger: 'blur'
         }],
@@ -392,12 +392,12 @@ export default {
           trigger: 'change'
         }],
         dischargePortPermit: [{
-          required: true,
+          required: false,
           message: '请输入排放口许可证',
           trigger: 'blur'
         }],
         dischargeStandard: [{
-          required: true,
+          required: false,
           message: '请输入排放标准',
           trigger: 'blur'
         }],
@@ -512,14 +512,14 @@ export default {
       }
     },
     sumbitPoint() {
-      if (this.form.companyId == null || this.form.companyId == undefined) {
+      if (this.form.companyId === null || this.form.companyId === undefined) {
         this.$notify({
           type: 'error',
           message: '请选择企业名称'
         })
         return
       }
-      if (this.form.groupId == null || this.form.groupId == undefined) {
+      if (this.form.groupId === null || this.form.groupId === undefined) {
         this.$notify({
           type: 'error',
           message: '请选择运维组'
@@ -541,14 +541,14 @@ export default {
       })
     },
     editSubmit() {
-      if (this.form.companyId == null || this.form.companyId == undefined) {
+      if (this.form.companyId === null || this.form.companyId === undefined) {
         this.$notify({
           type: 'error',
           message: '请选择企业名称'
         })
         return
       }
-      if (this.form.groupId == null || this.form.groupId == undefined) {
+      if (this.form.groupId === null || this.form.groupId === undefined) {
         this.$notify({
           type: 'error',
           message: '请选择运维组'

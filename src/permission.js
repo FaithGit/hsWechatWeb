@@ -17,6 +17,7 @@ NProgress.configure({
 const whiteList = ['/login'] // no redirect whitelist
 
 router.beforeEach(async(to, from, next) => {
+  console.log('全局拦截器')
   // start progress bar
   NProgress.start()
 
@@ -36,8 +37,10 @@ router.beforeEach(async(to, from, next) => {
     } else {
       const userId = store.getters.userId
       if (userId) {
+        console.log('刷新走那了1')
         next()
       } else {
+        console.log('刷新走那了2')
         try {
           // get user info
           const roleId = await store.dispatch('user/getInfo')
@@ -45,8 +48,7 @@ router.beforeEach(async(to, from, next) => {
           accessRoutes = await store.dispatch('permission/generateRoutes', [roleId])
           router.addRoutes(accessRoutes) // 动态添加可访问路由表
           router.options.routes = store.getters.permission_routes
-
-          next()
+          next({ ...to, replace: true })
         } catch (error) {
           await store.dispatch('user/resetToken')
           Message.error(error || 'Has Error')

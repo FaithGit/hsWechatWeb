@@ -4,10 +4,10 @@
     <div>
       视频名称：
       <el-input v-model="videoName" class="seachInput" placeholder="请选择输入关键字" clearable />
-      状态：
+      <!-- 状态：
       <el-select v-model="status" placeholder="请选择状态" class="seachInput" clearable>
         <el-option v-for="item in statusoptions" :key="item.value+'状态'" :label="item.label" :value="item.value" />
-      </el-select>
+      </el-select> -->
       <el-button type="primary" @click="seach">搜索</el-button>
       <el-button type="primary" @click="openShijuan">导入视频</el-button>
     </div>
@@ -28,10 +28,10 @@
         </template>
       </el-table-column>
       <el-table-column align="center" label="视频名称" prop="videoName" />
-
-      <el-table-column align="center" label="开始时间" prop="startTime" />
-      <el-table-column align="center" label="结束时间" prop="endTime" />
-      <el-table-column align="center" label="状态" prop="status" />
+      <el-table-column align="center" label="上传人" prop="generateUserName" />
+      <el-table-column align="center" label="上传时间" prop="generateTime" />
+      <el-table-column align="center" label="对应学习角色" prop="roleName" />
+      <!-- <el-table-column align="center" label="状态" prop="status" /> -->
       <el-table-column align="center" label="操作">
         <template slot-scope="scope">
           <el-button @click="checkVideo(scope.row)"> 查看</el-button>
@@ -62,16 +62,21 @@
       :close-on-click-modal="false"
       @close="shijuanVisible=false"
     >
-      <el-form ref="form1" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form1" :model="form" :rules="rules" label-width="140px">
         <el-form-item label="视频名称" prop="videoName">
           <el-input v-model="form.videoName" placeholder="请输入视频名称" />
         </el-form-item>
-        <el-form-item label="开始时间" prop="startTime">
+        <el-form-item label="对应学习角色" prop="roleIds">
+          <el-select v-model="form.roleIds" placeholder="请选择对应考试角色" style="width:220px" multiple>
+            <el-option v-for="item in roleIdList" :key="item.roleId" :label="item.roleName" :value="item.roleId" />
+          </el-select>
+        </el-form-item>
+        <!-- <el-form-item label="开始时间" prop="startTime">
           <el-date-picker v-model="form.startTime" type="datetime" placeholder="选择发布时间" />
         </el-form-item>
         <el-form-item label="结束时间" prop="endTime">
           <el-date-picker v-model="form.endTime" type="datetime" placeholder="选择截止时间" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="视频简介" prop="introduction">
           <el-input v-model="form.introduction" type="textarea" placeholder="请输入视频简介" rows="4" />
         </el-form-item>
@@ -84,12 +89,12 @@
             :on-remove="upRemove2"
             :limit="1"
             :file-list="uplist2"
-            accept=".jpg,.jpeg"
+            accept=".jpg,.jpeg,.png"
             :auto-upload="false"
             :on-change="upChangeFile2"
           >
             <el-button size="small" type="primary">点击上传</el-button>
-            <div slot="tip" class="el-upload__tip">限单个jpg/jpeg文件</div>
+            <div slot="tip" class="el-upload__tip">限单个jpg/jpeg/png文件</div>
           </el-upload>
         </el-form-item>
         <el-form-item label="视频附件">
@@ -124,16 +129,14 @@
       :close-on-click-modal="false"
       @close="checkVisible=false"
     >
-      <el-form ref="form1" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form1" :model="form" :rules="rules" label-width="140px" @submit.native.prevent>
         <el-form-item label="视频名称" prop="videoName">
           <el-input v-model="form.videoName" placeholder="请输入视频名称" :readonly="true" />
         </el-form-item>
-        <el-form-item label="开始时间" prop="startTime">
-          <el-date-picker v-model="form.startTime" :readonly="true" type="datetime" placeholder="选择发布时间" />
+        <el-form-item label="对应学习角色" prop="videoName">
+          <el-input v-model="form.roleName" placeholder="请输入视频名称" :readonly="true" />
         </el-form-item>
-        <el-form-item label="结束时间" prop="endTime">
-          <el-date-picker v-model="form.endTime" :readonly="true" type="datetime" placeholder="选择截止时间" />
-        </el-form-item>
+
         <el-form-item label="视频简介" prop="introduction">
           <el-input v-model="form.introduction" type="textarea" placeholder="请输入视频简介" :readonly="true" rows="4" />
         </el-form-item>
@@ -153,12 +156,13 @@
 import DPlayer from 'dplayer'
 import {
   listVideo,
-  removeVideo
+  removeVideo,
+  listRoleSel
 } from '@/api/table'
 import {
   mapGetters
 } from 'vuex'
-import moment from 'moment'
+// import moment from 'moment'
 
 import axios from 'axios'
 import setting from '@/settings'
@@ -168,11 +172,6 @@ import {
 
 export default {
   name: 'Video',
-  computed: {
-    ...mapGetters([
-      'userId'
-    ])
-  },
   data() {
     return {
       pageNo: 1,
@@ -214,13 +213,12 @@ export default {
       }, {
         value: 5,
         label: '难'
-      }
-
-      ],
+      }],
       licensedStatus: '',
       status: '',
       videoName: '',
       search1: '',
+      roleIdList: [], // 题目列表
       listLoading: false,
       loading: false, // 上传题目的loading
       examVisible: false,
@@ -262,20 +260,39 @@ export default {
           required: true,
           message: '请选择视频学习结束时间',
           trigger: 'change'
+        }],
+        roleIds: [{
+          required: true,
+          message: '请选择考试人员',
+          trigger: 'change'
         }]
       }
     }
   },
+  computed: {
+    ...mapGetters([
+      'userId'
+    ])
+  },
   mounted() {
     this.listVideo()
+    this.listRoleSel()
   },
   methods: {
+    listRoleSel() {
+      listRoleSel({
+        departmentIds: []
+      }).then(res => {
+        console.log(res)
+        this.roleIdList = res.retData
+      })
+    },
     listVideo() {
       listVideo({
         pageNo: this.pageNo,
         pageSize: this.pageSize,
-        licensedStatus: '',
-        status: this.status,
+        // licensedStatus: '',
+        // status: this.status,
         videoName: this.videoName
       }).then(res => {
         console.log('🚀 ~ listVideo ~ res', res)
@@ -322,7 +339,8 @@ export default {
         licensedStatus: '',
         examDifficultyCode: '',
         startTime: '',
-        endTime: ''
+        endTime: '',
+        roleIds: []
       }
     },
     upVedio() { // 上传题目
@@ -350,9 +368,8 @@ export default {
             formData.append('file', this.uplist[0].raw)
             formData.append('cover', this.uplist2[0].raw)
             formData.append('videoName', this.form.videoName)
-            formData.append('licensedStatus', '')
-            formData.append('startTime', moment(this.form.startTime).format('YYYY-MM-DD HH:mm:ss'))
-            formData.append('endTime', moment(this.form.endTime).format('YYYY-MM-DD HH:mm:ss'))
+            formData.append('userId', this.userId)
+            formData.append('roleIds', this.form.roleIds)
             formData.append('introduction', this.form.introduction)
             // return
             axios.post(setting.baseUrl + '/video/uploadVideo', formData, {
@@ -404,7 +421,7 @@ export default {
     },
     remove(item) {
       console.log(item)
-      this.$confirm('此操作将永久删除该试卷, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除该视频, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
