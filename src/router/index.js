@@ -207,6 +207,44 @@ export const asyncRoutes = [{
     }
   }
   ]
+}, {
+  path: '/rs',
+  component: Layout,
+  meta: {
+    title: '人事管理',
+    icon: 'rs',
+    roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl']
+  },
+  children: [{
+    path: 'rygk',
+    name: 'Rygk',
+    component: () => import('@/views/rs/index'),
+    meta: {
+      title: '人员管理',
+      icon: 'rs'
+    }
+  },
+
+  {
+    path: 'userzhengshu',
+    name: 'Userzhengshu',
+    component: () => import('@/views/rs/userzhengshu.vue'),
+    meta: {
+      title: '用户证书管理',
+      icon: 'zhengshu'
+    }
+  },
+  {
+    path: 'zhengshu',
+    name: 'Zhengshu',
+    component: () => import('@/views/rs/zhengshu.vue'),
+    meta: {
+      title: '证书管理',
+      icon: 'zhengshu'
+    }
+  }
+
+  ]
 },
 {
   path: '*',

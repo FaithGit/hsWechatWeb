@@ -387,3 +387,73 @@ export function readOverQuestion(data) { // 获取所有因子
     data
   })
 }
+export function listUserInfoPage(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/listUserInfoPage',
+    method: 'post',
+    data
+  })
+}
+export function listCertificatePage(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/listCertificatePage',
+    method: 'post',
+    data
+  })
+}
+export function addCertificate(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/addCertificate',
+    method: 'post',
+    data
+  })
+}
+export function deleteCertificate(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/deleteCertificate',
+    method: 'post',
+    data
+  })
+}
+export function updateCertificate(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/updateCertificate',
+    method: 'post',
+    data
+  })
+}
+export function listDepartment(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/sysUser/listDepartment',
+    method: 'post',
+    data
+  })
+}
+export function getCertificate(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/getCertificate',
+    method: 'post',
+    data
+  })
+}
+export function listCertificateSel(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/listCertificateSel',
+    method: 'post',
+    data
+  })
+}
+export function listUser(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/sysUser/listUser',
+    method: 'post',
+    data
+  })
+}
+export function listUserCertificatePage(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/listUserCertificatePage',
+    method: 'post',
+    data
+  })
+}
