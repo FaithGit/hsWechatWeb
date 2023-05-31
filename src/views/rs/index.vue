@@ -124,7 +124,15 @@
           <el-input v-model="form.education" placeholder="请输入学历" />
         </el-form-item>
         <el-form-item label="学历附件" prop="educationFiles">
-          <el-upload action="#" :on-change="handleChange" :auto-upload="false" :file-list="xueliList">
+          (点击列表查看附件)
+          <el-upload
+            action="#"
+            :on-change="handleChange"
+            :on-remove="handleRemove"
+            :on-preview="handlePreview"
+            :auto-upload="false"
+            :file-list="xueliList"
+          >
             <el-button size="small" type="primary">点击上传</el-button>
           </el-upload>
         </el-form-item>
@@ -132,7 +140,19 @@
         <el-form-item label="身份证" prop="idnum">
           <el-input v-model="form.idnum" placeholder="请输入身份证" />
         </el-form-item>
-        <el-form-item label="身份证附件" prop="idnumFiles" />
+        <el-form-item label="身份证附件" prop="educationFiles">
+          (点击列表查看附件)
+          <el-upload
+            action="#"
+            :on-change="handleChangeID"
+            :on-remove="handleRemoveID"
+            :on-preview="handlePreview"
+            :auto-upload="false"
+            :file-list="IDList"
+          >
+            <el-button size="small" type="primary">点击上传</el-button>
+          </el-upload>
+        </el-form-item>
         <el-form-item label="出生年月" prop="birth">
           <el-input v-model="form.birth" placeholder="请输入出生年月" />
         </el-form-item>
@@ -165,7 +185,8 @@ import {
   updateCompany,
   listUserInfoPage,
   listDepartment,
-  listRoleSel
+  listRoleSel,
+  addUserInfo
 } from '@/api/table'
 import {
   mapGetters
@@ -191,6 +212,7 @@ export default {
       roleList: [],
       visibleTitle: '',
       xueliList: [],
+      IDList: [],
 
       allAreacode: [],
       comName: '',
@@ -280,11 +302,35 @@ export default {
       })
         .then(res => {
           console.log(res.data)
-          this.xueliList.push({
-            name: '学历附件' + (this.xueliList.length + 1),
-            url: res.data.retData
-          })
+          this.xueliList.push(res.data.retData)
         })
+    },
+    handleRemove(file, fileList) { // 学历删除
+      console.log(file, fileList)
+      this.xueliList = fileList
+    },
+    handlePreview(file) { // 学历预览
+      console.log(file)
+      window.open(file.url)
+    },
+    handleChangeID(file, fileList) { // 学历上传
+      var formData = new FormData()
+      formData.append('file', file.raw)
+      formData.append('type', 'education')
+      axios.post(setting.baseUrl + '/sysSup/fileConvert', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'token': getToken()
+        }
+      })
+        .then(res => {
+          console.log(res.data)
+          this.IDList.push(res.data.retData)
+        })
+    },
+    handleRemoveID(file, fileList) { // 学历删除
+      console.log(file, fileList)
+      this.IDList = fileList
     },
     listRoleSel() {
       listRoleSel({}).then(res => {
@@ -366,15 +412,18 @@ export default {
       console.log('学习列表', this.xueliList)
       this.$refs.form1.validate((valid) => {
         if (valid) {
-          // addCompany(this.form).then(res => {
-          //   console.log(res)
-          //   this.$notify({
-          //     type: 'success',
-          //     message: res.retMsg
-          //   })
-          //   this.visible = false
-          //   this.listUserInfoPage()
-          // })
+          const newObj = this.form
+          newObj.educationFiles = this.xueliList
+          newObj.idnumFiles = this.IDList
+          addUserInfo(this.form).then(res => {
+            console.log(res)
+            this.$notify({
+              type: 'success',
+              message: res.retMsg
+            })
+            this.visible = false
+            this.listUserInfoPage()
+          })
         }
       })
     },

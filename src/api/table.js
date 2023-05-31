@@ -457,3 +457,10 @@ export function listUserCertificatePage(data) { // 获取所有因子
     data
   })
 }
+export function addUserInfo(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/addUserInfo',
+    method: 'post',
+    data
+  })
+}
