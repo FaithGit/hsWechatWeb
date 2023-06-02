@@ -13,18 +13,18 @@
         class="seachInput"
         no-children-text="暂无数据"
       />
-      证书名称：
+      培训主题：
       <treeselect
-        v-model="certificateId"
+        v-model="trainingId"
         :multiple="false"
-        :options="zhengshuList"
+        :options="peixunList"
         :normalizer="normalizer"
-        placeholder="请选择证书"
+        placeholder="请选择培训主题"
         class="seachInput"
         no-children-text="暂无数据"
       />
       <el-button type="primary" @click="seach">搜索</el-button>
-      <el-button type="primary" @click="addCom">新增用户证书</el-button>
+      <el-button type="primary" @click="addCom">新增用户培训</el-button>
     </div>
 
     <!-- 表格 -->
@@ -43,8 +43,9 @@
         </template>
       </el-table-column>
       <el-table-column align="center" label="用户名" prop="userName" />
-      <el-table-column align="center" label="证书名称" prop="certificateName" />
-      <el-table-column align="center" label="到期时间" prop="expireDate" />
+      <el-table-column align="center" label="培训主题" prop="trainingTheme" />
+      <el-table-column align="center" label="考核分数" prop="trainingScore" />
+      <el-table-column align="center" label="培训时间" prop="trainingTime" />
 
       <el-table-column align="center" label="操作" width="280">
         <template slot-scope="scope">
@@ -84,27 +85,28 @@
             :normalizer="normalizer2"
             placeholder="请选择用户"
             no-children-text="暂无数据"
+            :disabled="visibleTitle!='新增用户培训'"
           />
         </el-form-item>
-        <el-form-item label="证书名称" prop="certificateId">
+        <el-form-item label="培训主题" prop="trainingId">
           <treeselect
-            v-model="form.certificateId"
+            v-model="form.trainingId"
             :multiple="false"
-            :options="zhengshuList"
+            :options="peixunList"
             :normalizer="normalizer"
-            placeholder="请选择证书"
+            placeholder="请选择培训主题"
             no-children-text="暂无数据"
           />
         </el-form-item>
 
-        <el-form-item label="过期日期" prop="expireDate">
-          <el-date-picker v-model="form.expireDate" type="date" placeholder="请选择过期日期" />
+        <el-form-item label="考核成绩" prop="trainingScore">
+          <el-input-number v-model="form.trainingScore" :min="0" />
         </el-form-item>
 
         <div style="text-align:center;margin-top:80px">
           <el-button @click="visible=false">取 消</el-button>
-          <el-button v-if="visibleTitle=='新增用户证书'" type="primary" @click="sumbitCom">确 定</el-button>
-          <el-button v-if="visibleTitle=='编辑用户证书'" type="primary" @click="editSubmit">更 改</el-button>
+          <el-button v-if="visibleTitle=='新增用户培训'" type="primary" @click="sumbitCom">确 定</el-button>
+          <el-button v-else type="primary" @click="editSubmit">更 改</el-button>
         </div>
       </el-form>
     </el-dialog>
@@ -117,21 +119,21 @@ import Treeselect from '@riophae/vue-treeselect'
 // import the styles
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import {
-  deleteUserCertificate,
-  updateUserCertificate,
-  listCertificateSel,
+  deleteUserTraining,
+  updateUserTraining,
+  listTrainingSel,
   listUser,
-  listUserCertificatePage,
-  addUserCertificate,
-  getUserCertificate
+  listUserTrainingPage,
+  addUserTraining,
+  getUserTraining
 } from '@/api/table'
 import {
   mapGetters
 } from 'vuex'
-import moment from 'moment'
+// import moment from 'moment'
 // import moment from 'moment'
 export default {
-  name: 'Userzhengshu',
+  name: 'UserPeixun',
   components: {
     Treeselect
   },
@@ -144,7 +146,7 @@ export default {
       userIdShow: null,
       records: [],
       allAreacode: [],
-      certificateName: '',
+      trainingId: null,
       visibleTitle: '',
       comName: '',
       areaCode: null,
@@ -154,31 +156,26 @@ export default {
       listLoading: false,
       form: {},
       allyjList: [], // 全部药剂列表
-      zhengshuList: [], // 全部药剂列表
+      peixunList: [], // 全部药剂列表
       yaojiChoose: [], // 全部药剂列表
       userlist: [], // 全部药剂列表
       rules: {
-        certificateId: [{
+        trainingId: [{
           required: true,
-          message: '请选择证书名称',
+          message: '请选择培训主题',
           trigger: 'blur'
         }],
         userId: [{
           required: true,
           message: '请选择用户',
           trigger: 'change'
-        }],
-        expireDate: [{
-          required: true,
-          message: '请选择到期时间',
-          trigger: 'change'
         }]
       },
       normalizer(node) {
         // if (!node.children.length) delete node.children
         return {
-          id: node.certificateId,
-          label: node.certificateName,
+          id: node.trainingId,
+          label: node.trainingTheme,
           children: node.children && node.children.length ? node.children : 0
         }
       },
@@ -199,25 +196,24 @@ export default {
     ])
   },
   mounted() {
-    this.listCertificateSel()
+    this.listTrainingSel()
     this.listUser()
-
     if (!this.$route.params.pmId) {
-      this.listUserCertificatePage()
+      this.listUserTrainingPage()
     }
   },
   activated() {
     if (this.$route.params.pmId) {
       console.log('执行吗')
       this.userIdShow = this.$route.params.pmId
-      this.listUserCertificatePage()
+      this.listUserTrainingPage()
     }
   },
   methods: {
-    listCertificateSel() {
-      listCertificateSel({}).then(res => {
+    listTrainingSel() {
+      listTrainingSel({}).then(res => {
         console.log(res.retData)
-        this.zhengshuList = res.retData
+        this.peixunList = res.retData
       })
     },
     listUser() {
@@ -226,9 +222,9 @@ export default {
         this.userlist = res.retData
       })
     },
-    listUserCertificatePage() {
-      listUserCertificatePage({
-        certificateId: this.certificateId || '',
+    listUserTrainingPage() {
+      listUserTrainingPage({
+        trainingId: this.trainingId || '',
         userId: this.userIdShow || '',
         pageIndex: this.pageIndex,
         pageSize: this.pageSize
@@ -240,15 +236,15 @@ export default {
     },
     handleSizeChange(val) {
       this.pageSize = val
-      this.listUserCertificatePage()
+      this.listUserTrainingPage()
     },
     handleCurrentChange(val) {
       this.pageIndex = val
-      this.listUserCertificatePage()
+      this.listUserTrainingPage()
     },
     seach() {
       this.pageIndex = 1
-      this.listUserCertificatePage()
+      this.listUserTrainingPage()
     },
     editShiji(e) {
       this.editVisible = true
@@ -260,53 +256,50 @@ export default {
     },
     remove(e) {
       console.log(e)
-      this.$confirm('此操作将永久删除该用户证书, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除该用户培训记录, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteUserCertificate({
-          userCertificateId: e.userCertificateId
+        deleteUserTraining({
+          userTrainingId: e.userTrainingId
         }).then(res => {
           this.$notify({
             type: 'success',
             message: res.retMsg
           })
-          this.listUserCertificatePage()
+          this.listUserTrainingPage()
         })
       })
     },
     edit(e) {
-      getUserCertificate({
-        userCertificateId: e.userCertificateId
+      getUserTraining({
+        userTrainingId: e.userTrainingId
       }).then(res => {
         console.log(res)
         this.visible = true
         this.form = res.retData
-        this.visibleTitle = '编辑用户证书'
+        this.visibleTitle = '编辑用户培训'
       })
     },
     addCom(e) {
       this.visible = true
-      this.form = {}
-      this.visibleTitle = '新增用户证书'
+      this.form = {
+        trainingScore: 0
+      }
+      this.visibleTitle = '新增用户培训'
     },
     sumbitCom() {
       this.$refs.form1.validate((valid) => {
         if (valid) {
-          const newObj = {
-            certificateId: this.form.certificateId,
-            userId: this.form.userId,
-            expireDate: moment(this.form.expireDate).format('YYYY-MM-DD')
-          }
-          addUserCertificate(newObj).then(res => {
+          addUserTraining(this.form).then(res => {
             console.log(res)
             this.$notify({
               type: 'success',
               message: res.retMsg
             })
             this.visible = false
-            this.listUserCertificatePage()
+            this.listUserTrainingPage()
           })
         }
       })
@@ -314,20 +307,14 @@ export default {
     editSubmit() {
       this.$refs.form1.validate((valid) => {
         if (valid) {
-          const newObj = {
-            id: this.form.id,
-            certificateId: this.form.certificateId,
-            userId: this.form.userId,
-            expireDate: moment(this.form.expireDate).format('YYYY-MM-DD')
-          }
-          updateUserCertificate(newObj).then(res => {
+          updateUserTraining(this.form).then(res => {
             console.log(res)
             this.$notify({
               type: 'success',
               message: res.retMsg
             })
             this.visible = false
-            this.listUserCertificatePage()
+            this.listUserTrainingPage()
           })
         }
       })

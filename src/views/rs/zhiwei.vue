@@ -13,18 +13,8 @@
         class="seachInput"
         no-children-text="暂无数据"
       />
-      证书名称：
-      <treeselect
-        v-model="certificateId"
-        :multiple="false"
-        :options="zhengshuList"
-        :normalizer="normalizer"
-        placeholder="请选择证书"
-        class="seachInput"
-        no-children-text="暂无数据"
-      />
       <el-button type="primary" @click="seach">搜索</el-button>
-      <el-button type="primary" @click="addCom">新增用户证书</el-button>
+      <el-button type="primary" @click="addCom">新增职位变迁</el-button>
     </div>
 
     <!-- 表格 -->
@@ -43,8 +33,9 @@
         </template>
       </el-table-column>
       <el-table-column align="center" label="用户名" prop="userName" />
-      <el-table-column align="center" label="证书名称" prop="certificateName" />
-      <el-table-column align="center" label="到期时间" prop="expireDate" />
+      <el-table-column align="center" label="旧职位" prop="oldJob" />
+      <el-table-column align="center" label="新职位" prop="newJob" />
+      <el-table-column align="center" label="变更时间" prop="operateTime" />
 
       <el-table-column align="center" label="操作" width="280">
         <template slot-scope="scope">
@@ -86,25 +77,33 @@
             no-children-text="暂无数据"
           />
         </el-form-item>
-        <el-form-item label="证书名称" prop="certificateId">
-          <treeselect
-            v-model="form.certificateId"
-            :multiple="false"
-            :options="zhengshuList"
-            :normalizer="normalizer"
-            placeholder="请选择证书"
-            no-children-text="暂无数据"
-          />
+        <el-form-item label="旧职位" prop="oldJob">
+          <el-input v-model="form.oldJob" placeholder="请输入旧职位" />
         </el-form-item>
-
-        <el-form-item label="过期日期" prop="expireDate">
-          <el-date-picker v-model="form.expireDate" type="date" placeholder="请选择过期日期" />
+        <el-form-item label="新职位" prop="newJob">
+          <el-input v-model="form.newJob" placeholder="请输入新职位" />
+        </el-form-item>
+        <el-form-item label="变更时间" prop="operateTime">
+          <el-date-picker v-model="form.operateTime" type="datetime" placeholder="请选择变更时间" />
+        </el-form-item>
+        <el-form-item label="考核记录文件">
+          (点击列表查看附件)
+          <el-upload
+            action="#"
+            :on-change="handleChangeID"
+            :on-remove="handleRemoveID"
+            :on-preview="handlePreview"
+            :auto-upload="false"
+            :file-list="zhiweiList"
+          >
+            <el-button size="small" type="primary">点击上传</el-button>
+          </el-upload>
         </el-form-item>
 
         <div style="text-align:center;margin-top:80px">
           <el-button @click="visible=false">取 消</el-button>
-          <el-button v-if="visibleTitle=='新增用户证书'" type="primary" @click="sumbitCom">确 定</el-button>
-          <el-button v-if="visibleTitle=='编辑用户证书'" type="primary" @click="editSubmit">更 改</el-button>
+          <el-button v-if="visibleTitle=='新增职位变迁'" type="primary" @click="sumbitCom">确 定</el-button>
+          <el-button v-if="visibleTitle=='编辑职位变迁'" type="primary" @click="editSubmit">更 改</el-button>
         </div>
       </el-form>
     </el-dialog>
@@ -117,21 +116,26 @@ import Treeselect from '@riophae/vue-treeselect'
 // import the styles
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import {
-  deleteUserCertificate,
-  updateUserCertificate,
+  deleteJobChange,
+  updateJobChange,
   listCertificateSel,
   listUser,
-  listUserCertificatePage,
-  addUserCertificate,
-  getUserCertificate
+  listJobChangePage,
+  addJobChange,
+  getJobChangeDetail
 } from '@/api/table'
 import {
   mapGetters
 } from 'vuex'
+import axios from 'axios'
+import setting from '@/settings'
 import moment from 'moment'
+import {
+  getToken
+} from '@/utils/auth'
 // import moment from 'moment'
 export default {
-  name: 'Userzhengshu',
+  name: 'Zhiwei',
   components: {
     Treeselect
   },
@@ -145,6 +149,7 @@ export default {
       records: [],
       allAreacode: [],
       certificateName: '',
+      rewardPunishType: '',
       visibleTitle: '',
       comName: '',
       areaCode: null,
@@ -154,23 +159,36 @@ export default {
       listLoading: false,
       form: {},
       allyjList: [], // 全部药剂列表
+      zhiweiList: [], // 全部药剂列表
       zhengshuList: [], // 全部药剂列表
       yaojiChoose: [], // 全部药剂列表
       userlist: [], // 全部药剂列表
+      rewardPunishTypeList: [{
+        label: '奖励',
+        value: 1
+      }, {
+        label: '惩罚',
+        value: 2
+      }], // 全部药剂列表
       rules: {
-        certificateId: [{
-          required: true,
-          message: '请选择证书名称',
-          trigger: 'blur'
-        }],
         userId: [{
           required: true,
           message: '请选择用户',
           trigger: 'change'
         }],
-        expireDate: [{
+        oldJob: [{
           required: true,
-          message: '请选择到期时间',
+          message: '请输入旧职位',
+          trigger: 'blur'
+        }],
+        newJob: [{
+          required: true,
+          message: '请输入新职位',
+          trigger: 'blur'
+        }],
+        operateTime: [{
+          required: true,
+          message: '请输入变更时间',
           trigger: 'change'
         }]
       },
@@ -200,20 +218,43 @@ export default {
   },
   mounted() {
     this.listCertificateSel()
+    // this.listJobChangePage()
     this.listUser()
-
     if (!this.$route.params.pmId) {
-      this.listUserCertificatePage()
+      this.listJobChangePage()
     }
   },
   activated() {
     if (this.$route.params.pmId) {
       console.log('执行吗')
       this.userIdShow = this.$route.params.pmId
-      this.listUserCertificatePage()
+      this.listJobChangePage()
     }
   },
   methods: {
+    handleChangeID(file, fileList) { // 身份附件上传
+      var formData = new FormData()
+      formData.append('file', file.raw)
+      formData.append('type', 'education')
+      axios.post(setting.baseUrl + '/sysSup/fileConvert', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'token': getToken()
+        }
+      })
+        .then(res => {
+          console.log(res.data)
+          this.zhiweiList.push(res.data.retData)
+        })
+    },
+    handleRemoveID(file, fileList) { // 身份附件删除
+      console.log(file, fileList)
+      this.zhiweiList = fileList
+    },
+    handlePreview(file) { // 预览
+      console.log(file)
+      window.open(file.url)
+    },
     listCertificateSel() {
       listCertificateSel({}).then(res => {
         console.log(res.retData)
@@ -226,9 +267,8 @@ export default {
         this.userlist = res.retData
       })
     },
-    listUserCertificatePage() {
-      listUserCertificatePage({
-        certificateId: this.certificateId || '',
+    listJobChangePage() {
+      listJobChangePage({
         userId: this.userIdShow || '',
         pageIndex: this.pageIndex,
         pageSize: this.pageSize
@@ -240,15 +280,15 @@ export default {
     },
     handleSizeChange(val) {
       this.pageSize = val
-      this.listUserCertificatePage()
+      this.listJobChangePage()
     },
     handleCurrentChange(val) {
       this.pageIndex = val
-      this.listUserCertificatePage()
+      this.listJobChangePage()
     },
     seach() {
       this.pageIndex = 1
-      this.listUserCertificatePage()
+      this.listJobChangePage()
     },
     editShiji(e) {
       this.editVisible = true
@@ -260,53 +300,76 @@ export default {
     },
     remove(e) {
       console.log(e)
-      this.$confirm('此操作将永久删除该用户证书, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除该条职位变迁, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteUserCertificate({
-          userCertificateId: e.userCertificateId
+        deleteJobChange({
+          jobChangeId: e.jobChangeId
         }).then(res => {
           this.$notify({
             type: 'success',
             message: res.retMsg
           })
-          this.listUserCertificatePage()
+          this.listJobChangePage()
         })
       })
     },
     edit(e) {
-      getUserCertificate({
-        userCertificateId: e.userCertificateId
+      getJobChangeDetail({
+        jobChangeId: e.jobChangeId
       }).then(res => {
         console.log(res)
+        const {
+          retData
+        } = res
         this.visible = true
         this.form = res.retData
-        this.visibleTitle = '编辑用户证书'
+        this.form = {
+          jobChangeId: retData.jobChangeId,
+          newJob: retData.newJob,
+          oldJob: retData.oldJob,
+          operateTime: retData.operateTime,
+          userId: retData.userId
+        }
+        this.zhiweiList = retData.files
+        this.visibleTitle = '编辑职位变迁'
       })
     },
     addCom(e) {
       this.visible = true
       this.form = {}
-      this.visibleTitle = '新增用户证书'
+      this.visibleTitle = '新增职位变迁'
     },
     sumbitCom() {
       this.$refs.form1.validate((valid) => {
         if (valid) {
+          var _zhiweiList = []
+          this.zhiweiList.forEach(e => {
+            _zhiweiList.push({
+              name: e.name,
+              url: e.url
+            })
+          })
           const newObj = {
-            certificateId: this.form.certificateId,
+            operateUserId: this.userId,
             userId: this.form.userId,
-            expireDate: moment(this.form.expireDate).format('YYYY-MM-DD')
+            oldJob: this.form.oldJob,
+            newJob: this.form.newJob,
+            operateTime: moment(this.form.operateTime).format('YYYY-MM-DD HH:mm:ss'),
+            rewardPunishContent: this.form.rewardPunishContent,
+            files: _zhiweiList
           }
-          addUserCertificate(newObj).then(res => {
+
+          addJobChange(newObj).then(res => {
             console.log(res)
             this.$notify({
               type: 'success',
               message: res.retMsg
             })
             this.visible = false
-            this.listUserCertificatePage()
+            this.listJobChangePage()
           })
         }
       })
@@ -314,20 +377,31 @@ export default {
     editSubmit() {
       this.$refs.form1.validate((valid) => {
         if (valid) {
+          var _zhiweiList = []
+          this.zhiweiList.forEach(e => {
+            _zhiweiList.push({
+              name: e.name,
+              url: e.url
+            })
+          })
           const newObj = {
-            id: this.form.id,
-            certificateId: this.form.certificateId,
+            operateUserId: this.userId,
+            jobChangeId: this.form.jobChangeId,
             userId: this.form.userId,
-            expireDate: moment(this.form.expireDate).format('YYYY-MM-DD')
+            oldJob: this.form.oldJob,
+            newJob: this.form.newJob,
+            operateTime: moment(this.form.operateTime).format('YYYY-MM-DD HH:mm:ss'),
+            rewardPunishContent: this.form.rewardPunishContent,
+            files: _zhiweiList
           }
-          updateUserCertificate(newObj).then(res => {
+          updateJobChange(newObj).then(res => {
             console.log(res)
             this.$notify({
               type: 'success',
               message: res.retMsg
             })
             this.visible = false
-            this.listUserCertificatePage()
+            this.listJobChangePage()
           })
         }
       })

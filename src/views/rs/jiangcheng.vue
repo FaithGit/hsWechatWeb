@@ -13,18 +13,12 @@
         class="seachInput"
         no-children-text="暂无数据"
       />
-      证书名称：
-      <treeselect
-        v-model="certificateId"
-        :multiple="false"
-        :options="zhengshuList"
-        :normalizer="normalizer"
-        placeholder="请选择证书"
-        class="seachInput"
-        no-children-text="暂无数据"
-      />
+      奖惩名称：
+      <el-select v-model="rewardPunishType" clearable class="seachInput">
+        <el-option v-for="item in rewardPunishTypeList" :key="item.label" :label="item.label" :value="item.value" />
+      </el-select>
       <el-button type="primary" @click="seach">搜索</el-button>
-      <el-button type="primary" @click="addCom">新增用户证书</el-button>
+      <el-button type="primary" @click="addCom">新增用户奖惩</el-button>
     </div>
 
     <!-- 表格 -->
@@ -42,9 +36,11 @@
           {{ scope.$index+1 }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="用户名" prop="userName" />
-      <el-table-column align="center" label="证书名称" prop="certificateName" />
-      <el-table-column align="center" label="到期时间" prop="expireDate" />
+      <el-table-column align="center" label="用户名" prop="username" />
+      <el-table-column align="center" label="部门名" prop="departmentName" />
+      <el-table-column align="center" label="奖惩类型" prop="rewardPunishTypeName" />
+      <el-table-column align="center" label="奖惩内容" prop="rewardPunishContent" />
+      <el-table-column align="center" label="奖惩时间" prop="rewardPunishTime" />
 
       <el-table-column align="center" label="操作" width="280">
         <template slot-scope="scope">
@@ -86,25 +82,22 @@
             no-children-text="暂无数据"
           />
         </el-form-item>
-        <el-form-item label="证书名称" prop="certificateId">
-          <treeselect
-            v-model="form.certificateId"
-            :multiple="false"
-            :options="zhengshuList"
-            :normalizer="normalizer"
-            placeholder="请选择证书"
-            no-children-text="暂无数据"
-          />
+        <el-form-item label="奖惩类型" prop="rewardPunishType">
+          <el-select v-model="form.rewardPunishType">
+            <el-option v-for="item in rewardPunishTypeList" :key="item.label" :label="item.label" :value="item.value" />
+          </el-select>
         </el-form-item>
-
-        <el-form-item label="过期日期" prop="expireDate">
-          <el-date-picker v-model="form.expireDate" type="date" placeholder="请选择过期日期" />
+        <el-form-item label="奖惩内容" prop="rewardPunishContent">
+          <el-input v-model="form.rewardPunishContent" type="textarea" :rows="2" placeholder="请选择奖惩内容" />
+        </el-form-item>
+        <el-form-item label="奖惩时间" prop="rewardPunishTime">
+          <el-date-picker v-model="form.rewardPunishTime" type="datetime" placeholder="请选择奖惩时间" />
         </el-form-item>
 
         <div style="text-align:center;margin-top:80px">
           <el-button @click="visible=false">取 消</el-button>
-          <el-button v-if="visibleTitle=='新增用户证书'" type="primary" @click="sumbitCom">确 定</el-button>
-          <el-button v-if="visibleTitle=='编辑用户证书'" type="primary" @click="editSubmit">更 改</el-button>
+          <el-button v-if="visibleTitle=='新增用户奖惩'" type="primary" @click="sumbitCom">确 定</el-button>
+          <el-button v-if="visibleTitle=='编辑用户奖惩'" type="primary" @click="editSubmit">更 改</el-button>
         </div>
       </el-form>
     </el-dialog>
@@ -117,13 +110,13 @@ import Treeselect from '@riophae/vue-treeselect'
 // import the styles
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import {
-  deleteUserCertificate,
-  updateUserCertificate,
+  deleteRewardPunish,
+  updateRewardPunish,
   listCertificateSel,
   listUser,
-  listUserCertificatePage,
-  addUserCertificate,
-  getUserCertificate
+  listRewardPunishPage,
+  addRewardPunish,
+  getRewardPunish
 } from '@/api/table'
 import {
   mapGetters
@@ -131,7 +124,7 @@ import {
 import moment from 'moment'
 // import moment from 'moment'
 export default {
-  name: 'Userzhengshu',
+  name: 'Jiangcheng',
   components: {
     Treeselect
   },
@@ -145,6 +138,7 @@ export default {
       records: [],
       allAreacode: [],
       certificateName: '',
+      rewardPunishType: '',
       visibleTitle: '',
       comName: '',
       areaCode: null,
@@ -157,21 +151,33 @@ export default {
       zhengshuList: [], // 全部药剂列表
       yaojiChoose: [], // 全部药剂列表
       userlist: [], // 全部药剂列表
+      rewardPunishTypeList: [{
+        label: '奖励',
+        value: 1
+      }, {
+        label: '惩罚',
+        value: 2
+      }], // 全部药剂列表
       rules: {
-        certificateId: [{
-          required: true,
-          message: '请选择证书名称',
-          trigger: 'blur'
-        }],
         userId: [{
           required: true,
           message: '请选择用户',
           trigger: 'change'
         }],
-        expireDate: [{
+        rewardPunishType: [{
           required: true,
-          message: '请选择到期时间',
+          message: '请选择奖惩类型',
           trigger: 'change'
+        }],
+        rewardPunishTime: [{
+          required: true,
+          message: '请选择奖惩时间',
+          trigger: 'change'
+        }],
+        rewardPunishContent: [{
+          required: true,
+          message: '请输入奖惩内容',
+          trigger: 'blur'
         }]
       },
       normalizer(node) {
@@ -203,7 +209,7 @@ export default {
     this.listUser()
 
     if (!this.$route.params.pmId) {
-      this.listUserCertificatePage()
+      this.listRewardPunishPage()
     }
   },
   activated() {
@@ -226,10 +232,10 @@ export default {
         this.userlist = res.retData
       })
     },
-    listUserCertificatePage() {
-      listUserCertificatePage({
-        certificateId: this.certificateId || '',
+    listRewardPunishPage() {
+      listRewardPunishPage({
         userId: this.userIdShow || '',
+        rewardPunishType: this.rewardPunishType || '',
         pageIndex: this.pageIndex,
         pageSize: this.pageSize
       }).then(res => {
@@ -240,15 +246,15 @@ export default {
     },
     handleSizeChange(val) {
       this.pageSize = val
-      this.listUserCertificatePage()
+      this.listRewardPunishPage()
     },
     handleCurrentChange(val) {
       this.pageIndex = val
-      this.listUserCertificatePage()
+      this.listRewardPunishPage()
     },
     seach() {
       this.pageIndex = 1
-      this.listUserCertificatePage()
+      this.listRewardPunishPage()
     },
     editShiji(e) {
       this.editVisible = true
@@ -260,53 +266,54 @@ export default {
     },
     remove(e) {
       console.log(e)
-      this.$confirm('此操作将永久删除该用户证书, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除该用户奖惩记录, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteUserCertificate({
-          userCertificateId: e.userCertificateId
+        deleteRewardPunish({
+          rewardPunishId: e.rewardPunishId
         }).then(res => {
           this.$notify({
             type: 'success',
             message: res.retMsg
           })
-          this.listUserCertificatePage()
+          this.listRewardPunishPage()
         })
       })
     },
     edit(e) {
-      getUserCertificate({
-        userCertificateId: e.userCertificateId
+      getRewardPunish({
+        rewardPunishId: e.rewardPunishId
       }).then(res => {
         console.log(res)
         this.visible = true
         this.form = res.retData
-        this.visibleTitle = '编辑用户证书'
+        this.visibleTitle = '编辑用户奖惩'
       })
     },
     addCom(e) {
       this.visible = true
       this.form = {}
-      this.visibleTitle = '新增用户证书'
+      this.visibleTitle = '新增用户奖惩'
     },
     sumbitCom() {
       this.$refs.form1.validate((valid) => {
         if (valid) {
           const newObj = {
-            certificateId: this.form.certificateId,
             userId: this.form.userId,
-            expireDate: moment(this.form.expireDate).format('YYYY-MM-DD')
+            rewardPunishType: this.form.rewardPunishType,
+            rewardPunishTime: moment(this.form.rewardPunishTime).format('YYYY-MM-DD HH:mm:ss'),
+            rewardPunishContent: this.form.rewardPunishContent
           }
-          addUserCertificate(newObj).then(res => {
+          addRewardPunish(newObj).then(res => {
             console.log(res)
             this.$notify({
               type: 'success',
               message: res.retMsg
             })
             this.visible = false
-            this.listUserCertificatePage()
+            this.listRewardPunishPage()
           })
         }
       })
@@ -316,18 +323,19 @@ export default {
         if (valid) {
           const newObj = {
             id: this.form.id,
-            certificateId: this.form.certificateId,
             userId: this.form.userId,
-            expireDate: moment(this.form.expireDate).format('YYYY-MM-DD')
+            rewardPunishType: this.form.rewardPunishType,
+            rewardPunishTime: moment(this.form.rewardPunishTime).format('YYYY-MM-DD HH:mm:ss'),
+            rewardPunishContent: this.form.rewardPunishContent
           }
-          updateUserCertificate(newObj).then(res => {
+          updateRewardPunish(newObj).then(res => {
             console.log(res)
             this.$notify({
               type: 'success',
               message: res.retMsg
             })
             this.visible = false
-            this.listUserCertificatePage()
+            this.listRewardPunishPage()
           })
         }
       })

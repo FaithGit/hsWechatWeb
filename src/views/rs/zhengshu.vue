@@ -181,7 +181,7 @@ export default {
       }).then(res => {
         console.log(res)
         this.visible = true
-        this.form = e
+        this.form = res.retData
         this.visibleTitle = '编辑证书'
       })
     },

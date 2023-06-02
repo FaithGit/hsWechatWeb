@@ -213,7 +213,7 @@ export const asyncRoutes = [{
   meta: {
     title: '人事管理',
     icon: 'rs',
-    roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl']
+    roles: ['zjb', 'admin', 'rs']
   },
   children: [{
     path: 'rygk',
@@ -241,6 +241,42 @@ export const asyncRoutes = [{
     meta: {
       title: '证书管理',
       icon: 'zhengshu'
+    }
+  },
+  {
+    path: 'userPeixun',
+    name: 'UserPeixun',
+    component: () => import('@/views/rs/userPeixun.vue'),
+    meta: {
+      title: '用户培训管理',
+      icon: 'peixun'
+    }
+  },
+  {
+    path: 'peixun',
+    name: 'Peixun',
+    component: () => import('@/views/rs/peixun.vue'),
+    meta: {
+      title: '培训管理',
+      icon: 'peixun'
+    }
+  },
+  {
+    path: 'zhiwei',
+    name: 'Zhiwei',
+    component: () => import('@/views/rs/zhiwei.vue'),
+    meta: {
+      title: '用户职位变迁',
+      icon: 'zhiwei'
+    }
+  },
+  {
+    path: 'jiangcheng',
+    name: 'Jiangcheng',
+    component: () => import('@/views/rs/jiangcheng.vue'),
+    meta: {
+      title: '用户奖惩记录',
+      icon: 'jiangcheng'
     }
   }
 

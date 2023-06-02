@@ -464,3 +464,192 @@ export function addUserInfo(data) { // 获取所有因子
     data
   })
 }
+export function getUserInfoDetail(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/getUserInfoDetail',
+    method: 'post',
+    data
+  })
+}
+export function updateUserInfo(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/updateUserInfo',
+    method: 'post',
+    data
+  })
+}
+export function addUserCertificate(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/addUserCertificate',
+    method: 'post',
+    data
+  })
+}
+export function deleteUserCertificate(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/deleteUserCertificate',
+    method: 'post',
+    data
+  })
+}
+export function getUserCertificate(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/getUserCertificate',
+    method: 'post',
+    data
+  })
+}
+export function updateUserCertificate(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/updateUserCertificate',
+    method: 'post',
+    data
+  })
+}
+export function listTrainingPage(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/listTrainingPage',
+    method: 'post',
+    data
+  })
+}
+export function addTraining(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/addTraining',
+    method: 'post',
+    data
+  })
+}
+export function getTraining(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/getTraining',
+    method: 'post',
+    data
+  })
+}
+export function deleteTraining(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/deleteTraining',
+    method: 'post',
+    data
+  })
+}
+export function updateTraining(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/updateTraining',
+    method: 'post',
+    data
+  })
+}
+export function listUserTrainingPage(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/listUserTrainingPage',
+    method: 'post',
+    data
+  })
+}
+export function listTrainingSel(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/listTrainingSel',
+    method: 'post',
+    data
+  })
+}
+export function addUserTraining(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/addUserTraining',
+    method: 'post',
+    data
+  })
+}
+export function getUserTraining(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/getUserTraining',
+    method: 'post',
+    data
+  })
+}
+export function updateUserTraining(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/updateUserTraining',
+    method: 'post',
+    data
+  })
+}
+export function deleteUserTraining(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/deleteUserTraining',
+    method: 'post',
+    data
+  })
+}
+export function listRewardPunishPage(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/listRewardPunishPage',
+    method: 'post',
+    data
+  })
+}
+export function updateRewardPunish(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/updateRewardPunish',
+    method: 'post',
+    data
+  })
+}
+export function addRewardPunish(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/addRewardPunish',
+    method: 'post',
+    data
+  })
+}
+export function getRewardPunish(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/getRewardPunish',
+    method: 'post',
+    data
+  })
+}
+export function deleteRewardPunish(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/deleteRewardPunish',
+    method: 'post',
+    data
+  })
+}
+export function listJobChangePage(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/listJobChangePage',
+    method: 'post',
+    data
+  })
+}
+export function addJobChange(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/addJobChange',
+    method: 'post',
+    data
+  })
+}
+export function getJobChangeDetail(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/getJobChangeDetail',
+    method: 'post',
+    data
+  })
+}
+export function updateJobChange(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/updateJobChange',
+    method: 'post',
+    data
+  })
+}
+export function deleteJobChange(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/deleteJobChange',
+    method: 'post',
+    data
+  })
+}

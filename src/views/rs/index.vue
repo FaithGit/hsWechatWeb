@@ -79,9 +79,13 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="操作">
+      <el-table-column align="center" label="操作" width="540">
         <template slot-scope="scope">
-          <el-button @click="edit(scope.row)">编辑</el-button>
+          <el-button @click="gotoZs(scope.row)">证书管理</el-button>
+          <el-button @click="gotopx(scope.row)">培训管理</el-button>
+          <el-button @click="gotozw(scope.row)">职位变迁</el-button>
+          <el-button @click="gotojc(scope.row)">奖惩记录</el-button>
+          <el-button type="success" @click="edit(scope.row)">编辑</el-button>
           <!-- <el-button @click="remove(scope.row)">删除</el-button> -->
         </template>
       </el-table-column>
@@ -154,7 +158,7 @@
           </el-upload>
         </el-form-item>
         <el-form-item label="出生年月" prop="birth">
-          <el-input v-model="form.birth" placeholder="请输入出生年月" />
+          <el-date-picker v-model="form.birth" type="date" placeholder="请选择出生年月" />
         </el-form-item>
         <el-form-item label="紧急联系人" prop="emergencyContact">
           <el-input v-model="form.emergencyContact" placeholder="请输入紧急联系人" />
@@ -163,12 +167,16 @@
           <el-input v-model="form.emergencyMobile" placeholder="请输入紧急联系方式" />
         </el-form-item>
         <el-form-item label="入职时间" prop="entryTime">
-          <el-input v-model="form.entryTime" placeholder="请输入入职时间" />
+          <!-- <el-input v-model="form.entryTime" placeholder="请输入入职时间" /> -->
+          <el-date-picker v-model="form.entryTime" type="date" placeholder="请选择入职日期" />
         </el-form-item>
 
         <div style="text-align:center;margin-top:80px">
           <el-button @click="visible=false">取 消</el-button>
-          <el-button type="primary" @click="sumbitPeople">确 定</el-button>
+          <el-button v-if="visibleTitle=='新增用户'" type="primary" :loading="btnLoding" @click="sumbitPeople">确 定
+          </el-button>
+          <el-button v-else type="primary" :loading="btnLoding" @click="editPeople">更 新
+          </el-button>
         </div>
       </el-form>
     </el-dialog>
@@ -181,12 +189,12 @@ import {
 } from '@/utils/asyncValidator'
 
 import {
-  getAreaCodeTree,
-  updateCompany,
   listUserInfoPage,
   listDepartment,
   listRoleSel,
-  addUserInfo
+  addUserInfo,
+  getUserInfoDetail,
+  updateUserInfo
 } from '@/api/table'
 import {
   mapGetters
@@ -196,6 +204,8 @@ import setting from '@/settings'
 import {
   getToken
 } from '@/utils/auth'
+
+import moment from 'moment'
 
 export default {
   name: 'Rygk',
@@ -214,13 +224,13 @@ export default {
       xueliList: [],
       IDList: [],
 
-      allAreacode: [],
       comName: '',
       areaCode: null,
       status: '',
       visible: false,
       editVisible: false,
       listLoading: false,
+      btnLoding: false,
 
       rules: {
         userName: [{
@@ -247,12 +257,12 @@ export default {
         birth: [{
           required: true,
           message: '请输入出生年月',
-          trigger: 'blur'
+          trigger: 'change'
         }],
         entryTime: [{
           required: true,
           message: '请输入入职时间',
-          trigger: 'blur'
+          trigger: 'change'
         }],
         emergencyContact: [{
           required: true,
@@ -287,6 +297,42 @@ export default {
     this.listUserInfoPage()
   },
   methods: {
+    gotoZs(e) {
+      console.log(e.userId)
+      this.$router.push({
+        name: 'Userzhengshu',
+        params: {
+          pmId: e.userId
+        }
+      })
+    },
+    gotopx(e) {
+      console.log(e.userId)
+      this.$router.push({
+        name: 'UserPeixun',
+        params: {
+          pmId: e.userId
+        }
+      })
+    },
+    gotozw(e) {
+      console.log(e.userId)
+      this.$router.push({
+        name: 'Zhiwei',
+        params: {
+          pmId: e.userId
+        }
+      })
+    },
+    gotojc(e) {
+      console.log(e.userId)
+      this.$router.push({
+        name: 'Jiangcheng',
+        params: {
+          pmId: e.userId
+        }
+      })
+    },
     handleChange(file, fileList) { // 学历上传
       console.log(file)
       console.log(fileList)
@@ -309,11 +355,11 @@ export default {
       console.log(file, fileList)
       this.xueliList = fileList
     },
-    handlePreview(file) { // 学历预览
+    handlePreview(file) { // 预览
       console.log(file)
       window.open(file.url)
     },
-    handleChangeID(file, fileList) { // 学历上传
+    handleChangeID(file, fileList) { // 身份附件上传
       var formData = new FormData()
       formData.append('file', file.raw)
       formData.append('type', 'education')
@@ -328,7 +374,7 @@ export default {
           this.IDList.push(res.data.retData)
         })
     },
-    handleRemoveID(file, fileList) { // 学历删除
+    handleRemoveID(file, fileList) { // 身份附件删除
       console.log(file, fileList)
       this.IDList = fileList
     },
@@ -342,14 +388,6 @@ export default {
       listDepartment({}).then(res => {
         console.log(res)
         this.departmentList = res.retData
-      })
-    },
-    getAreaCodeTree() {
-      getAreaCodeTree({
-        areaCode: 3304
-      }).then(res => {
-        console.log(res)
-        this.allAreacode.push(res.retData)
       })
     },
     listUserInfoPage() {
@@ -376,13 +414,31 @@ export default {
       this.pageIndex = 1
       this.listUserInfoPage()
     },
-    editShiji(e) {
-      this.editVisible = true
-      this.form = Object.assign({}, e)
-      if (this.form.areaCode === 0) {
-        this.form.areaCode = null
-      }
-      console.log('🚀 ~ editShiji ~   this.form:', this.form)
+    edit(e) {
+      getUserInfoDetail({
+        userId: e.userId
+      }).then(res => {
+        console.log(res)
+        const {
+          retData
+        } = res
+        this.visible = true
+        this.visibleTitle = '编辑信息'
+        this.form = {
+          birth: retData.birth,
+          education: retData.education,
+          emergencyContact: retData.emergencyContact,
+          emergencyMobile: retData.emergencyMobile,
+          entryTime: retData.entryTime,
+          idnum: retData.idnum,
+          telephone: retData.telephone,
+          userId: retData.userId,
+          userName: retData.userName
+        }
+        this.xueliList = retData.educationFiles
+        this.IDList = retData.idnumFiles
+        this.form.roleId = retData.roleId.toString() || ''
+      })
     },
     remove(e) {
       this.$confirm('此操作将永久删除该企业, 是否继续?', '提示', {
@@ -409,13 +465,42 @@ export default {
       }
     },
     sumbitPeople() {
-      console.log('学习列表', this.xueliList)
+      // console.log('学习列表', this.xueliList)
       this.$refs.form1.validate((valid) => {
         if (valid) {
-          const newObj = this.form
-          newObj.educationFiles = this.xueliList
-          newObj.idnumFiles = this.IDList
-          addUserInfo(this.form).then(res => {
+          this.btnLoding = true
+          let newObj = this.form
+          var _educationFiles = []
+          this.xueliList.forEach(e => {
+            _educationFiles.push({
+              name: e.name,
+              url: e.url
+            })
+          })
+          var _idnumFiles = []
+          this.IDList.forEach(e => {
+            _idnumFiles.push({
+              name: e.name,
+              url: e.url
+            })
+          })
+
+          newObj = {
+            birth: moment(this.form.birth).format('YYYY-MM-DD'),
+            education: this.form.education,
+            emergencyContact: this.form.emergencyContact,
+            emergencyMobile: this.form.emergencyMobile,
+            entryTime: moment(this.form.entryTime).format('YYYY-MM-DD'),
+            idnum: this.form.idnum,
+            roleId: this.form.roleId,
+            telephone: this.form.telephone,
+            userId: this.form.userId,
+            userName: this.form.userName,
+            idnumFiles: _idnumFiles,
+            educationFiles: _educationFiles
+          }
+
+          addUserInfo(newObj).then(res => {
             console.log(res)
             this.$notify({
               type: 'success',
@@ -423,41 +508,63 @@ export default {
             })
             this.visible = false
             this.listUserInfoPage()
+            this.btnLoding = false
+          }).catch(() => {
+            this.btnLoding = true
           })
         }
       })
     },
-    editSubmit() {
-      if (this.form.areaCode === null || this.form.areaCode === undefined) {
-        this.$notify({
-          type: 'error',
-          message: '请选择地区code'
-        })
-        return
-      }
+    editPeople() {
+      // console.log('学习列表', this.xueliList)
       this.$refs.form1.validate((valid) => {
         if (valid) {
-          updateCompany(this.form).then(res => {
+          this.btnLoding = true
+          let newObj = this.form
+          var _educationFiles = []
+          this.xueliList.forEach(e => {
+            _educationFiles.push({
+              name: e.name,
+              url: e.url
+            })
+          })
+          var _idnumFiles = []
+          this.IDList.forEach(e => {
+            _idnumFiles.push({
+              name: e.name,
+              url: e.url
+            })
+          })
+          newObj = {
+            birth: moment(this.form.birth).format('YYYY-MM-DD'),
+            userId: this.form.userId,
+            education: this.form.education,
+            emergencyContact: this.form.emergencyContact,
+            emergencyMobile: this.form.emergencyMobile,
+            entryTime: moment(this.form.entryTime).format('YYYY-MM-DD'),
+            idnum: this.form.idnum,
+            roleId: this.form.roleId,
+            telephone: this.form.telephone,
+            userName: this.form.userName,
+            idnumFiles: _idnumFiles,
+            educationFiles: _educationFiles
+          }
+          updateUserInfo(newObj).then(res => {
             console.log(res)
             this.$notify({
               type: 'success',
               message: res.retMsg
             })
-            this.editVisible = false
+            this.visible = false
             this.listUserInfoPage()
+            this.btnLoding = false
+          }).catch(() => {
+            this.btnLoding = true
           })
         }
       })
-    },
-    gotoPoint(e) {
-      console.log(e)
-      this.$router.push({
-        name: 'Ponit',
-        params: {
-          companyId: e.companyId
-        }
-      })
     }
+
   }
 }
 
