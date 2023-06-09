@@ -653,3 +653,17 @@ export function deleteJobChange(data) { // 获取所有因子
     data
   })
 }
+export function listQuestionStatisticsPage(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/exam/listQuestionStatisticsPage',
+    method: 'post',
+    data
+  })
+}
+export function lisDischargeStandard(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/point/lisDischargeStandard',
+    method: 'post',
+    data
+  })
+}

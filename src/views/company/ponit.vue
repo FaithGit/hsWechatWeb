@@ -56,7 +56,7 @@
       </el-table-column>
       <el-table-column align="center" label="排放标准">
         <template slot-scope="scope">
-          {{ (scope.row.dischargeStandard==null||scope.row.dischargeStandard=='')?'-':scope.row.dischargeStandard }}
+          {{ (scope.row.standardName==null||scope.row.standardName=='')?'-':scope.row.standardName }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="关注程度">
@@ -143,10 +143,6 @@
           <el-input v-model="form.dischargePortPermit" placeholder="请输入排放口许可证" />
         </el-form-item>
 
-        <el-form-item label="排放标准" prop="dischargeStandard">
-          <el-input v-model="form.dischargeStandard" placeholder="请输入排放标准" />
-        </el-form-item>
-
         <el-form-item label="站点状态" prop="pointStatus">
           <el-select v-model="form.pointStatus" placeholder="请选择站点状态">
             <el-option label="在用" :value="1" />
@@ -159,11 +155,28 @@
         </el-form-item>
 
         <el-form-item label="污染源种类" prop="pollutionType">
-          <el-select v-model="form.pollutionType" placeholder="请选择污染源种类">
+          <el-select v-model="form.pollutionType" placeholder="请选择污染源种类" @change="lisDischargeStandard">
             <el-option label="废水" :value="1" />
             <el-option label="废气" :value="2" />
             <el-option label="vocs" :value="3" />
           </el-select>
+        </el-form-item>
+        <el-form-item v-if="form.pollutionType" label="排放标准" prop="dischargeStandardId">
+
+          <el-popover placement="right" title="" width="200" trigger="hover" :content="computedLabel">
+            <treeselect
+              slot="reference"
+              v-model="form.dischargeStandardId"
+              :multiple="false"
+              :options="dischargeStandardIdList"
+              :normalizer="normalizer3"
+              placeholder="请选择排放标准"
+              :clearable="false"
+              class="fuSelect"
+              @select="changeDischargeStandardId"
+            />
+          </el-popover>
+
         </el-form-item>
         <el-form-item label="紧急联系人" prop="emergencyContact">
           <el-input v-model="form.emergencyContact" placeholder="请输入紧急联系人" />
@@ -233,11 +246,6 @@
         <el-form-item label="排放口许可证" prop="dischargePortPermit">
           <el-input v-model="form.dischargePortPermit" placeholder="请输入排放口许可证" />
         </el-form-item>
-
-        <el-form-item label="排放标准" prop="dischargeStandard">
-          <el-input v-model="form.dischargeStandard" placeholder="请输入排放标准" />
-        </el-form-item>
-
         <el-form-item label="站点状态" prop="pointStatus">
           <el-select v-model="form.pointStatus" placeholder="请选择站点状态">
             <el-option label="在用" :value="1" />
@@ -248,13 +256,31 @@
             <el-option label="拆除" :value="6" />
           </el-select>
         </el-form-item>
-
         <el-form-item label="污染源种类" prop="pollutionType">
-          <el-select v-model="form.pollutionType" placeholder="请选择污染源种类">
+          <el-select v-model="form.pollutionType" placeholder="请选择污染源种类" @change="lisDischargeStandard">
             <el-option label="废水" :value="1" />
             <el-option label="废气" :value="2" />
             <el-option label="vocs" :value="3" />
           </el-select>
+        </el-form-item>
+        <el-form-item v-if="form.pollutionType" label="排放标准" prop="dischargeStandardId">
+          <!-- <treeselect v-model="form.dischargeStandardId" :multiple="false" :options="dischargeStandardIdList"
+            :normalizer="normalizer3" placeholder="请选择排放标准" /> -->
+
+          <el-popover placement="right" title="" width="200" trigger="hover" :content="computedLabel">
+            <treeselect
+              slot="reference"
+              v-model="form.dischargeStandardId"
+              :multiple="false"
+              :options="dischargeStandardIdList"
+              :normalizer="normalizer3"
+              placeholder="请选择排放标准"
+              :clearable="false"
+              class="fuSelect"
+              @select="changeDischargeStandardId"
+            />
+          </el-popover>
+
         </el-form-item>
         <el-form-item label="紧急联系人" prop="emergencyContact">
           <el-input v-model="form.emergencyContact" placeholder="请输入紧急联系人" />
@@ -299,7 +325,8 @@ import {
   updatePoint,
   listCompanySel,
   listGroupSel,
-  addPoint
+  addPoint,
+  lisDischargeStandard
 } from '@/api/table'
 import {
   mapGetters
@@ -321,7 +348,7 @@ export default {
       comlist: [],
       groupList: [],
       pointStatus: '',
-
+      computedLabel: '请选择排放标准',
       comName: '',
       pointName: '',
       status: '',
@@ -331,6 +358,7 @@ export default {
       form: {},
       allyjList: [], // 全部药剂列表
       yaojiChoose: [], // 全部药剂列表
+      dischargeStandardIdList: [], // 全部药剂列表
       options: [{
         value: 1,
         label: '在用'
@@ -396,10 +424,10 @@ export default {
           message: '请输入排放口许可证',
           trigger: 'blur'
         }],
-        dischargeStandard: [{
-          required: false,
-          message: '请输入排放标准',
-          trigger: 'blur'
+        dischargeStandardId: [{
+          required: true,
+          message: '请选择排放标准',
+          trigger: 'change'
         }],
         emergencyContact: [{
           required: true,
@@ -439,6 +467,13 @@ export default {
           label: node.groupName,
           children: node.children && node.children.length ? node.children : 0
         }
+      },
+      normalizer3(node) {
+        return {
+          id: node.id,
+          label: node.standardName,
+          children: node.children && node.children.length ? node.children : 0
+        }
       }
 
     }
@@ -461,6 +496,21 @@ export default {
     this.listCompanySel()
   },
   methods: {
+    changeDischargeStandardId(node, instanceId) {
+      console.log(node, instanceId)
+      this.computedLabel = node.standardName
+      this.form.dischargeStandardId = node.id
+    },
+    lisDischargeStandard() {
+      console.log('????')
+      lisDischargeStandard({
+        pollutionType: this.form.pollutionType
+      }).then(res => {
+        console.log(res)
+        this.form.dischargeStandardId = null
+        this.dischargeStandardIdList = res.retData
+      })
+    },
     listCompanySel() { // 公司列表
       listCompanySel({}).then(res => {
         console.log(res)
@@ -502,6 +552,19 @@ export default {
     editPoint(e) {
       this.editVisible = true
       this.form = Object.assign({}, e)
+
+      lisDischargeStandard({
+        pollutionType: this.form.pollutionType
+      }).then(res => {
+        console.log(res)
+        // this.form.dischargeStandardId = null
+        this.dischargeStandardIdList = res.retData
+        const nameTemp = this.dischargeStandardIdList.find(e => {
+          return e.id === this.form.dischargeStandardId
+        })
+        this.computedLabel = nameTemp.standardName
+      })
+
       console.log('🚀 ~ editPoint ~   this.form:', this.form)
     },
     addPoint1(e) {
@@ -624,6 +687,11 @@ export default {
   .headClass {
     display: flex;
     align-items: center;
+  }
+
+  .fuSelect ::v-deep .vue-treeselect__label {
+    height: 50px;
+    line-height: 50px;
   }
 
 </style>

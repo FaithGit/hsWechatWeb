@@ -109,6 +109,14 @@ export const asyncRoutes = [{
       title: '阅卷',
       icon: 'yuejuan'
     }
+  }, {
+    path: 'cuotiji',
+    name: 'Cuotiji',
+    component: () => import('@/views/testPaper/cuotiji'),
+    meta: {
+      title: '试题答题情况',
+      icon: 'cuotiji'
+    }
   }]
 },
 

@@ -4,12 +4,16 @@
     <div>
       试卷名称：
       <el-input v-model="examName" class="seachInput" placeholder="请选择输入关键字" clearable />
-      状态：
+      试卷类型：
+      <el-select v-model="examType" placeholder="请选择型" class="seachInput" clearable>
+        <el-option v-for="item in examTypeOptions" :key="item.value+'型'" :label="item.label" :value="item.value" />
+      </el-select>
+      试卷状态：
       <el-select v-model="status" placeholder="请选择状态" class="seachInput" clearable>
         <el-option v-for="item in statusoptions" :key="item.value+'状态'" :label="item.label" :value="item.value" />
       </el-select>
       <el-button type="primary" @click="seach">搜索</el-button>
-      <el-button type="primary" @click="openSj">随机生成试卷</el-button>
+      <el-button type="primary" @click="openSj">生成考核试卷</el-button>
     </div>
 
     <!-- 表格 -->
@@ -30,7 +34,7 @@
       <el-table-column align="center" label="试卷名" prop="examName" />
       <el-table-column align="center" label="总分" prop="examTotalScore" />
       <el-table-column align="center" label="答题限时/分" prop="examAnswerTime" />
-      <el-table-column align="center" label="考核角色" prop="roleName" />
+      <!-- <el-table-column align="center" label="考核角色" prop="roleName" /> -->
       <el-table-column align="center" label="创建人" prop="generateUserName" />
       <el-table-column align="center" label="发布时间" prop="examPublishTime" />
       <el-table-column align="center" label="截止时间" prop="examDeadlineTime" />
@@ -39,7 +43,7 @@
       <el-table-column align="center" label="未考人数" prop="notTestNum" /> -->
       <el-table-column align="center" label="操作" width="180">
         <template slot-scope="scope">
-          <el-button @click="getExam(scope.row)"> 查看</el-button>
+          <!-- <el-button @click="getExam(scope.row)"> 查看</el-button> -->
           <el-button type="danger" @click="remove(scope.row)"> 删除</el-button>
         </template>
       </el-table-column>
@@ -172,7 +176,7 @@
     <!-- 随机生成试卷 -->
     <el-dialog
       v-if="sjVisible"
-      title="随机生成试卷"
+      title="生成考核试卷"
       :append-to-body="true"
       :visible="sjVisible"
       width="70%"
@@ -183,11 +187,7 @@
         <el-form-item label="试卷名称" prop="examName">
           <el-input v-model="form.examName" placeholder="请输入试卷名称" style="width:220px" />
         </el-form-item>
-        <el-form-item label="对应考试角色" prop="roleIds">
-          <el-select v-model="form.roleIds" placeholder="请选择对应考试角色" style="width:220px" multiple>
-            <el-option v-for="item in roleIdList" :key="item.roleId" :label="item.roleName" :value="item.roleId" />
-          </el-select>
-        </el-form-item>
+
         <el-form-item label="发布时间" prop="examPublishTime">
           <el-date-picker v-model="form.examPublishTime" type="datetime" placeholder="选择发布时间" />
         </el-form-item>
@@ -197,7 +197,17 @@
         <el-form-item label="答题限时" prop="examAnswerTime">
           <el-input-number v-model="form.examAnswerTime" :min="0" placeholder="请输入试卷答题限时时间(分钟)" /> 分钟
         </el-form-item>
-        <el-row :gutter="20">
+        <el-form-item label="对应考试角色" prop="testUserIds">
+          <treeselect
+            v-model="form.testUserIds"
+            :multiple="true"
+            :options="userlist"
+            :normalizer="normalizer2"
+            placeholder="请选择对应考试人员"
+            no-children-text="暂无数据"
+          />
+        </el-form-item>
+        <el-row :gutter="20" style="margin-bottom:20px">
           <el-col :span="4" :offset="2" style="text-align:center">
             <div style="margin-bottom:15px">单选题选项</div>
             <div style="margin-bottom:5px">数量：
@@ -244,8 +254,9 @@
             </div>
           </el-col>
         </el-row>
+
       </el-form>
-      <div style="text-align:center;margin-top:30px">
+      <div style="text-align:center;margin-top:60px">
         <el-button @click="sjVisible=false">取消</el-button>
         <el-button type="primary" :loading="loading" @click="upSuiji">确认</el-button>
       </div>
@@ -261,11 +272,17 @@ import {
   getExam,
   randomGenerateExam,
   removeExam,
-  listRoleSel
+  listUser
 } from '@/api/table'
 import {
   mapGetters
 } from 'vuex'
+
+// import the styles
+import Treeselect from '@riophae/vue-treeselect'
+// import the styles
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+
 import moment from 'moment'
 
 import axios from 'axios'
@@ -276,13 +293,16 @@ import {
 
 export default {
   name: 'TestPaper',
-
+  components: {
+    Treeselect
+  },
   data() {
     return {
       pageNo: 1,
       pageSize: 10,
       total: 0,
       records: [],
+      userlist: [],
       statusoptions: [{
         value: 1,
         label: '未开始'
@@ -293,7 +313,18 @@ export default {
         value: 3,
         label: '已过期失效'
       }],
+      examTypeOptions: [{
+        value: 1,
+        label: '练习'
+      }, {
+        value: 2,
+        label: '月考'
+      }, {
+        value: 3,
+        label: '考核'
+      }],
       status: '',
+      examType: '',
       examName: '',
       search1: '',
       listLoading: false,
@@ -303,7 +334,6 @@ export default {
       timuVisible: false,
       examObj: {},
       uplist: [], // 题目列表
-      roleIdList: [], // 题目列表
       form: {
         examName: '',
         examPublishTime: '',
@@ -316,7 +346,7 @@ export default {
           message: '请输入试卷名称',
           trigger: 'blur'
         }],
-        roleIds: [{
+        testUserIds: [{
           required: true,
           message: '请选择考试人员',
           trigger: 'change'
@@ -337,7 +367,15 @@ export default {
           trigger: 'change'
         }]
       },
-      sjVisible: false
+      sjVisible: false,
+      normalizer2(node) {
+        // if (!node.children.length) delete node.children
+        return {
+          id: node.userId,
+          label: node.userName,
+          children: node.children && node.children.length ? node.children : 0
+        }
+      }
     }
   },
   computed: {
@@ -346,16 +384,15 @@ export default {
     ])
   },
   mounted() {
-    this.listRoleSel()
+    this.listUser()
     this.listExam()
   },
   methods: {
-    listRoleSel() {
-      listRoleSel({
-        departmentIds: []
-      }).then(res => {
+
+    listUser() { // 试卷列表
+      listUser({}).then(res => {
         console.log(res)
-        this.roleIdList = res.retData
+        this.userlist = res.retData
       })
     },
     listExam() { // 试卷列表
@@ -363,6 +400,7 @@ export default {
         pageNo: this.pageNo,
         pageSize: this.pageSize,
         status: this.status,
+        examType: this.examType,
         examName: this.examName
       }).then(res => {
         console.log('🚀 ~ listExam ~ res', res)
@@ -396,7 +434,6 @@ export default {
       console.log(item)
       getExam({
         examId: item.examId,
-        encryption: false, // 是否加密(false不加密true加密)
         userId: this.userId
       }).then(res => {
         console.log(res)
@@ -428,7 +465,7 @@ export default {
       this.sjVisible = true
       this.form = {
         examName: '',
-        roleIds: [],
+        testUserIds: [],
         examPublishTime: '',
         examDeadlineTime: '',
         examAnswerTime: 60,
@@ -549,7 +586,7 @@ export default {
           const _obj = {
             userId: this.userId,
             examName: this.form.examName,
-            roleIds: this.form.roleIds,
+            testUserIds: this.form.testUserIds,
             examPublishTime: moment(this.form.examPublishTime).format('YYYY-MM-DD HH:mm:ss'),
             examDeadlineTime: moment(this.form.examDeadlineTime).format('YYYY-MM-DD HH:mm:ss'),
             examAnswerTime: this.form.examAnswerTime,

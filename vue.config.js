@@ -25,7 +25,7 @@ module.exports = {
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
   publicPath: '/',
-  outputDir: 'dist',
+  outputDir: 'hsWechatWeb',
   assetsDir: 'static',
   lintOnSave: false,
   productionSourceMap: false,

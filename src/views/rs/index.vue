@@ -245,7 +245,7 @@ export default {
         }],
         emergencyMobile: [{
           required: true,
-          validator: moblie,
+          message: '请输入联系方式',
           trigger: 'blur'
         }],
         education: [{
