@@ -34,6 +34,7 @@
         </template>
       </el-table-column>
       <el-table-column align="center" label="企业名称" prop="comName" />
+      <el-table-column align="center" label="企业简称" prop="comShortName" />
       <el-table-column align="center" label="所属区域">
         <template slot-scope="scope">
           {{ scope.row.areaName==''?'-':scope.row.areaName }}
@@ -58,7 +59,7 @@
         <template slot-scope="scope">
           <el-button @click="editShiji(scope.row)">编辑</el-button>
           <el-button @click="gotoPoint(scope.row)">点位管理</el-button>
-          <!-- <el-button type="danger" @click="remove(scope.row)"> 删除</el-button> -->
+          <el-button type="danger" @click="remove(scope.row)"> 删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -88,10 +89,13 @@
         <el-form-item label="企业名称" prop="comName">
           <el-input v-model="form.comName" placeholder="请输入企业名称" />
         </el-form-item>
+        <el-form-item label="企业简称" prop="comShortName">
+          <el-input v-model="form.comShortName" placeholder="请输入企业简称" />
+        </el-form-item>
         <el-form-item label="社会信用代码" prop="socialCreditCode">
           <el-input v-model="form.socialCreditCode" placeholder="请输入社会信用代码" />
         </el-form-item>
-        <el-form-item label="区域" prop="unit">
+        <el-form-item label="区域" prop="areaCode">
           <treeselect
             v-model="form.areaCode"
             :multiple="false"
@@ -100,6 +104,7 @@
             placeholder="请选择区域"
             class="seachInput"
             style="margin:0"
+            @input="riskPersonDeptChangeValue"
           />
         </el-form-item>
         <el-form-item label="经度" prop="lng">
@@ -135,10 +140,13 @@
         <el-form-item label="企业名称" prop="comName">
           <el-input v-model="form.comName" placeholder="请输入企业名称" />
         </el-form-item>
+        <el-form-item label="企业简称" prop="comShortName">
+          <el-input v-model="form.comShortName" placeholder="请输入企业简称" />
+        </el-form-item>
         <el-form-item label="社会信用代码" prop="socialCreditCode">
           <el-input v-model="form.socialCreditCode" placeholder="请输入社会信用代码" />
         </el-form-item>
-        <el-form-item label="区域" prop="unit">
+        <el-form-item label="区域" prop="areaCode">
           <treeselect
             v-model="form.areaCode"
             :multiple="false"
@@ -147,6 +155,7 @@
             placeholder="请选择区域"
             class="seachInput"
             style="margin:0"
+            @input="riskPersonDeptChangeValue"
           />
         </el-form-item>
         <el-form-item label="经度" prop="lng">
@@ -182,12 +191,14 @@ import {
   getAreaCodeTree,
   listCompanyPage,
   addCompany,
-  updateCompany
+  updateCompany,
+  deleteCompany
 } from '@/api/table'
 import {
   mapGetters
 } from 'vuex'
 // import moment from 'moment'
+
 export default {
   name: 'Company',
   components: {
@@ -212,7 +223,12 @@ export default {
       rules: {
         comName: [{
           required: true,
-          message: '请输入环保负责人',
+          message: '请输入企业名称',
+          trigger: 'blur'
+        }],
+        comShortName: [{
+          required: true,
+          message: '请输入企业简称',
           trigger: 'blur'
         }],
         contactMobile: [{
@@ -222,27 +238,32 @@ export default {
         }],
         contact: [{
           required: true,
-          message: '请输入企业名称',
+          message: '请输入环保负责人',
           trigger: 'blur'
         }],
-        lng: [{
-          required: true,
-          message: '请输入经度',
-          trigger: 'blur'
-        }],
-        lat: [{
-          required: true,
-          message: '请输入维度',
-          trigger: 'blur'
-        }],
+        // lng: [{
+        //   required: false,
+        //   type: 'number',
+        //   message: '必须为数字',
+        //   transform: value =>
+        //     this.$options.filters.formValidateFun(value, 'number')
+        // }],
+        // lat: [{
+        //   required: false,
+        //   type: 'number',
+        //   message: '必须为数字',
+        //   transform: value =>
+        //     this.$options.filters.formValidateFun(value, 'number')
+        // }],
         socialCreditCode: [{
           required: true,
           message: '请输入统一社会信用代码',
           trigger: 'blur'
-        }, {
-          len: 18,
-          message: '请输入18位统一社会信用代码',
-          trigger: 'blur'
+        }],
+        areaCode: [{
+          required: true,
+          message: '请选择地区',
+          trigger: 'input'
         }]
       },
       normalizer(node) {
@@ -266,6 +287,10 @@ export default {
     this.listCompanyPage()
   },
   methods: {
+    riskPersonDeptChangeValue() {
+      // form是表单名 riskPersonDept是prop名
+      this.$refs['form1'].validateField('areaCode')
+    },
     getAreaCodeTree() {
       getAreaCodeTree({
         areaCode: 3304
@@ -312,15 +337,15 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // deletePharmaceutical({
-        //   id: e.id
-        // }).then(res => {
-        //   this.$notify({
-        //     type: "success",
-        //     message: res.retMsg
-        //   })
-        //   this.listCompanyPage()
-        // })
+        deleteCompany({
+          companyId: e.companyId
+        }).then(res => {
+          this.$notify({
+            type: 'success',
+            message: res.retMsg
+          })
+          this.listCompanyPage()
+        })
       })
     },
     addCom(e) {
@@ -330,13 +355,6 @@ export default {
       }
     },
     sumbitCom() {
-      if (this.form.areaCode == null || this.form.areaCode == undefined) {
-        this.$notify({
-          type: 'error',
-          message: '请选择地区code'
-        })
-        return
-      }
       this.$refs.form1.validate((valid) => {
         if (valid) {
           addCompany(this.form).then(res => {
@@ -352,13 +370,6 @@ export default {
       })
     },
     editSubmit() {
-      if (this.form.areaCode == null || this.form.areaCode == undefined) {
-        this.$notify({
-          type: 'error',
-          message: '请选择地区code'
-        })
-        return
-      }
       this.$refs.form1.validate((valid) => {
         if (valid) {
           updateCompany(this.form).then(res => {

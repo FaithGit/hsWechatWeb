@@ -74,7 +74,7 @@
           <el-button @click="editPoint(scope.row)">编辑</el-button>
           <!-- <el-button @click="gotoPoint(scope.row)">设备管理</el-button>
           <el-button @click="gotoPoint(scope.row)">因子管理</el-button> -->
-          <!-- <el-button type="danger" @click="remove(scope.row)"> 删除</el-button> -->
+          <el-button type="danger" @click="remove(scope.row)"> 删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -101,7 +101,7 @@
       @close="addVisible=false"
     >
       <el-form ref="form1" :model="form" label-width="140px" :rules="rules">
-        <el-form-item label="企业名称">
+        <el-form-item label="企业名称" prop="companyId">
           <treeselect
             v-model="form.companyId"
             :multiple="false"
@@ -111,13 +111,14 @@
             @input="changeCom2"
           />
         </el-form-item>
-        <el-form-item label="点位名称">
+        <el-form-item label="点位名称" prop="pointId">
           <treeselect
             v-model="form.pointId"
             :multiple="false"
             :options="dianweiList2"
             :normalizer="normalizer2"
             placeholder="请选择点位名称"
+            @input="riskPersonDeptChangeValue"
           />
         </el-form-item>
         <el-form-item label="运维时设备名称" prop="instrumentName">
@@ -221,7 +222,8 @@ import {
   listCompanySel,
   listShortPointSel,
   listInstrumentTypeSel,
-  addInstrument
+  addInstrument,
+  deleteInstrument
 } from '@/api/table'
 import {
   mapGetters
@@ -284,12 +286,21 @@ export default {
           trigger: 'change'
         }],
 
+        companyId: [{
+          required: true,
+          message: '请选择企业名称',
+          trigger: 'input'
+        }],
+        pointId: [{
+          required: true,
+          message: '请选择点位名称',
+          trigger: 'input'
+        }],
         checkStatus: [{
           required: true,
           message: '请输入运维状态',
           trigger: 'change'
         }],
-
         startYear: [{
           required: true,
           message: '请输入开始时间年份',
@@ -362,6 +373,28 @@ export default {
     this.listShortPointSel()
   },
   methods: {
+    riskPersonDeptChangeValue() {
+      // form是表单名 riskPersonDept是prop名
+
+      this.$refs['form1'].validateField('pointId')
+    },
+    remove(e) {
+      this.$confirm('此操作将永久删除该设备, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteInstrument({
+          instrumentId: e.instrumentId
+        }).then(res => {
+          this.$notify({
+            type: 'success',
+            message: res.retMsg
+          })
+          this.listInstrumentPage()
+        })
+      })
+    },
     changeCom(node, instanceId) {
       console.log('🚀 ~ changeCom ~ node,instanceId:', node, instanceId)
       this.listShortPointSel()
@@ -372,6 +405,7 @@ export default {
       this.listShortPointSel2()
       // this.form.pointId = null
       this.$set(this.form, 'pointId', null)
+      this.$refs['form1'].validateField('companyId')
     },
     listInstrumentTypeSel() { // 设备类型
       listInstrumentTypeSel({}).then(res => {
@@ -430,23 +464,6 @@ export default {
       this.form = Object.assign({}, e)
       console.log('🚀 ~ editPoint ~   this.form:', this.form)
     },
-    // remove(e) {
-    //   this.$confirm('此操作将永久删除该企业, 是否继续?', '提示', {
-    //     confirmButtonText: '确定',
-    //     cancelButtonText: '取消',
-    //     type: 'warning'
-    //   }).then(() => {
-    //     // deletePharmaceutical({
-    //     //   id: e.id
-    //     // }).then(res => {
-    //     //   this.$notify({
-    //     //     type: "success",
-    //     //     message: res.retMsg
-    //     //   })
-    //     //   this.listInstrumentPage()
-    //     // })
-    //   })
-    // },
     addShebei(e) {
       this.addVisible = true
       this.form = {
@@ -457,13 +474,13 @@ export default {
       }
     },
     sumbitPoint() {
-      if (this.form.pointId == null || this.form.pointId == undefined || this.form.pointId == '') {
-        this.$notify({
-          type: 'error',
-          message: '请选择点位名称'
-        })
-        return
-      }
+      // if (this.form.pointId == null || this.form.pointId == undefined || this.form.pointId == '') {
+      //   this.$notify({
+      //     type: 'error',
+      //     message: '请选择点位名称'
+      //   })
+      //   return
+      // }
       this.$refs.form1.validate((valid) => {
         if (valid) {
           addInstrument(this.form).then(res => {

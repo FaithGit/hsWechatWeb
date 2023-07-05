@@ -117,7 +117,7 @@
       @close="addVisible=false"
     >
       <el-form ref="form1" :model="form" label-width="200px" :rules="rules">
-        <el-form-item label="企业名称">
+        <el-form-item label="企业名称" prop="companyId">
           <treeselect
             v-model="form.companyId"
             :multiple="false"
@@ -127,22 +127,24 @@
             @input="changeCom2"
           />
         </el-form-item>
-        <el-form-item label="点位名称">
+        <el-form-item label="点位名称" prop="pointId">
           <treeselect
             v-model="form.pointId"
             :multiple="false"
             :options="dianweiList2"
             :normalizer="normalizer2"
             placeholder="请选择点位名称"
+            @input="changePointId"
           />
         </el-form-item>
-        <el-form-item label="因子名称">
+        <el-form-item label="因子名称" prop="factorCode">
           <treeselect
             v-model="form.factorCode"
             :multiple="false"
             :options="factorList"
             :normalizer="normalizer3"
             placeholder="请选择因子"
+            @input="changeFactorCode"
           />
         </el-form-item>
         <el-form-item label="浓度报警上限值" prop="alarmUpperLimit">
@@ -350,6 +352,21 @@ export default {
       }],
       rules: {
 
+        companyId: [{
+          required: true,
+          message: '请选择企业名称',
+          trigger: 'input'
+        }],
+        pointId: [{
+          required: true,
+          message: '请选择点位名称',
+          trigger: 'input'
+        }],
+        factorCode: [{
+          required: true,
+          message: '请选择因子名称',
+          trigger: 'input'
+        }],
         alarmUpperLimit: [{
           required: true,
           message: '请输入浓度报警上限值',
@@ -432,6 +449,13 @@ export default {
       this.listShortPointSel2()
       // this.form.pointId = null
       this.$set(this.form, 'pointId', null)
+      this.$refs['form1'].validateField('companyId')
+    },
+    changePointId() {
+      this.$refs['form1'].validateField('pointId')
+    },
+    changeFactorCode() {
+      this.$refs['form1'].validateField('factorCode')
     },
     listInstrumentTypeSel() { // 设备类型
       listInstrumentTypeSel({}).then(res => {
@@ -529,20 +553,6 @@ export default {
       }
     },
     sumbitPoint() {
-      if (this.form.pointId == null || this.form.pointId == undefined || this.form.pointId == '') {
-        this.$notify({
-          type: 'error',
-          message: '请选择点位名称'
-        })
-        return
-      }
-      if (this.form.factorCode == null || this.form.factorCode == undefined || this.form.factorCode == '') {
-        this.$notify({
-          type: 'error',
-          message: '请选择因子名称'
-        })
-        return
-      }
       this.$refs.form1.validate((valid) => {
         if (valid) {
           addPointFactor(this.form).then(res => {

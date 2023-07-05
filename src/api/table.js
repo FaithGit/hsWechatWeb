@@ -667,3 +667,45 @@ export function lisDischargeStandard(data) { // 获取所有因子
     data
   })
 }
+export function deleteCompany(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/company/deleteCompany',
+    method: 'post',
+    data
+  })
+}
+export function deletePoint(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/point/deletePoint',
+    method: 'post',
+    data
+  })
+}
+export function deleteInstrument(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/instrument/deleteInstrument',
+    method: 'post',
+    data
+  })
+}
+export function exportPoint(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/point/exportPoint',
+    method: 'post',
+    data
+  })
+}
+export function listUserExamPage(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/exam/listUserExamPage',
+    method: 'post',
+    data
+  })
+}
+export function exportUserExam(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/exam/exportUserExam',
+    method: 'post',
+    data
+  })
+}

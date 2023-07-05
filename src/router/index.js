@@ -117,6 +117,14 @@ export const asyncRoutes = [{
       title: '试题答题情况',
       icon: 'cuotiji'
     }
+  }, {
+    path: 'testPaper',
+    name: 'TestPaper',
+    component: () => import('@/views/testPaper/testPaper'),
+    meta: {
+      title: '答题试卷列表',
+      icon: 'testList'
+    }
   }]
 },
 

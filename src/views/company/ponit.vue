@@ -14,6 +14,26 @@
       />
       点位名称：
       <el-input v-model="pointName" class="seachInput" placeholder="请选择输入点位名称" clearable />
+
+      站点状态：
+      <el-select v-model="pointStatus" placeholder="请选择站点状态" class="seachInput" clearable>
+        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+      </el-select>
+
+      <el-button type="primary" @click="seach">搜索</el-button>
+      <el-button type="primary" @click="addPoint1">新增点位</el-button>
+    </div>
+    <div class="headClass" style="margin-top:10px">
+      区域：
+      <treeselect
+        v-model="areaCode"
+        :multiple="false"
+        :options="allAreacode"
+        :normalizer="normalizer4"
+        placeholder="请选择区域"
+        class="seachInput"
+        no-children-text="暂无数据"
+      />
       运维组：
       <treeselect
         v-model="groupId"
@@ -23,12 +43,7 @@
         placeholder="请选择运维组"
         class="seachInput"
       />
-      站点状态：
-      <el-select v-model="pointStatus" placeholder="请选择站点状态" class="seachInput" clearable>
-        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-      </el-select>
-      <el-button type="primary" @click="seach">搜索</el-button>
-      <el-button type="primary" @click="addPoint1">新增点位</el-button>
+      <el-button type="primary" @click="daochu">导出</el-button>
     </div>
 
     <!-- 表格 -->
@@ -48,18 +63,19 @@
       </el-table-column>
       <el-table-column align="center" label="企业名称" prop="comName" />
       <el-table-column align="center" label="点位名称" prop="pointName" />
-      <el-table-column align="center" label="站点状态" prop="pointStatusName" />
+      <el-table-column align="center" label="点位简称" prop="pointShortName" />
+      <el-table-column align="center" label="站点状态" prop="pointStatusName" width="80" />
       <el-table-column align="center" label="运维组">
         <template slot-scope="scope">
           {{ (scope.row.groupName==null||scope.row.groupName=='')?'-':scope.row.groupName }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="排放标准">
+      <el-table-column align="center" label="排放标准" width="200">
         <template slot-scope="scope">
           {{ (scope.row.standardName==null||scope.row.standardName=='')?'-':scope.row.standardName }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="关注程度">
+      <el-table-column align="center" label="关注程度" width="80">
         <template slot-scope="scope">
           {{ (scope.row.concernLevelName==null||scope.row.concernLevelName=='')?'-':scope.row.concernLevelName }}
         </template>
@@ -75,12 +91,12 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="操作" width="320">
+      <el-table-column align="center" label="操作" width="400">
         <template slot-scope="scope">
           <el-button @click="editPoint(scope.row)">编辑</el-button>
           <el-button @click="gotoShebei(scope.row)">设备管理</el-button>
           <el-button @click="gotoyinzi(scope.row)">因子管理</el-button>
-          <!-- <el-button type="danger" @click="remove(scope.row)"> 删除</el-button> -->
+          <el-button type="danger" @click="remove(scope.row)"> 删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -88,7 +104,7 @@
     <div class="buttonPagination">
       <el-pagination
         :current-page="pageIndex"
-        :page-sizes="[10,20,30,40,50]"
+        :page-sizes="[10,20,30,40,50,100,500,1000]"
         :page-size="pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
@@ -107,17 +123,21 @@
       @close="addVisible=false"
     >
       <el-form ref="form1" :model="form" label-width="140px" :rules="rules">
-        <el-form-item label="企业名称">
+        <el-form-item label="企业名称" prop="companyId">
           <treeselect
             v-model="form.companyId"
             :multiple="false"
             :options="comlist"
             :normalizer="normalizer"
             placeholder="请选择企业"
+            @input="riskPersonDeptChangeValue"
           />
         </el-form-item>
         <el-form-item label="点位名称" prop="pointName">
           <el-input v-model="form.pointName" placeholder="请输入点位名称" />
+        </el-form-item>
+        <el-form-item label="点位简称" prop="pointShortName">
+          <el-input v-model="form.pointShortName" placeholder="请输入点位简称" />
         </el-form-item>
         <el-form-item label="数采仪编码mn号" prop="dciMn">
           <el-input v-model="form.dciMn" placeholder="请输入数采仪编码mn号  " />
@@ -196,7 +216,7 @@
             :multiple="false"
             :options="groupList"
             :normalizer="normalizer2"
-            placeholder="请选择企业"
+            placeholder="请选择运维组"
           />
         </el-form-item>
         <div style="text-align:center;margin-top:80px">
@@ -217,11 +237,14 @@
     >
 
       <el-form ref="form1" :model="form" label-width="140px" :rules="rules">
-        <el-form-item label="企业名称">
+        <el-form-item label="企业名称" prop="comName">
           <el-input v-model="form.comName" placeholder="请输入点位名称" readonly="" />
         </el-form-item>
         <el-form-item label="点位名称" prop="pointName">
           <el-input v-model="form.pointName" placeholder="请输入点位名称" />
+        </el-form-item>
+        <el-form-item label="点位简称" prop="pointShortName">
+          <el-input v-model="form.pointShortName" placeholder="请输入点位简称" />
         </el-form-item>
         <el-form-item label="数采仪编码mn号" prop="dciMn">
           <el-input v-model="form.dciMn" placeholder="请输入数采仪编码mn号  " />
@@ -300,7 +323,7 @@
             :multiple="false"
             :options="groupList"
             :normalizer="normalizer2"
-            placeholder="请选择企业"
+            placeholder="请选择运维组"
           />
         </el-form-item>
         <div style="text-align:center;margin-top:80px">
@@ -326,7 +349,10 @@ import {
   listCompanySel,
   listGroupSel,
   addPoint,
-  lisDischargeStandard
+  lisDischargeStandard,
+  deletePoint,
+  getAreaCodeTree,
+  exportPoint
 } from '@/api/table'
 import {
   mapGetters
@@ -343,9 +369,11 @@ export default {
       pageSize: 10,
       companyId: null,
       groupId: null,
+      areaCode: null,
       total: 0,
       records: [],
       comlist: [],
+      allAreacode: [],
       groupList: [],
       pointStatus: '',
       computedLabel: '请选择排放标准',
@@ -384,6 +412,11 @@ export default {
           message: '请输入点位名称',
           trigger: 'blur'
         }],
+        pointShortName: [{
+          required: true,
+          message: '请输入点位名称',
+          trigger: 'blur'
+        }],
         emergencyMobile: [{
           required: true,
           validator: moblie,
@@ -403,6 +436,16 @@ export default {
           required: true,
           message: '请输入数采仪系统类型',
           trigger: 'change'
+        }],
+        companyId: [{
+          required: true,
+          message: '请选择企业名称',
+          trigger: 'change'
+        }],
+        groupId: [{
+          required: true,
+          message: '请选择运维组',
+          trigger: 'input'
         }],
         concernLevel: [{
           required: true,
@@ -436,13 +479,17 @@ export default {
         }],
         lng: [{
           required: true,
-          message: '请输入经度',
-          trigger: 'blur'
+          type: 'number',
+          message: '必须为数字',
+          transform: value =>
+            this.$options.filters.formValidateFun(value, 'number')
         }],
         lat: [{
           required: true,
-          message: '请输入维度',
-          trigger: 'blur'
+          type: 'number',
+          message: '必须为数字',
+          transform: value =>
+            this.$options.filters.formValidateFun(value, 'number')
         }]
         // socialCreditCode: [{
         //   required: true,
@@ -474,6 +521,13 @@ export default {
           label: node.standardName,
           children: node.children && node.children.length ? node.children : 0
         }
+      },
+      normalizer4(node) {
+        return {
+          id: node.value,
+          label: node.label,
+          children: node.children && node.children.length ? node.children : 0
+        }
       }
 
     }
@@ -494,8 +548,52 @@ export default {
   mounted() {
     this.listGroupSel()
     this.listCompanySel()
+    this.getAreaCodeTree()
   },
   methods: {
+    riskPersonDeptChangeValue() {
+      // form是表单名 riskPersonDept是prop名
+      this.$refs['form1'].validateField('companyId')
+    },
+    daochu() {
+      exportPoint({
+        companyId: this.companyId || '',
+        areaCode: this.areaCode || '',
+        pointName: this.pointName,
+        groupId: this.groupId || '',
+        pointStatus: this.pointStatus,
+        pageIndex: this.pageIndex,
+        pageSize: this.pageSize
+      }).then(res => {
+        console.log(res)
+        window.open(res.retData)
+      })
+    },
+    getAreaCodeTree() {
+      getAreaCodeTree({
+        areaCode: 3304
+      }).then(res => {
+        console.log(res)
+        this.allAreacode.push(res.retData)
+      })
+    },
+    remove(e) {
+      this.$confirm('此操作将永久删除该点位, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deletePoint({
+          pointId: e.pointId
+        }).then(res => {
+          this.$notify({
+            type: 'success',
+            message: res.retMsg
+          })
+          this.listPointPage()
+        })
+      })
+    },
     changeDischargeStandardId(node, instanceId) {
       console.log(node, instanceId)
       this.computedLabel = node.standardName
@@ -526,6 +624,7 @@ export default {
     listPointPage() {
       listPointPage({
         companyId: this.companyId || '',
+        areaCode: this.areaCode || '',
         pointName: this.pointName,
         groupId: this.groupId || '',
         pointStatus: this.pointStatus,
@@ -575,20 +674,6 @@ export default {
       }
     },
     sumbitPoint() {
-      if (this.form.companyId === null || this.form.companyId === undefined) {
-        this.$notify({
-          type: 'error',
-          message: '请选择企业名称'
-        })
-        return
-      }
-      if (this.form.groupId === null || this.form.groupId === undefined) {
-        this.$notify({
-          type: 'error',
-          message: '请选择运维组'
-        })
-        return
-      }
       this.$refs.form1.validate((valid) => {
         if (valid) {
           addPoint(this.form).then(res => {
@@ -604,20 +689,6 @@ export default {
       })
     },
     editSubmit() {
-      if (this.form.companyId === null || this.form.companyId === undefined) {
-        this.$notify({
-          type: 'error',
-          message: '请选择企业名称'
-        })
-        return
-      }
-      if (this.form.groupId === null || this.form.groupId === undefined) {
-        this.$notify({
-          type: 'error',
-          message: '请选择运维组'
-        })
-        return
-      }
       this.$refs.form1.validate((valid) => {
         if (valid) {
           updatePoint(this.form).then(res => {
@@ -690,8 +761,12 @@ export default {
   }
 
   .fuSelect ::v-deep .vue-treeselect__label {
-    height: 50px;
+    min-height: 50px;
     line-height: 50px;
+    word-wrap: break-word;
+    word-break: break-all;
+    white-space: pre-wrap;
+    border-bottom: 1px solid #eee;
   }
 
 </style>
