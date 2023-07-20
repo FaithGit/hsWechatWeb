@@ -21,12 +21,12 @@
     <!-- 表格 -->
     <el-table
       v-loading="listLoading"
-      :data="records"
+      :data="tableData"
       element-loading-text="加载中"
       border
-      fit
-      highlight-current-row
       style="margin-top:1.04vw"
+      :span-method="arraySpanMethod"
+      :row-class-name="tableRowClassName"
     >
       <el-table-column align="center" label="#" width="95">
         <template slot-scope="scope">
@@ -34,31 +34,56 @@
         </template>
       </el-table-column>
       <el-table-column align="center" label="企业名称" prop="comName" />
-      <el-table-column align="center" label="企业简称" prop="comShortName" />
       <el-table-column align="center" label="所属区域">
         <template slot-scope="scope">
           {{ scope.row.areaName==''?'-':scope.row.areaName }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="社会信用代码">
+      <el-table-column align="center" label="点位名称">
         <template slot-scope="scope">
-          {{ scope.row.socialCreditCode==''?'-':scope.row.socialCreditCode }}
+          <div :class="[scope.row.pointName!==' - '?'pointName':'']" @click="gotoPoint(scope.row)">
+            {{ scope.row.pointName }}
+          </div>
+
         </template>
       </el-table-column>
-      <el-table-column align="center" label="环保负责人">
+      <el-table-column align="center" label="点位状态">
         <template slot-scope="scope">
-          {{ scope.row.contact==''?'-':scope.row.contact }}
+          {{ scope.row.pointStatusName }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="负责人联系电话">
+      <el-table-column align="center" label="运维组">
         <template slot-scope="scope">
-          {{ scope.row.contactMobile==''?'-':scope.row.contactMobile }}
+          {{ scope.row.groupName }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="操作" width="280">
+      <el-table-column align="center" label="关注程度">
+        <template slot-scope="scope">
+          {{ scope.row.concernLevelName }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="数采仪ip">
+        <template slot-scope="scope">
+          {{ scope.row.dciIp }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="因子名称">
+        <template slot-scope="scope">
+          <div :class="[scope.row.factorName!==' - '?'pointName':'']" @click="gotoyinzi(scope.row)">
+            {{ scope.row.factorName }}
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="上下限值">
+        <template slot-scope="scope">
+          {{ scope.row.limit }}
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" label="操作" width="180">
         <template slot-scope="scope">
           <el-button @click="editShiji(scope.row)">编辑</el-button>
-          <el-button @click="gotoPoint(scope.row)">点位管理</el-button>
+          <!-- <el-button @click="gotoPoint(scope.row)">点位管理</el-button> -->
           <el-button type="danger" @click="remove(scope.row)"> 删除</el-button>
         </template>
       </el-table-column>
@@ -192,7 +217,8 @@ import {
   listCompanyPage,
   addCompany,
   updateCompany,
-  deleteCompany
+  deleteCompany,
+  getCompanyById
 } from '@/api/table'
 import {
   mapGetters
@@ -210,6 +236,7 @@ export default {
       pageSize: 10,
       total: 0,
       records: [],
+      tableData: [],
       allAreacode: [],
       comName: '',
       areaCode: null,
@@ -287,6 +314,17 @@ export default {
     this.listCompanyPage()
   },
   methods: {
+    tableRowClassName({
+      row,
+      rowIndex
+    }) {
+      // console.log('row', row)
+      if (row.index % 2 === 0) {
+        return 'bkred'
+      } else {
+        return 'bkgreen'
+      }
+    },
     riskPersonDeptChangeValue() {
       // form是表单名 riskPersonDept是prop名
       this.$refs['form1'].validateField('areaCode')
@@ -309,7 +347,112 @@ export default {
         console.log(res)
         this.records = res.retData.records
         this.total = res.retData.total
+        this.init()
       })
+    },
+    init() {
+      const getDate = [] // 存储新表格数据
+      const comIndex = [] // 公司行数
+      const pointIndex = [] // 点位行数
+      var comNum = 0 // 公司基数
+      var pointNum = 0 // 点位基数
+      this.records.forEach((v, index) => {
+        comNum = 0 // 循环企业基数
+        if (v.points && v.points.length) { // 如果有点位数
+          v.points.forEach((p, pidx) => { // 点位数循环
+            pointNum = 0
+            if (p.pointFactors && p.pointFactors.length) { // 如果有因子的话
+              p.pointFactors.forEach((y, yidx) => {
+                getDate.push({
+                  comName: this.computedNull(v.comName),
+                  index: index,
+                  areaName: this.computedNull(v.areaName),
+                  companyId: this.computedNull(v.companyId),
+                  pointName: this.computedNull(p.pointName),
+                  pointId: this.computedNull(p.pointId),
+                  pointStatusName: this.computedNull(p.pointStatusName),
+                  groupName: this.computedNull(p.groupName),
+                  concernLevelName: this.computedNull(p.concernLevelName),
+                  dciIp: this.computedNull(p.dciIp),
+                  factorName: this.computedNull(y.factorName),
+                  limit: this.computedNull(y.alarmLowerLimit) + ' / ' + this.computedNull(y
+                    .alarmUpperLimit)
+                })
+                pointNum++
+                comNum++
+              })
+              pointIndex.push(pointNum)
+            } else {
+              getDate.push({
+                index: index,
+                comName: this.computedNull(v.comName),
+                areaName: this.computedNull(v.areaName),
+                companyId: this.computedNull(v.companyId),
+                pointName: this.computedNull(p.pointName),
+                pointId: this.computedNull(p.pointId),
+                pointStatusName: this.computedNull(p.pointStatusName),
+                groupName: this.computedNull(p.groupName),
+                concernLevelName: this.computedNull(p.concernLevelName),
+                dciIp: this.computedNull(p.dciIp)
+              })
+              comNum++
+              pointIndex.push(1)
+            }
+          })
+        } else { // #1如果没有点位数
+          getDate.push({
+            index: index,
+            comName: this.computedNull(v.comName),
+            areaName: this.computedNull(v.areaName),
+            companyId: this.computedNull(v.companyId)
+          })
+          comNum++
+          pointIndex.push(1) // 没有点位 自己占格
+        }
+
+        comIndex.push(comNum)
+      })
+      console.log('🚀 ~ this.records.forEach ~ comIndex:', comIndex)
+      console.log('🚀 ~ this.records.forEach ~ pointIndex:', pointIndex)
+
+      let com = 1
+      for (let i = 0; i < comIndex.length; i++) {
+        getDate[com - 1].comIndex = comIndex[i]
+        com += comIndex[i]
+      }
+
+      com = 1
+      for (let i = 0; i < pointIndex.length; i++) {
+        getDate[com - 1].pointIndex = pointIndex[i]
+        com += pointIndex[i]
+      }
+      this.tableData = getDate
+      console.log('🚀 ~ init ~ this.tableData:', this.tableData)
+    },
+    // 表格合并方法
+    arraySpanMethod({
+      row,
+      column,
+      rowIndex,
+      columnIndex
+    }) {
+      if (columnIndex === 0 || columnIndex === 1 || columnIndex === 2 || columnIndex === 10) {
+        if (row.comIndex) { // 如果有值,说明需要合并
+          return [row.comIndex, 1]
+        } else return [0, 0]
+      }
+      if (columnIndex === 3 || columnIndex === 4 || columnIndex === 5 || columnIndex === 6 || columnIndex === 7) {
+        if (row.pointIndex) { // 如果有值,说明需要合并
+          return [row.pointIndex, 1]
+        } else return [0, 0]
+      }
+    },
+    computedNull(val) {
+      if (val === undefined || val === null || val === '' || val === ' ' || val === -9999) {
+        return ' - '
+      } else {
+        return val
+      }
     },
     handleSizeChange(val) {
       this.pageSize = val
@@ -324,12 +467,20 @@ export default {
       this.listCompanyPage()
     },
     editShiji(e) {
+      getCompanyById({
+        companyId: e.companyId
+      }).then(res => {
+        console.log(res)
+
+        if (res.retData.areaCode === 0) {
+          res.retData.areaCode = null
+        }
+        this.form = res.retData
+      })
+
       this.editVisible = true
-      this.form = Object.assign({}, e)
-      if (this.form.areaCode === 0) {
-        this.form.areaCode = null
-      }
-      console.log('🚀 ~ editShiji ~   this.form:', this.form)
+
+      // console.log('🚀 ~ editShiji ~   this.form:', this.form)
     },
     remove(e) {
       this.$confirm('此操作将永久删除该企业, 是否继续?', '提示', {
@@ -386,10 +537,27 @@ export default {
     },
     gotoPoint(e) {
       console.log(e)
+      if (e.pointName === ' - ') {
+        return
+      }
       this.$router.push({
         name: 'Ponit',
         params: {
-          companyId: e.companyId
+          companyId: e.companyId,
+          pointName: e.pointName
+        }
+      })
+    },
+    gotoyinzi(e) {
+      console.log(e)
+      if (e.factorName === ' - ') {
+        return
+      }
+      this.$router.push({
+        name: 'YinziList',
+        params: {
+          companyId: e.companyId,
+          pointId: e.pointId
         }
       })
     }
@@ -428,6 +596,26 @@ export default {
   .headClass {
     display: flex;
     align-items: center;
+  }
+
+  .pointName {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .pointName:hover {
+    color: #9100ff !important;
+  }
+
+</style>
+
+<style>
+  .el-table .bkred {
+    background: #ffffff;
+  }
+
+  .el-table .bkgreen {
+    background: #fafafa
   }
 
 </style>

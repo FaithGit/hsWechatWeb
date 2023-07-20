@@ -45,6 +45,7 @@
       border
       fit
       highlight-current-row
+      stripe
       style="margin-top:1.04vw"
     >
       <el-table-column align="center" label="#" width="95">
@@ -109,7 +110,7 @@
 
     <el-dialog
       v-if="addVisible"
-      title="新增设备"
+      title="新增因子"
       :append-to-body="true"
       :visible="addVisible"
       width="40%"
@@ -159,7 +160,7 @@
         <el-form-item label="是否展示" prop="isDisplay">
           <el-switch v-model="form.isDisplay" active-text="是" inactive-text="否" :active-value="1" :inactive-value="0" />
         </el-form-item>
-        <el-form-item label="是否参与分钟值超标预警判断" prop="isMinute">
+        <el-form-item label="是否参与预警判断" prop="isMinute">
           <el-switch v-model="form.isMinute" active-text="是" inactive-text="否" :active-value="1" :inactive-value="0" />
         </el-form-item>
         <el-form-item label="是否参与恒值预警判断" prop="isConstant">
@@ -177,7 +178,7 @@
         <el-form-item label="是否参与脱机预警判断" prop="isOffLine">
           <el-switch v-model="form.isOffLine" active-text="是" inactive-text="否" :active-value="1" :inactive-value="0" />
         </el-form-item>
-        <el-form-item label="是否参与异常波动预警判断" prop="isAbnormalFluctuation">
+        <!-- <el-form-item label="是否参与异常波动预警判断" prop="isAbnormalFluctuation">
           <el-switch
             v-model="form.isAbnormalFluctuation"
             active-text="是"
@@ -185,8 +186,8 @@
             :active-value="1"
             :inactive-value="0"
           />
-        </el-form-item>
-        <el-form-item label="是否参与折算" prop="isCorrected">
+        </el-form-item> -->
+        <!-- <el-form-item label="是否参与折算" prop="isCorrected">
           <el-switch
             v-model="form.isCorrected"
             active-text="是"
@@ -194,7 +195,7 @@
             :active-value="1"
             :inactive-value="0"
           />
-        </el-form-item>
+        </el-form-item> -->
 
         <div style="text-align:center;margin-top:80px">
           <el-button @click="addVisible=false">取 消</el-button>
@@ -235,7 +236,7 @@
         <el-form-item label="是否展示" prop="isDisplay">
           <el-switch v-model="form.isDisplay" active-text="是" inactive-text="否" :active-value="1" :inactive-value="0" />
         </el-form-item>
-        <el-form-item label="是否参与分钟值超标预警判断" prop="isMinute">
+        <el-form-item label="是否参与预警判断" prop="isMinute">
           <el-switch v-model="form.isMinute" active-text="是" inactive-text="否" :active-value="1" :inactive-value="0" />
         </el-form-item>
         <el-form-item label="是否参与恒值预警判断" prop="isConstant">
@@ -253,7 +254,7 @@
         <el-form-item label="是否参与脱机预警判断" prop="isOffLine">
           <el-switch v-model="form.isOffLine" active-text="是" inactive-text="否" :active-value="1" :inactive-value="0" />
         </el-form-item>
-        <el-form-item label="是否参与异常波动预警判断" prop="isAbnormalFluctuation">
+        <!-- <el-form-item label="是否参与异常波动预警判断" prop="isAbnormalFluctuation">
           <el-switch
             v-model="form.isAbnormalFluctuation"
             active-text="是"
@@ -261,8 +262,8 @@
             :active-value="1"
             :inactive-value="0"
           />
-        </el-form-item>
-        <el-form-item label="是否参与折算" prop="isCorrected">
+        </el-form-item> -->
+        <!-- <el-form-item label="是否参与折算" prop="isCorrected">
           <el-switch
             v-model="form.isCorrected"
             active-text="是"
@@ -270,7 +271,7 @@
             :active-value="1"
             :inactive-value="0"
           />
-        </el-form-item>
+        </el-form-item> -->
         <div style="text-align:center;margin-top:80px">
           <el-button @click="editVisible=false">取 消</el-button>
           <el-button type="primary" @click="editSubmit">更 新</el-button>
@@ -293,7 +294,8 @@ import {
   updatePointFactor,
   listFactorSel,
   addPointFactor,
-  deletePointFactor
+  deletePointFactor,
+  getFactor
 } from '@/api/table'
 import {
   mapGetters
@@ -454,7 +456,23 @@ export default {
     changePointId() {
       this.$refs['form1'].validateField('pointId')
     },
-    changeFactorCode() {
+    changeFactorCode(e) {
+      console.log(e)
+      if (e) {
+        getFactor({
+          factorCode: e
+        }).then(res => {
+          console.log(res)
+          this.form.isDisplay = res.retData.defaultDisplay
+          this.form.isMinute = res.retData.defaultMinute
+          this.form.isConstant = res.retData.defaultConstant
+          this.form.isZeroOut = res.retData.defaultZeroOut
+          this.form.isOffLine = res.retData.defaultOffLine
+          // this.form.isAbnormalFluctuation = res.retData.defaultAbnormalFluctuation
+          // this.form.isCorrected = res.retData.defaultCorrected
+          this.form.earlyWarningCoefficient = res.retData.defaultCoefficient
+        })
+      }
       this.$refs['form1'].validateField('factorCode')
     },
     listInstrumentTypeSel() { // 设备类型
@@ -547,9 +565,15 @@ export default {
         isMinute: 1,
         isConstant: 1,
         isZeroOut: 1,
-        isOffLine: 1,
-        isAbnormalFluctuation: 1,
-        isCorrected: 1
+        isOffLine: 1
+        // isAbnormalFluctuation: 1,
+        // isCorrected: 1
+      }
+      if (this.companyId) {
+        this.form.companyId = this.companyId
+      }
+      if (this.pointId) {
+        this.form.pointId = this.pointId
       }
     },
     sumbitPoint() {

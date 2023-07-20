@@ -54,6 +54,7 @@
       border
       fit
       highlight-current-row
+      stripe
       style="margin-top:1.04vw"
     >
       <el-table-column align="center" label="#" width="95">
@@ -541,6 +542,7 @@ export default {
     console.log(this.$route.params)
     if (JSON.stringify(this.$route.params) !== '{}') {
       this.companyId = this.$route.params.companyId
+      this.pointName = this.$route.params.pointName
       console.log('更新数据')
     }
     this.listPointPage()
@@ -671,6 +673,9 @@ export default {
       this.form = {
         companyId: null,
         groupId: null
+      }
+      if (this.companyId) {
+        this.form.companyId = this.companyId
       }
     },
     sumbitPoint() {

@@ -17,7 +17,7 @@
       <el-button type="primary" style="margin-left:10px" @click="seach">搜索</el-button>
     </div>
     <!-- 表格 -->
-    <el-table :data="records" element-loading-text="加载中" border fit highlight-current-row style="margin-top:1.04vw">
+    <el-table :data="records" element-loading-text="加载中" border fit highlight-current-row stripe style="margin-top:1.04vw">
       <el-table-column align="center" label="#" width="95">
         <template slot-scope="scope">
           {{ scope.$index+1 }}

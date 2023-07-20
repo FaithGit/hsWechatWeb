@@ -709,3 +709,24 @@ export function exportUserExam(data) { // 获取所有因子
     data
   })
 }
+export function getCompanyById(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/company/getCompanyById',
+    method: 'post',
+    data
+  })
+}
+export function getFactor(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/point/getFactor',
+    method: 'post',
+    data
+  })
+}
+export function listUserTree(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/sysUser/listUserTree',
+    method: 'post',
+    data
+  })
+}

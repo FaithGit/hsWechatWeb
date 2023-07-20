@@ -13,7 +13,7 @@
         <el-option v-for="item in statusoptions" :key="item.value+'状态'" :label="item.label" :value="item.value" />
       </el-select>
       <el-button type="primary" @click="seach">搜索</el-button>
-      <el-button type="primary" @click="openSj">生成考核试卷</el-button>
+      <el-button type="primary" @click="openSj">生成试卷</el-button>
     </div>
 
     <!-- 表格 -->
@@ -23,6 +23,7 @@
       element-loading-text="加载中"
       border
       fit
+      stripe
       highlight-current-row
       style="margin-top:1.04vw"
     >
@@ -176,13 +177,19 @@
     <!-- 随机生成试卷 -->
     <el-dialog
       v-if="sjVisible"
-      title="生成考核试卷"
+      title="生成试卷"
       :append-to-body="true"
       :visible="sjVisible"
       width="70%"
       :close-on-click-modal="false"
       @close="sjVisible=false"
     >
+      <div class="textShuomin">
+        月考：选择题20题（3），判断题20题（2），限时20分钟 <br>
+        试用期转正考：选择题20题（3），判断题20题（2），限时20分钟，考核80分以上通过<br>
+        副组长晋升考：选择题30题（2），判断题20题（2），限时30分钟，考核90分以上通过<br>
+        组长晋升考核：选择题40题（2），判断题10题（2），限时30分钟，考核90分以上通过
+      </div>
       <el-form ref="form1" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="试卷名称" prop="examName">
           <el-input v-model="form.examName" placeholder="请输入试卷名称" style="width:220px" />
@@ -193,6 +200,12 @@
         </el-form-item>
         <el-form-item label="截止时间" prop="examDeadlineTime">
           <el-date-picker v-model="form.examDeadlineTime" type="datetime" placeholder="选择截止时间" />
+        </el-form-item>
+        <el-form-item label="试卷类型" prop="examType">
+          <el-select v-model="form.examType" placeholder="请选择">
+            <el-option label="月考" :value="2" />
+            <el-option label="考核" :value="3" />
+          </el-select>
         </el-form-item>
         <el-form-item label="答题限时" prop="examAnswerTime">
           <el-input-number v-model="form.examAnswerTime" :min="0" placeholder="请输入试卷答题限时时间(分钟)" /> 分钟
@@ -205,6 +218,7 @@
             :normalizer="normalizer2"
             placeholder="请选择对应考试人员"
             no-children-text="暂无数据"
+            :value-consists-of="'LEAF_PRIORITY'"
           />
         </el-form-item>
         <el-row :gutter="20" style="margin-bottom:20px">
@@ -272,7 +286,7 @@ import {
   getExam,
   randomGenerateExam,
   removeExam,
-  listUser
+  listUserTree
 } from '@/api/table'
 import {
   mapGetters
@@ -361,6 +375,11 @@ export default {
           message: '请选择试卷截止时间',
           trigger: 'change'
         }],
+        examType: [{
+          required: true,
+          message: '请选择试卷类型',
+          trigger: 'change'
+        }],
         examAnswerTime: [{
           required: true,
           message: '请输入试卷答题限时时间(分钟)',
@@ -371,8 +390,8 @@ export default {
       normalizer2(node) {
         // if (!node.children.length) delete node.children
         return {
-          id: node.userId,
-          label: node.userName,
+          id: node.id,
+          label: node.label,
           children: node.children && node.children.length ? node.children : 0
         }
       }
@@ -384,13 +403,13 @@ export default {
     ])
   },
   mounted() {
-    this.listUser()
+    this.listUserTree()
     this.listExam()
   },
   methods: {
 
-    listUser() { // 试卷列表
-      listUser({}).then(res => {
+    listUserTree() { // 试卷列表
+      listUserTree({}).then(res => {
         console.log(res)
         this.userlist = res.retData
       })
@@ -478,7 +497,8 @@ export default {
         fillInTheBlankNum: 0,
         fillInTheBlankScores: 0,
         essayQuestionNum: 0,
-        essayQuestionScores: 0
+        essayQuestionScores: 0,
+        examType: ''
       }
     },
     upFile() { // 上传题目
@@ -587,6 +607,7 @@ export default {
             userId: this.userId,
             examName: this.form.examName,
             testUserIds: this.form.testUserIds,
+            examType: this.form.examType,
             examPublishTime: moment(this.form.examPublishTime).format('YYYY-MM-DD HH:mm:ss'),
             examDeadlineTime: moment(this.form.examDeadlineTime).format('YYYY-MM-DD HH:mm:ss'),
             examAnswerTime: this.form.examAnswerTime,
@@ -680,6 +701,14 @@ export default {
   .testDetails {
     font-size: 16px;
     line-height: 26px;
+  }
+
+  .textShuomin {
+    position: absolute;
+    right: 30px;
+    line-height: 20px;
+    border: 1px solid #eee;
+    padding: 10px;
   }
 
 </style>

@@ -20,6 +20,7 @@
       element-loading-text="加载中"
       border
       fit
+      stripe
       highlight-current-row
       style="margin-top:1.04vw"
     >

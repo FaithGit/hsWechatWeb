@@ -43,6 +43,7 @@
       element-loading-text="加载中"
       border
       fit
+      stripe
       highlight-current-row
       style="margin-top:1.04vw"
     >
@@ -471,6 +472,12 @@ export default {
         pointId: null,
         checkStatus: 1,
         startYear: ''
+      }
+      if (this.companyId) {
+        this.form.companyId = this.companyId
+      }
+      if (this.pointId) {
+        this.form.pointId = this.pointId
       }
     },
     sumbitPoint() {

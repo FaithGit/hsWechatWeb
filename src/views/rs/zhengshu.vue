@@ -16,6 +16,7 @@
       border
       fit
       highlight-current-row
+      stripe
       style="margin-top:1.04vw"
     >
       <el-table-column align="center" label="#" width="95">
