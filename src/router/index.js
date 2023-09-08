@@ -137,7 +137,8 @@ export const asyncRoutes = [{
     component: () => import('@/views/video/index'),
     meta: {
       title: '视频管理',
-      icon: 'video'
+      icon: 'video',
+      roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl']
     }
   }]
 },
@@ -184,7 +185,7 @@ export const asyncRoutes = [{
   meta: {
     title: '系统管理',
     icon: 'dashboard',
-    roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl']
+    roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl', 'ywybzz', 'ywybzy', 'ywybfzz']
   },
   children: [{
     path: 'company',
@@ -219,6 +220,15 @@ export const asyncRoutes = [{
     component: () => import('@/views/company/yinziList'),
     meta: {
       title: '点位因子管理',
+      icon: 'pointYinzi'
+    }
+  },
+  {
+    path: 'yinzi',
+    name: 'Yinzi',
+    component: () => import('@/views/company/yinzi'),
+    meta: {
+      title: '因子管理',
       icon: 'yinzi'
     }
   }
@@ -229,7 +239,7 @@ export const asyncRoutes = [{
   meta: {
     title: '人事管理',
     icon: 'rs',
-    roles: ['zjb', 'admin', 'rs']
+    roles: ['zjb', 'admin', 'rs', 'ywybjl']
   },
   children: [{
     path: 'rygk',

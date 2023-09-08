@@ -30,18 +30,18 @@
     >
       <el-table-column align="center" label="#" width="95">
         <template slot-scope="scope">
-          {{ scope.$index+1 }}
+          {{ (scope.row.index+1)+(pageIndex-1)*pageSize }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="企业名称" prop="comName" />
       <el-table-column align="center" label="所属区域">
         <template slot-scope="scope">
-          {{ scope.row.areaName==''?'-':scope.row.areaName }}
+          {{ computedNull(scope.row.areaName) }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="点位名称">
         <template slot-scope="scope">
-          <div :class="[scope.row.pointName!==' - '?'pointName':'']" @click="gotoPoint(scope.row)">
+          <div :class="[scope.row.pointName!=='-'?'pointName':'']" @click="gotoPoint(scope.row)">
             {{ scope.row.pointName }}
           </div>
 
@@ -69,7 +69,7 @@
       </el-table-column>
       <el-table-column align="center" label="因子名称">
         <template slot-scope="scope">
-          <div :class="[scope.row.factorName!==' - '?'pointName':'']" @click="gotoyinzi(scope.row)">
+          <div :class="[scope.row.factorName!=='-'?'pointName':'']" @click="gotoyinzi(scope.row)">
             {{ scope.row.factorName }}
           </div>
         </template>
@@ -306,7 +306,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'userId'
+      'userId', 'roleId', 'userGroupId'
     ])
   },
   mounted() {
@@ -342,7 +342,9 @@ export default {
         comName: this.comName,
         areaCode: this.areaCode || '',
         pageIndex: this.pageIndex,
-        pageSize: this.pageSize
+        pageSize: this.pageSize,
+        roleId: this.roleId,
+        groupId: this.userGroupId
       }).then(res => {
         console.log(res)
         this.records = res.retData.records
@@ -448,8 +450,8 @@ export default {
       }
     },
     computedNull(val) {
-      if (val === undefined || val === null || val === '' || val === ' ' || val === -9999) {
-        return ' - '
+      if (val === undefined || val === null || val === '' || val === ' ') {
+        return '-'
       } else {
         return val
       }
@@ -537,7 +539,7 @@ export default {
     },
     gotoPoint(e) {
       console.log(e)
-      if (e.pointName === ' - ') {
+      if (e.pointName === '-') {
         return
       }
       this.$router.push({
@@ -550,7 +552,7 @@ export default {
     },
     gotoyinzi(e) {
       console.log(e)
-      if (e.factorName === ' - ') {
+      if (e.factorName === '-') {
         return
       }
       this.$router.push({

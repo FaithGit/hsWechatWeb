@@ -730,3 +730,52 @@ export function listUserTree(data) { // 获取所有因子
     data
   })
 }
+export function listFactorPage(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/company/listFactorPage',
+    method: 'post',
+    data
+  })
+}
+export function addFactor(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/company/addFactor',
+    method: 'post',
+    data
+  })
+}
+export function updateFactor(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/company/updateFactor',
+    method: 'post',
+    data
+  })
+}
+export function getFactorById(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/company/getFactorById',
+    method: 'post',
+    data
+  })
+}
+export function getPointById(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/point/getPointById',
+    method: 'post',
+    data
+  })
+}
+export function getInstrumentById(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/instrument/getInstrumentById',
+    method: 'post',
+    data
+  })
+}
+export function getPointQRCode(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/operate/getPointQRCode',
+    method: 'post',
+    data
+  })
+}

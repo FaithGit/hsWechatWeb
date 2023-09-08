@@ -1,4 +1,3 @@
-
 function isRealNum(val) {
   // isNaN()函数 把空串 空格 以及NUll 按照0来处理 所以先去除，
 
@@ -15,8 +14,7 @@ function isRealNum(val) {
 }
 
 export function moblie(rule, value, callback) {
-  if(value==''||value==undefined||value==null){
-    
+  if (value === '' || value === undefined || value === null) {
     return callback(new Error('请输入手机号'))
   }
   var reg = new RegExp('^[0-9]*$') // 纯数字
@@ -44,38 +42,35 @@ export function password(rule, value, callback) {
   }
 }
 export function lonAndLat(rule, value, callback) {
-  if(value==''||value==undefined||value==null){
-    
+  if (value == '' || value == undefined || value == null) {
     return callback(new Error('请输入经纬度'))
   }
-  if(value.indexOf(" ")!==-1){
+  if (value.indexOf(' ') !== -1) {
     return callback(new Error('不能含有空格'))
   }
   const arr = value.split(',')
-  var temp1 = isRealNum(arr[0]) 
+  var temp1 = isRealNum(arr[0])
   var temp2 = isRealNum(arr[1])
 
   if (arr.length === 2) {
-    if (temp1 && temp2) {//判断格式是否正确
-      let _j=Number(arr[0])
-      console.log("🚀 ~ lonAndLat ~ arr[0]", arr[0].length)
-      console.log("🚀 ~ lonAndLat ~ arr[0]", arr[1].length)
-      let _w=Number(arr[1])
+    if (temp1 && temp2) { // 判断格式是否正确
+      const _j = Number(arr[0])
+      console.log('🚀 ~ lonAndLat ~ arr[0]', arr[0].length)
+      console.log('🚀 ~ lonAndLat ~ arr[0]', arr[1].length)
+      const _w = Number(arr[1])
 
-      if(arr[0].length<6||arr[1].length<5){
+      if (arr[0].length < 6 || arr[1].length < 5) {
         return callback(new Error('经纬度至少保留2位小数'))
       }
 
-
-      if(_j>121.16||_j<120){
+      if (_j > 121.16 || _j < 120) {
         return callback(new Error('经度不在嘉兴市内'))
       }
-      if(_w>31.2||_j<30.21){
+      if (_w > 31.2 || _j < 30.21) {
         return callback(new Error('纬度不在嘉兴市内'))
       }
-      
-      callback()
 
+      callback()
     } else {
       if (temp1) {
         return callback(new Error('请检查纬度格式'))

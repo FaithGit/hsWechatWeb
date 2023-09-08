@@ -43,38 +43,31 @@
       element-loading-text="加载中"
       border
       fit
-      stripe
-      highlight-current-row
+      :span-method="arraySpanMethod"
+      :row-class-name="tableRowClassName"
       style="margin-top:1.04vw"
     >
       <el-table-column align="center" label="#" width="95">
         <template slot-scope="scope">
-          {{ scope.$index+1 }}
+          {{ (scope.row.index+1)+(pageIndex-1)*pageSize }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="企业名称" prop="comName" />
       <el-table-column align="center" label="点位名称" prop="pointName" />
       <el-table-column align="center" label="设备名称">
         <template slot-scope="scope">
-          {{ (scope.row.instrumentRealName==null||scope.row.instrumentRealName=='')?'-':scope.row.instrumentRealName }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="设备类型">
-        <template slot-scope="scope">
-          {{ (scope.row.typeName==null||scope.row.typeName=='')?'-':scope.row.typeName }}
+          {{ computedNull(scope.row.instrumentName) }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="是否需要维护">
         <template slot-scope="scope">
-          {{ (scope.row.checkStatusName==null||scope.row.checkStatusName=='')?'-':scope.row.checkStatusName }}
+          {{ computedNull(scope.row.checkStatusName) }}
         </template>
       </el-table-column>
 
       <el-table-column align="center" label="操作">
         <template slot-scope="scope">
           <el-button @click="editPoint(scope.row)">编辑</el-button>
-          <!-- <el-button @click="gotoPoint(scope.row)">设备管理</el-button>
-          <el-button @click="gotoPoint(scope.row)">因子管理</el-button> -->
           <el-button type="danger" @click="remove(scope.row)"> 删除</el-button>
         </template>
       </el-table-column>
@@ -122,15 +115,8 @@
             @input="riskPersonDeptChangeValue"
           />
         </el-form-item>
-        <el-form-item label="运维时设备名称" prop="instrumentName">
-          <el-input v-model="form.instrumentName" placeholder="请输入运维时设备名称" />
-        </el-form-item>
-        <el-form-item label="设备名称" prop="instrumentRealName">
-          <el-input v-model="form.instrumentRealName" placeholder="请输入设备名称" />
-        </el-form-item>
-
         <el-form-item label="设备类型" prop="instrumentType">
-          <el-select v-model="form.instrumentType" placeholder="请选择设备类型">
+          <el-select v-model="form.instrumentType" placeholder="请选择设备类型" @change="toggleInstrumentType">
             <el-option
               v-for="item in shebeilist"
               :key="'3'+item.instrumentType+item.instrumentTypeName"
@@ -139,6 +125,13 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="运维时设备名称" prop="instrumentName">
+          <el-input v-model="form.instrumentName" placeholder="请输入运维时设备名称" />
+        </el-form-item>
+        <el-form-item label="设备名称" prop="instrumentRealName">
+          <el-input v-model="form.instrumentRealName" placeholder="请输入设备名称" />
+        </el-form-item>
+
         <el-form-item label="开始时间年份" prop="startYear">
           <el-input v-model="form.startYear" placeholder="请输入开始时间年份" />
         </el-form-item>
@@ -172,15 +165,8 @@
     >
 
       <el-form ref="form1" :model="form" label-width="140px" :rules="rules">
-        <el-form-item label="运维时设备名称" prop="instrumentName">
-          <el-input v-model="form.instrumentName" placeholder="请输入运维时设备名称" />
-        </el-form-item>
-        <el-form-item label="设备名称" prop="instrumentRealName">
-          <el-input v-model="form.instrumentRealName" placeholder="请输入设备名称" />
-        </el-form-item>
-
         <el-form-item label="设备类型" prop="instrumentType">
-          <el-select v-model="form.instrumentType" placeholder="请选择设备类型">
+          <el-select v-model="form.instrumentType" placeholder="请选择设备类型" @change="toggleInstrumentType">
             <el-option
               v-for="item in shebeilist"
               :key="'2'+item.instrumentType+item.instrumentTypeName"
@@ -189,6 +175,13 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="运维时设备名称" prop="instrumentName">
+          <el-input v-model="form.instrumentName" placeholder="请输入运维时设备名称" />
+        </el-form-item>
+        <el-form-item label="设备名称" prop="instrumentRealName">
+          <el-input v-model="form.instrumentRealName" placeholder="请输入设备名称" />
+        </el-form-item>
+
         <el-form-item label="开始时间年份" prop="startYear">
           <el-input v-model="form.startYear" placeholder="请输入开始时间年份" />
         </el-form-item>
@@ -224,7 +217,8 @@ import {
   listShortPointSel,
   listInstrumentTypeSel,
   addInstrument,
-  deleteInstrument
+  deleteInstrument,
+  getInstrumentById
 } from '@/api/table'
 import {
   mapGetters
@@ -351,7 +345,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'userId'
+      'userId', 'roleId', 'userGroupId'
     ])
   },
   activated() {
@@ -374,6 +368,51 @@ export default {
     this.listShortPointSel()
   },
   methods: {
+    computedNull(val) {
+      if (val === undefined || val === null || val === '' || val === ' ') {
+        return '-'
+      } else {
+        return val
+      }
+    },
+    // 表格合并方法
+    arraySpanMethod({
+      row,
+      column,
+      rowIndex,
+      columnIndex
+    }) {
+      if (columnIndex === 0 || columnIndex === 1) {
+        if (row.comIndex) { // 如果有值,说明需要合并
+          return [row.comIndex, 1]
+        } else return [0, 0]
+      }
+      if (columnIndex === 2) {
+        if (row.pointIndex) { // 如果有值,说明需要合并
+          return [row.pointIndex, 1]
+        } else return [0, 0]
+      }
+    },
+    tableRowClassName({
+      row,
+      rowIndex
+    }) {
+      // console.log('row', row)
+      if (row.index % 2 === 0) {
+        return 'bkred'
+      } else {
+        return 'bkgreen'
+      }
+    },
+    toggleInstrumentType(e) {
+      console.log(e)
+      var findObj = this.shebeilist.find(i => {
+        return i.instrumentType === e
+      })
+      console.log(findObj)
+      this.form.instrumentName = findObj.instrumentTypeName
+      this.form.instrumentRealName = findObj.instrumentTypeName
+    },
     riskPersonDeptChangeValue() {
       // form是表单名 riskPersonDept是prop名
 
@@ -440,11 +479,94 @@ export default {
         companyId: this.companyId || '',
         pointId: this.pointId || '',
         instrumentType: this.pointStatus || '',
+        roleId: this.roleId,
+        groupId: this.userGroupId,
         pageIndex: this.pageIndex,
         pageSize: this.pageSize
       }).then(res => {
         console.log(res)
-        this.records = res.retData.records
+        var temp = res.retData.records
+        // this.records = res.retData.records
+        var newRecords = []
+
+        const comIndex = [] // 公司行数
+        const pointIndex = [] // 点位行数
+        var comNum = 0 // 公司基数
+        var pointNum = 0 // 点位基数
+
+        temp.forEach((e, index) => {
+          comNum = 0
+          if (e.points.length === 0) { // 企业没有点位
+            newRecords.push({
+              comName: e.comName,
+              companyId: e.companyId,
+              index: index,
+              pointName: '-',
+              pointId: '-',
+              instrumentName: '-',
+              instrumentId: '-',
+              checkStatusName: '-',
+              checkStatus: '-'
+            })
+            comNum++
+            pointIndex.push(1)
+          } else {
+            e.points.forEach(i => {
+              // console.log(i)
+              if (i.instruments.length === 0) { // 点位没有点位设备
+                newRecords.push({
+                  comName: e.comName,
+                  companyId: e.companyId,
+                  index: index,
+                  pointName: i.pointName,
+                  pointId: i.pointId,
+                  instrumentName: '-',
+                  instrumentId: '-',
+                  checkStatusName: '-',
+                  checkStatus: '-'
+                })
+                comNum++
+                pointIndex.push(1)
+              } else {
+                pointNum = 0
+                i.instruments.forEach(iiner => {
+                  newRecords.push({
+                    comName: e.comName,
+                    companyId: e.companyId,
+                    index: index,
+                    pointName: i.pointName,
+                    pointId: i.pointId,
+                    instrumentName: iiner.instrumentName,
+                    instrumentId: iiner.instrumentId,
+                    checkStatusName: iiner.checkStatusName,
+                    checkStatus: iiner.checkStatus
+                  })
+                  comNum++
+                  pointNum++
+                })
+                pointIndex.push(pointNum)
+              }
+            })
+          }
+          comIndex.push(comNum)
+        })
+        console.log('comIndex', comIndex)
+        console.log('pointIndex', pointIndex)
+
+        let com = 1
+        for (let i = 0; i < comIndex.length; i++) {
+          newRecords[com - 1].comIndex = comIndex[i]
+          com += comIndex[i]
+        }
+
+        com = 1
+        for (let i = 0; i < pointIndex.length; i++) {
+          newRecords[com - 1].pointIndex = pointIndex[i]
+          com += pointIndex[i]
+        }
+
+        this.records = newRecords
+        console.log(newRecords)
         this.total = res.retData.total
       })
     },
@@ -461,8 +583,15 @@ export default {
       this.listInstrumentPage()
     },
     editPoint(e) {
-      this.editVisible = true
-      this.form = Object.assign({}, e)
+      console.log(e)
+      getInstrumentById({
+        instrumentId: e.instrumentId
+      }).then(res => {
+        console.log(res)
+        this.editVisible = true
+        this.form = res.retData
+      })
+
       console.log('🚀 ~ editPoint ~   this.form:', this.form)
     },
     addShebei(e) {
@@ -479,6 +608,7 @@ export default {
       if (this.pointId) {
         this.form.pointId = this.pointId
       }
+      this.listShortPointSel2()
     },
     sumbitPoint() {
       // if (this.form.pointId == null || this.form.pointId == undefined || this.form.pointId == '') {
@@ -555,6 +685,16 @@ export default {
   .headClass {
     display: flex;
     align-items: center;
+  }
+
+</style>
+<style>
+  .el-table .bkred {
+    background: #ffffff;
+  }
+
+  .el-table .bkgreen {
+    background: #fafafa
   }
 
 </style>

@@ -57,32 +57,34 @@
       <el-table-column align="center" label="点位名称" prop="pointName" />
       <el-table-column align="center" label="因子名称">
         <template slot-scope="scope">
-          {{ (scope.row.factorName==null||scope.row.factorName=='')?'-':scope.row.factorName }}
+          {{ computedNull(scope.row.factorName) }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="因子编码">
         <template slot-scope="scope">
-          {{ (scope.row.factorCode==null||scope.row.factorCode=='')?'-':scope.row.factorCode }}
+          {{ computedNull(scope.row.factorCode) }}
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" label="浓度报警下限值">
+        <template slot-scope="scope">
+          {{ computedNull(scope.row.alarmLowerLimit) }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="浓度报警上限值">
         <template slot-scope="scope">
-          {{ (scope.row.alarmUpperLimit==null||scope.row.alarmUpperLimit=='')?'-':scope.row.alarmUpperLimit }}
+          {{ computedNull(scope.row.alarmUpperLimit) }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="浓度报警下限值">
-        <template slot-scope="scope">
-          {{ (scope.row.alarmLowerLimit==null||scope.row.alarmLowerLimit=='')?'-':scope.row.alarmLowerLimit }}
-        </template>
-      </el-table-column>
+
       <el-table-column align="center" label="预警系数">
         <template slot-scope="scope">
-          {{ (scope.row.earlyWarningCoefficient==null||scope.row.earlyWarningCoefficient=='')?'-':scope.row.earlyWarningCoefficient }}
+          {{ computedNull(scope.row.earlyWarningCoefficient) }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="是否展示">
         <template slot-scope="scope">
-          {{ (scope.row.isDisplayName==null||scope.row.isDisplayName=='')?'-':scope.row.isDisplayName }}
+          {{ computedNull(scope.row.isDisplayName) }}
         </template>
       </el-table-column>
 
@@ -148,11 +150,13 @@
             @input="changeFactorCode"
           />
         </el-form-item>
-        <el-form-item label="浓度报警上限值" prop="alarmUpperLimit">
-          <el-input v-model="form.alarmUpperLimit" placeholder="浓度报警上限值" />
-        </el-form-item>
+
         <el-form-item label="浓度报警下限值" prop="alarmLowerLimit">
-          <el-input v-model="form.alarmLowerLimit" placeholder="浓度报警下限值" />
+          <el-input-number v-model="form.alarmLowerLimit" placeholder="报警下限值" />
+        </el-form-item>
+        <el-form-item label="浓度报警上限值" prop="alarmUpperLimit">
+          <el-input-number v-model="form.alarmUpperLimit" placeholder="报警上限值" />
+          <div v-if="alarmShow" class="alarmShow">上限值需小于下限值</div>
         </el-form-item>
         <el-form-item label="预警系数" prop="earlyWarningCoefficient">
           <el-input-number v-model="form.earlyWarningCoefficient" />
@@ -224,11 +228,12 @@
         <el-form-item label="因子名称">
           {{ form.factorName }}
         </el-form-item>
-        <el-form-item label="浓度报警上限值" prop="alarmUpperLimit">
-          <el-input v-model="form.alarmUpperLimit" placeholder="浓度报警上限值" />
-        </el-form-item>
         <el-form-item label="浓度报警下限值" prop="alarmLowerLimit">
-          <el-input v-model="form.alarmLowerLimit" placeholder="浓度报警下限值" />
+          <el-input-number v-model="form.alarmLowerLimit" placeholder="报警下限值" />
+        </el-form-item>
+        <el-form-item label="浓度报警上限值" prop="alarmUpperLimit">
+          <el-input-number v-model="form.alarmUpperLimit" placeholder="报警上限值" />
+          <div v-if="alarmShow" class="alarmShow">上限值需小于下限值</div>
         </el-form-item>
         <el-form-item label="预警系数" prop="earlyWarningCoefficient">
           <el-input-number v-model="form.earlyWarningCoefficient" />
@@ -326,6 +331,7 @@ export default {
       addVisible: false,
       editVisible: false,
       listLoading: false,
+      alarmShow: false,
       form: {},
       allyjList: [], // 全部药剂列表
       yaojiChoose: [], // 全部药剂列表
@@ -372,12 +378,12 @@ export default {
         alarmUpperLimit: [{
           required: true,
           message: '请输入浓度报警上限值',
-          trigger: 'blur'
+          trigger: 'change'
         }],
         alarmLowerLimit: [{
           required: true,
           message: '请输入浓度报警下限值',
-          trigger: 'blur'
+          trigger: 'change'
         }]
 
         // socialCreditCode: [{
@@ -416,7 +422,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'userId'
+      'userId', 'roleId', 'userGroupId'
     ])
   },
   activated() {
@@ -440,7 +446,13 @@ export default {
     this.listFactorSel()
   },
   methods: {
-
+    computedNull(val) {
+      if (val === undefined || val === null || val === '' || val === ' ') {
+        return '-'
+      } else {
+        return val
+      }
+    },
     changeCom(node, instanceId) {
       console.log('🚀 ~ changeCom ~ node,instanceId:', node, instanceId)
       this.listShortPointSel()
@@ -513,7 +525,9 @@ export default {
         pointId: this.pointId || '',
         factorCode: this.factorId || '',
         pageIndex: this.pageIndex,
-        pageSize: this.pageSize
+        pageSize: this.pageSize,
+        roleId: this.roleId,
+        groupId: this.userGroupId
       }).then(res => {
         console.log(res)
         this.records = res.retData.records
@@ -534,6 +548,7 @@ export default {
     },
     editPoint(e) {
       this.editVisible = true
+      this.alarmShow = false
       this.form = Object.assign({}, e)
       console.log('🚀 ~ editPoint ~   this.form:', this.form)
     },
@@ -569,8 +584,10 @@ export default {
         // isAbnormalFluctuation: 1,
         // isCorrected: 1
       }
+      this.alarmShow = false
       if (this.companyId) {
         this.form.companyId = this.companyId
+        this.listShortPointSel2()
       }
       if (this.pointId) {
         this.form.pointId = this.pointId
@@ -579,6 +596,13 @@ export default {
     sumbitPoint() {
       this.$refs.form1.validate((valid) => {
         if (valid) {
+          if (this.form.alarmLowerLimit > this.form.alarmUpperLimit) {
+            this.alarmShow = true
+            return
+          } else {
+            this.alarmShow = false
+          }
+
           addPointFactor(this.form).then(res => {
             console.log(res)
             this.$notify({
@@ -594,6 +618,12 @@ export default {
     editSubmit() {
       this.$refs.form1.validate((valid) => {
         if (valid) {
+          if (this.form.alarmLowerLimit > this.form.alarmUpperLimit) {
+            this.alarmShow = true
+            return
+          } else {
+            this.alarmShow = false
+          }
           updatePointFactor(this.form).then(res => {
             console.log(res)
             this.$notify({
@@ -644,6 +674,13 @@ export default {
   .headClass {
     display: flex;
     align-items: center;
+  }
+
+  .alarmShow {
+    color: #F56C6C;
+    font-size: 12px;
+    line-height: 1;
+    padding-top: 4px;
   }
 
 </style>

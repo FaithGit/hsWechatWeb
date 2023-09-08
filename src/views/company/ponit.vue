@@ -19,6 +19,14 @@
       <el-select v-model="pointStatus" placeholder="请选择站点状态" class="seachInput" clearable>
         <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
+      污染源种类：
+      <el-select v-model="pollutionType" placeholder="请选择污染源种类" clearable class="seachInput">
+        <el-option label="废水" :value="1" />
+        <el-option label="废气" :value="2" />
+        <el-option label="vocs" :value="3" />
+        <el-option label="地表水" :value="4" />
+        <el-option label="其他" :value="5" />
+      </el-select>
 
       <el-button type="primary" @click="seach">搜索</el-button>
       <el-button type="primary" @click="addPoint1">新增点位</el-button>
@@ -57,47 +65,76 @@
       stripe
       style="margin-top:1.04vw"
     >
-      <el-table-column align="center" label="#" width="95">
+      <el-table-column align="center" label="#" width="30">
         <template slot-scope="scope">
           {{ scope.$index+1 }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="企业名称" prop="comName" />
       <el-table-column align="center" label="点位名称" prop="pointName" />
-      <el-table-column align="center" label="点位简称" prop="pointShortName" />
-      <el-table-column align="center" label="站点状态" prop="pointStatusName" width="80" />
-      <el-table-column align="center" label="运维组">
+      <el-table-column align="center" label="点位简称" prop="pointShortName" width="60" />
+      <el-table-column align="center" label="站点状态" prop="pointStatusName" width="60" />
+      <el-table-column align="center" label="运维组" width="80">
         <template slot-scope="scope">
-          {{ (scope.row.groupName==null||scope.row.groupName=='')?'-':scope.row.groupName }}
+          {{ computedNull(scope.row.groupName) }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="排放标准" width="200">
         <template slot-scope="scope">
-          {{ (scope.row.standardName==null||scope.row.standardName=='')?'-':scope.row.standardName }}
+          {{ computedNull(scope.row.standardName) }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="关注程度" width="80">
+      <el-table-column align="center" label="关注程度" width="60">
         <template slot-scope="scope">
-          {{ (scope.row.concernLevelName==null||scope.row.concernLevelName=='')?'-':scope.row.concernLevelName }}
+          {{ computedNull(scope.row.concernLevelName) }}
+
         </template>
       </el-table-column>
       <el-table-column align="center" label="数采仪编码(mn)">
         <template slot-scope="scope">
-          {{ (scope.row.dciMn==null||scope.row.dciMn=='')?'-':scope.row.dciMn }}
+          {{ computedNull(scope.row.dciMn) }}
+
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="数采仪版本号">
+        <template slot-scope="scope">
+          {{ computedNull(scope.row.dciVersion) }}
+
         </template>
       </el-table-column>
       <el-table-column align="center" label="数采仪ip">
         <template slot-scope="scope">
-          {{ (scope.row.dciIp==null||scope.row.dciIp=='')?'-':scope.row.dciIp }}
+          {{ computedNull(scope.row.dciIp) }}
+
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="参数" width="220">
+        <template slot-scope="scope">
+          <div>烟道截面积：
+            {{ computedNull(scope.row.flueCrossArea) }}
+
+          </div>
+          <div>速度场系数：
+            {{ computedNull(scope.row.velocityFieldCoefficient) }}
+
+          </div>
+          <div>基准氧含量：
+            {{ computedNull(scope.row.oxygenReferenceValue) }}
+
+          </div>
+          <div>过量空气系数：
+            {{ computedNull(scope.row.excessAirFactor) }}
+          </div>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="操作" width="400">
+      <el-table-column align="center" label="操作" width="300">
         <template slot-scope="scope">
           <el-button @click="editPoint(scope.row)">编辑</el-button>
+          <el-button @click="erweima(scope.row)">二维码</el-button>
           <el-button @click="gotoShebei(scope.row)">设备管理</el-button>
-          <el-button @click="gotoyinzi(scope.row)">因子管理</el-button>
-          <el-button type="danger" @click="remove(scope.row)"> 删除</el-button>
+          <el-button style="margin-top:5px" @click="gotoyinzi(scope.row)">因子管理</el-button>
+          <el-button type="danger" style="margin-top:5px" @click="remove(scope.row)"> 删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -116,15 +153,15 @@
 
     <el-dialog
       v-if="addVisible"
-      title="新增点位"
+      :title="futitle"
       :append-to-body="true"
       :visible="addVisible"
-      width="40%"
+      width="41vw"
       :close-on-click-modal="false"
       @close="addVisible=false"
     >
-      <el-form ref="form1" :model="form" label-width="140px" :rules="rules">
-        <el-form-item label="企业名称" prop="companyId">
+      <el-form ref="form1" :model="form" :inline="true" label-width="120px" :rules="rules" label-position="top">
+        <el-form-item v-if="futitle=='新增点位'" label="企业名称" prop="companyId" class="formWidth2">
           <treeselect
             v-model="form.companyId"
             :multiple="false"
@@ -134,143 +171,27 @@
             @input="riskPersonDeptChangeValue"
           />
         </el-form-item>
-        <el-form-item label="点位名称" prop="pointName">
-          <el-input v-model="form.pointName" placeholder="请输入点位名称" />
-        </el-form-item>
-        <el-form-item label="点位简称" prop="pointShortName">
-          <el-input v-model="form.pointShortName" placeholder="请输入点位简称" />
-        </el-form-item>
-        <el-form-item label="数采仪编码mn号" prop="dciMn">
-          <el-input v-model="form.dciMn" placeholder="请输入数采仪编码mn号  " />
-        </el-form-item>
-        <el-form-item label="数采仪ip" prop="dciIp">
-          <el-input v-model="form.dciIp" placeholder="请输入数采仪ip" />
-        </el-form-item>
-        <el-form-item label="数采仪系统类型" prop="dciType">
-          <el-select v-model="form.dciType" placeholder="请选择">
-            <el-option label="海晟数采仪" :value="1" />
-            <el-option label="其他" :value="2" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="关注程度" prop="concernLevel">
-          <el-select v-model="form.concernLevel" placeholder="请选择关注程度">
-            <el-option label="重点" :value="1" />
-            <el-option label="非重点" :value="2" />
-            <el-option label="非污染源" :value="3" />
-            <el-option label="企业自测" :value="4" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="排放口许可证" prop="dischargePortPermit">
-          <el-input v-model="form.dischargePortPermit" placeholder="请输入排放口许可证" />
-        </el-form-item>
-
-        <el-form-item label="站点状态" prop="pointStatus">
-          <el-select v-model="form.pointStatus" placeholder="请选择站点状态">
-            <el-option label="在用" :value="1" />
-            <el-option label="停运" :value="2" />
-            <el-option label="建设(调试)" :value="3" />
-            <el-option label="合同转包" :value="4" />
-            <el-option label="合同终止" :value="5" />
-            <el-option label="拆除" :value="6" />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="污染源种类" prop="pollutionType">
-          <el-select v-model="form.pollutionType" placeholder="请选择污染源种类" @change="lisDischargeStandard">
-            <el-option label="废水" :value="1" />
-            <el-option label="废气" :value="2" />
-            <el-option label="vocs" :value="3" />
-          </el-select>
-        </el-form-item>
-        <el-form-item v-if="form.pollutionType" label="排放标准" prop="dischargeStandardId">
-
-          <el-popover placement="right" title="" width="200" trigger="hover" :content="computedLabel">
-            <treeselect
-              slot="reference"
-              v-model="form.dischargeStandardId"
-              :multiple="false"
-              :options="dischargeStandardIdList"
-              :normalizer="normalizer3"
-              placeholder="请选择排放标准"
-              :clearable="false"
-              class="fuSelect"
-              @select="changeDischargeStandardId"
-            />
-          </el-popover>
-
-        </el-form-item>
-        <el-form-item label="紧急联系人" prop="emergencyContact">
-          <el-input v-model="form.emergencyContact" placeholder="请输入紧急联系人" />
-        </el-form-item>
-        <el-form-item label="紧急联系人电话" prop="emergencyMobile">
-          <el-input v-model="form.emergencyMobile" placeholder="紧急联系人电话" />
-        </el-form-item>
-        <el-form-item label="经度" prop="lng">
-          <el-input v-model="form.lng" placeholder="请输入经度" />
-        </el-form-item>
-        <el-form-item label="维度" prop="lat">
-          <el-input v-model="form.lat" placeholder="请输入维度" />
-        </el-form-item>
-        <el-form-item label="运维组">
-          <treeselect
-            v-model="form.groupId"
-            :multiple="false"
-            :options="groupList"
-            :normalizer="normalizer2"
-            placeholder="请选择运维组"
-          />
-        </el-form-item>
-        <div style="text-align:center;margin-top:80px">
-          <el-button @click="addVisible=false">取 消</el-button>
-          <el-button type="primary" @click="sumbitPoint">确 定</el-button>
-        </div>
-      </el-form>
-    </el-dialog>
-
-    <el-dialog
-      v-if="editVisible"
-      title="编辑点位"
-      :append-to-body="true"
-      :visible="editVisible"
-      width="40%"
-      :close-on-click-modal="false"
-      @close="editVisible=false"
-    >
-
-      <el-form ref="form1" :model="form" label-width="140px" :rules="rules">
-        <el-form-item label="企业名称" prop="comName">
+        <el-form-item v-if="futitle!='新增点位'" label="企业名称" prop="companyId" class="formWidth2">
           <el-input v-model="form.comName" placeholder="请输入点位名称" readonly="" />
         </el-form-item>
-        <el-form-item label="点位名称" prop="pointName">
+        <el-form-item label="点位名称" prop="pointName" class="formWidth4">
           <el-input v-model="form.pointName" placeholder="请输入点位名称" />
         </el-form-item>
-        <el-form-item label="点位简称" prop="pointShortName">
+        <el-form-item label="点位简称" prop="pointShortName" class="formWidth4">
           <el-input v-model="form.pointShortName" placeholder="请输入点位简称" />
         </el-form-item>
-        <el-form-item label="数采仪编码mn号" prop="dciMn">
-          <el-input v-model="form.dciMn" placeholder="请输入数采仪编码mn号  " />
-        </el-form-item>
-        <el-form-item label="数采仪ip" prop="dciIp">
-          <el-input v-model="form.dciIp" placeholder="请输入数采仪ip" />
-        </el-form-item>
-        <el-form-item label="数采仪系统类型" prop="dciType">
-          <el-select v-model="form.dciType" placeholder="请选择">
-            <el-option label="海晟数采仪" :value="1" />
-            <el-option label="其他" :value="2" />
+
+        <el-form-item label="污染源种类" prop="pollutionType" class="formWidth4">
+          <el-select v-model="form.pollutionType" placeholder="请选择污染源种类" @change="lisDischargeStandard">
+            <el-option label="废水" :value="1" />
+            <el-option label="废气" :value="2" />
+            <el-option label="vocs" :value="3" />
+            <el-option label="地表水" :value="4" />
+            <el-option label="其他" :value="5" />
           </el-select>
         </el-form-item>
-        <el-form-item label="关注程度" prop="concernLevel">
-          <el-select v-model="form.concernLevel" placeholder="请选择关注程度">
-            <el-option label="重点" :value="1" />
-            <el-option label="非重点" :value="2" />
-            <el-option label="非污染源" :value="3" />
-            <el-option label="企业自测" :value="4" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="排放口许可证" prop="dischargePortPermit">
-          <el-input v-model="form.dischargePortPermit" placeholder="请输入排放口许可证" />
-        </el-form-item>
-        <el-form-item label="站点状态" prop="pointStatus">
+
+        <el-form-item label="站点状态" prop="pointStatus" class="formWidth4">
           <el-select v-model="form.pointStatus" placeholder="请选择站点状态">
             <el-option label="在用" :value="1" />
             <el-option label="停运" :value="2" />
@@ -280,17 +201,21 @@
             <el-option label="拆除" :value="6" />
           </el-select>
         </el-form-item>
-        <el-form-item label="污染源种类" prop="pollutionType">
-          <el-select v-model="form.pollutionType" placeholder="请选择污染源种类" @change="lisDischargeStandard">
-            <el-option label="废水" :value="1" />
-            <el-option label="废气" :value="2" />
-            <el-option label="vocs" :value="3" />
+
+        <el-form-item label="关注程度" prop="concernLevel" class="formWidth4">
+          <el-select v-model="form.concernLevel" placeholder="请选择关注程度">
+            <el-option label="重点" :value="1" />
+            <el-option label="非重点" :value="2" />
+            <el-option label="非污染源" :value="3" />
+            <el-option label="企业自测" :value="4" />
           </el-select>
         </el-form-item>
-        <el-form-item v-if="form.pollutionType" label="排放标准" prop="dischargeStandardId">
-          <!-- <treeselect v-model="form.dischargeStandardId" :multiple="false" :options="dischargeStandardIdList"
-            :normalizer="normalizer3" placeholder="请选择排放标准" /> -->
 
+        <el-form-item label="排放口许可证" prop="dischargePortPermit" class="formWidth4">
+          <el-input v-model="form.dischargePortPermit" placeholder="请输入排放口许可证" />
+        </el-form-item>
+
+        <el-form-item v-if="form.pollutionType" label="排放标准" prop="dischargeStandardId">
           <el-popover placement="right" title="" width="200" trigger="hover" :content="computedLabel">
             <treeselect
               slot="reference"
@@ -304,21 +229,50 @@
               @select="changeDischargeStandardId"
             />
           </el-popover>
-
         </el-form-item>
-        <el-form-item label="紧急联系人" prop="emergencyContact">
+
+        <el-form-item label="紧急联系人" prop="emergencyContact" class="formWidth4">
           <el-input v-model="form.emergencyContact" placeholder="请输入紧急联系人" />
         </el-form-item>
-        <el-form-item label="紧急联系人电话" prop="emergencyMobile">
+        <el-form-item label="紧急联系人电话" prop="emergencyMobile" class="formWidth4">
           <el-input v-model="form.emergencyMobile" placeholder="紧急联系人电话" />
         </el-form-item>
-        <el-form-item label="经度" prop="lng">
+
+        <el-form-item label="经度" prop="lng" class="formWidth4">
           <el-input v-model="form.lng" placeholder="请输入经度" />
         </el-form-item>
-        <el-form-item label="维度" prop="lat">
+        <el-form-item label="维度" prop="lat" class="formWidth4">
           <el-input v-model="form.lat" placeholder="请输入维度" />
         </el-form-item>
-        <el-form-item label="运维组">
+
+        <el-form-item label="数采仪系统类型" prop="dciType">
+          <el-select v-model="form.dciType" placeholder="请选择" class="formWidth4">
+            <el-option label="海晟数采仪" :value="1" />
+            <el-option label="其他" :value="2" />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="数采仪ip" prop="dciIp" class="formWidth4">
+          <el-input v-model="form.dciIp" placeholder="请输入数采仪ip" />
+        </el-form-item>
+
+        <el-form-item label="数采仪编码mn号" prop="dciMn" class="formWidth2">
+          <el-input v-model="form.dciMn" placeholder="请输入数采仪编码mn号  " />
+        </el-form-item>
+
+        <el-form-item label="秘钥" class="formWidth4">
+          <el-input v-model="form.secretKey" placeholder="请输入秘钥" />
+        </el-form-item>
+        <el-form-item label="是否传送数据" prop="isDataSend" class="formWidth4">
+          <el-switch
+            v-model="form.isDataSend"
+            active-text="传送 "
+            inactive-text="不传送"
+            :active-value="1"
+            :inactive-value="0"
+          />
+        </el-form-item>
+        <el-form-item label="运维组" class="formWidth2">
           <treeselect
             v-model="form.groupId"
             :multiple="false"
@@ -327,9 +281,24 @@
             placeholder="请选择运维组"
           />
         </el-form-item>
+
+        <el-form-item label="烟道截面积" prop="flueCrossArea" class="formWidth4">
+          <el-input v-model="form.flueCrossArea" placeholder="请输入烟道截面积" />
+        </el-form-item>
+        <el-form-item label="速度场系数" prop="velocityFieldCoefficient" class="formWidth4">
+          <el-input v-model="form.velocityFieldCoefficient" placeholder="请输入速度场系数" />
+        </el-form-item>
+        <el-form-item label="基准氧含量" prop="oxygenReferenceValue" class="formWidth4">
+          <el-input v-model="form.oxygenReferenceValue" placeholder="请输入基准氧含量" />
+        </el-form-item>
+        <el-form-item label="过量空气系数" prop="excessAirFactor" class="formWidth4">
+          <el-input v-model="form.excessAirFactor" placeholder="请输入过量空气系数" />
+        </el-form-item>
+
         <div style="text-align:center;margin-top:80px">
-          <el-button @click="editVisible=false">取 消</el-button>
-          <el-button type="primary" @click="editSubmit">更 新</el-button>
+          <el-button @click="addVisible=false">取 消</el-button>
+          <el-button v-if="futitle=='新增点位'" type="primary" @click="sumbitPoint">确 定</el-button>
+          <el-button v-if="futitle=='编辑点位'" type="primary" @click="editSubmit">更 新</el-button>
         </div>
       </el-form>
     </el-dialog>
@@ -353,7 +322,9 @@ import {
   lisDischargeStandard,
   deletePoint,
   getAreaCodeTree,
-  exportPoint
+  exportPoint,
+  getPointById,
+  getPointQRCode
 } from '@/api/table'
 import {
   mapGetters
@@ -377,10 +348,12 @@ export default {
       allAreacode: [],
       groupList: [],
       pointStatus: '',
+      futitle: '新增点位',
       computedLabel: '请选择排放标准',
       comName: '',
       pointName: '',
       status: '',
+      pollutionType: '',
       addVisible: false,
       editVisible: false,
       listLoading: false,
@@ -535,7 +508,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'userId'
+      'userId', 'roleId', 'userGroupId'
     ])
   },
   activated() {
@@ -553,6 +526,13 @@ export default {
     this.getAreaCodeTree()
   },
   methods: {
+    computedNull(val) {
+      if (val === undefined || val === null || val === '' || val === ' ') {
+        return '-'
+      } else {
+        return val
+      }
+    },
     riskPersonDeptChangeValue() {
       // form是表单名 riskPersonDept是prop名
       this.$refs['form1'].validateField('companyId')
@@ -563,6 +543,7 @@ export default {
         areaCode: this.areaCode || '',
         pointName: this.pointName,
         groupId: this.groupId || '',
+        roleId: this.roleId,
         pointStatus: this.pointStatus,
         pageIndex: this.pageIndex,
         pageSize: this.pageSize
@@ -629,6 +610,8 @@ export default {
         areaCode: this.areaCode || '',
         pointName: this.pointName,
         groupId: this.groupId || '',
+        pollutionType: this.pollutionType || '',
+        roleId: this.roleId,
         pointStatus: this.pointStatus,
         pageIndex: this.pageIndex,
         pageSize: this.pageSize
@@ -651,28 +634,38 @@ export default {
       this.listPointPage()
     },
     editPoint(e) {
-      this.editVisible = true
-      this.form = Object.assign({}, e)
+      this.addVisible = true
+      this.futitle = '编辑点位'
+      // this.form = Object.assign({}, e)
 
-      lisDischargeStandard({
-        pollutionType: this.form.pollutionType
+      getPointById({
+        pointId: e.pointId
       }).then(res => {
         console.log(res)
-        // this.form.dischargeStandardId = null
-        this.dischargeStandardIdList = res.retData
-        const nameTemp = this.dischargeStandardIdList.find(e => {
-          return e.id === this.form.dischargeStandardId
+        this.form = res.retData
+
+        lisDischargeStandard({
+          pollutionType: this.form.pollutionType
+        }).then(res => {
+          console.log(res)
+          // this.form.dischargeStandardId = null
+          this.dischargeStandardIdList = res.retData
+          const nameTemp = this.dischargeStandardIdList.find(e => {
+            return e.id === this.form.dischargeStandardId
+          })
+          this.computedLabel = nameTemp.standardName
         })
-        this.computedLabel = nameTemp.standardName
       })
 
       console.log('🚀 ~ editPoint ~   this.form:', this.form)
     },
     addPoint1(e) {
       this.addVisible = true
+      this.futitle = '新增点位'
       this.form = {
         companyId: null,
-        groupId: null
+        groupId: null,
+        isDataSend: 0
       }
       if (this.companyId) {
         this.form.companyId = this.companyId
@@ -727,6 +720,22 @@ export default {
           pointId: e.pointId
         }
       })
+    },
+    erweima(e) {
+      console.log(e)
+      getPointQRCode({
+        pointId: e.pointId
+      }).then(res => {
+        console.log(res)
+        fetch(res.retData.url).then(response => response.blob()).then(blob => {
+          var downloadLink = document.createElement('a')
+          downloadLink.href = URL.createObjectURL(blob)
+          downloadLink.download = res.retData.filename + '.png'
+          document.body.appendChild(downloadLink)
+          downloadLink.click()
+          URL.revokeObjectURL(downloadLink.href)
+        })
+      })
     }
   }
 }
@@ -772,6 +781,21 @@ export default {
     word-break: break-all;
     white-space: pre-wrap;
     border-bottom: 1px solid #eee;
+  }
+
+  .formWidth2 {
+    width: 18.2vw;
+    margin-right: 0.6vw;
+  }
+
+  .formWidth3 {
+    width: 11vw;
+    margin-right: 0.6vw;
+  }
+
+  .formWidth4 {
+    width: 8.8vw;
+    margin-right: 0.6vw;
   }
 
 </style>

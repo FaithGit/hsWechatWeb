@@ -36,47 +36,47 @@
       <el-table-column align="center" label="姓名" prop="userName" />
       <el-table-column align="center" label="部门名称">
         <template slot-scope="scope">
-          {{ scope.row.departmentName||'-' }}
+          {{ computedNull(scope.row.departmentName) }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="角色">
         <template slot-scope="scope">
-          {{ scope.row.roleName||'-' }}
+          {{ computedNull(scope.row.roleName) }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="联系方式">
         <template slot-scope="scope">
-          {{ scope.row.telephone||'-' }}
+          {{ computedNull(scope.row.telephone) }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="学历">
         <template slot-scope="scope">
-          {{ scope.row.education||'-' }}
+          {{ computedNull(scope.row.education) }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="身份证">
         <template slot-scope="scope">
-          {{ scope.row.idnum||'-' }}
+          {{ computedNull(scope.row.idnum) }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="出生年月">
         <template slot-scope="scope">
-          {{ scope.row.birth||'-' }}
+          {{ computedNull(scope.row.birth) }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="紧急联系人">
         <template slot-scope="scope">
-          {{ scope.row.emergencyContact||'-' }}
+          {{ computedNull(scope.row.emergencyContact) }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="紧急联系方式">
         <template slot-scope="scope">
-          {{ scope.row.emergencyMobile||'-' }}
+          {{ computedNull(scope.row.emergencyMobile) }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="入职时间">
         <template slot-scope="scope">
-          {{ scope.row.entryTime||'-' }}
+          {{ computedNull(scope.row.entryTime) }}
         </template>
       </el-table-column>
 
@@ -298,6 +298,13 @@ export default {
     this.listUserInfoPage()
   },
   methods: {
+    computedNull(val) {
+      if (val === undefined || val === null || val === '' || val === ' ') {
+        return '-'
+      } else {
+        return val
+      }
+    },
     gotoZs(e) {
       console.log(e.userId)
       this.$router.push({

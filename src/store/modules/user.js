@@ -16,7 +16,9 @@ const state = {
   token: '',
   name: '',
   avatar: '',
-  userId: ''
+  userId: '',
+  roleId: '',
+  groupId: ''
 }
 
 const mutations = {
@@ -31,6 +33,8 @@ const mutations = {
   },
   SET_userInfo: (state, userInfo) => {
     state.userId = userInfo.userId
+    state.roleId = userInfo.roleId
+    state.groupId = userInfo.groupId
   }
 }
 
