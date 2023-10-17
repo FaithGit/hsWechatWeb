@@ -102,6 +102,7 @@
             :options="comlist"
             :normalizer="normalizer"
             placeholder="请选择企业"
+            :clearable="false"
             @input="changeCom2"
           />
         </el-form-item>
@@ -363,9 +364,9 @@ export default {
   },
   mounted() {
     this.listCompanySel()
-    this.listShortPointSel2()
+    // this.listShortPointSel2()
     this.listInstrumentTypeSel()
-    this.listShortPointSel()
+    // this.listShortPointSel()
   },
   methods: {
     computedNull(val) {
@@ -437,7 +438,11 @@ export default {
     },
     changeCom(node, instanceId) {
       console.log('🚀 ~ changeCom ~ node,instanceId:', node, instanceId)
-      this.listShortPointSel()
+      if (node === undefined) {
+        this.dianweiList = []
+      } else {
+        this.listShortPointSel()
+      }
       this.pointId = null
     },
     changeCom2(node, instanceId) {

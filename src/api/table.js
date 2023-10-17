@@ -779,3 +779,17 @@ export function getPointQRCode(data) { // 获取所有因子
     data
   })
 }
+export function listOplog(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/sysSup/listOplog',
+    method: 'post',
+    data
+  })
+}
+export function addLoginLog(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/sysSup/addLoginLog',
+    method: 'post',
+    data
+  })
+}

@@ -1,7 +1,8 @@
 // import { login, logout, getInfo } from '@/api/user'
 import {
   login,
-  getUserByToken
+  getUserByToken,
+  addLoginLog
 } from '@/api/table'
 import {
   setToken,
@@ -49,10 +50,22 @@ const actions = {
       verificationCode,
       verificationImageId
     } = userInfo
+
+    var C = require('crypto-js')
+    // 需要加密的字符串
+    const str = password
+    // 密码
+    const pwd = 'hskj_1207_202309'
+    // 加密
+    const ciphertext = C.AES.encrypt(str, C.enc.Utf8.parse(pwd), {
+      mode: C.mode.ECB,
+      padding: C.pad.Pkcs7
+    }).toString()
+
     return new Promise((resolve, reject) => {
       login({
         telephone: username.trim(),
-        password: password,
+        password: ciphertext,
         verificationCode,
         verificationImageId
       }).then(response => {
@@ -77,6 +90,11 @@ const actions = {
       }).then(res => {
         console.log('res', res)
         commit('SET_userInfo', res.retData)
+
+        addLoginLog({
+          type: 2
+        })
+
         resolve(res.retData.roleId)
       }).catch(error => {
         reject(error)

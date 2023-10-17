@@ -231,6 +231,15 @@ export const asyncRoutes = [{
       title: '因子管理',
       icon: 'yinzi'
     }
+  },
+  {
+    path: 'rizhi',
+    name: 'Rizhi',
+    component: () => import('@/views/company/rizhi.vue'),
+    meta: {
+      title: '系统日志',
+      icon: 'rizhi'
+    }
   }
   ]
 }, {
@@ -305,7 +314,6 @@ export const asyncRoutes = [{
       icon: 'jiangcheng'
     }
   }
-
   ]
 },
 {

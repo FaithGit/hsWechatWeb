@@ -30,6 +30,7 @@
 
       <el-button type="primary" @click="seach">搜索</el-button>
       <el-button type="primary" @click="addPoint1">新增点位</el-button>
+      <el-button type="primary" @click="daochu">导出</el-button>
     </div>
     <div class="headClass" style="margin-top:10px">
       区域：
@@ -42,8 +43,11 @@
         class="seachInput"
         no-children-text="暂无数据"
       />
-      运维组：
+      <span v-if="!computedRoleBoolean">
+        运维组：
+      </span>
       <treeselect
+        v-if="!computedRoleBoolean"
         v-model="groupId"
         :multiple="false"
         :options="groupList"
@@ -51,7 +55,13 @@
         placeholder="请选择运维组"
         class="seachInput"
       />
-      <el-button type="primary" @click="daochu">导出</el-button>
+
+      是否传送数据：
+      <el-select v-model="isDataSend" placeholder="是否传送数据" clearable class="seachInput">
+        <el-option label="传送" :value="1" />
+        <el-option label="不传送" :value="0" />
+      </el-select>
+
     </div>
 
     <!-- 表格 -->
@@ -342,7 +352,9 @@ export default {
       companyId: null,
       groupId: null,
       areaCode: null,
+      computedRoleBoolean: false,
       total: 0,
+      isDataSend: '',
       records: [],
       comlist: [],
       allAreacode: [],
@@ -524,6 +536,12 @@ export default {
     this.listGroupSel()
     this.listCompanySel()
     this.getAreaCodeTree()
+
+    if (this.roleId === 'ywybzz' || this.roleId === 'ywybfzz' || this.roleId === 'ywybzy') {
+      this.computedRoleBoolean = true
+    } else {
+      this.computedRoleBoolean = false
+    }
   },
   methods: {
     computedNull(val) {
@@ -542,7 +560,9 @@ export default {
         companyId: this.companyId || '',
         areaCode: this.areaCode || '',
         pointName: this.pointName,
-        groupId: this.groupId || '',
+        isDataSend: this.isDataSend,
+        groupId: this.computedRoleBoolean ? this.roleId : this.groupId || '',
+        pollutionType: this.pollutionType || '',
         roleId: this.roleId,
         pointStatus: this.pointStatus,
         pageIndex: this.pageIndex,
@@ -609,7 +629,8 @@ export default {
         companyId: this.companyId || '',
         areaCode: this.areaCode || '',
         pointName: this.pointName,
-        groupId: this.groupId || '',
+        isDataSend: this.isDataSend,
+        groupId: this.computedRoleBoolean ? this.roleId : this.groupId || '',
         pollutionType: this.pollutionType || '',
         roleId: this.roleId,
         pointStatus: this.pointStatus,

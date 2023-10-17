@@ -13,5 +13,6 @@ module.exports = {
    * @description Whether show the logo in sidebar
    */
   sidebarLogo: false,
+  // baseUrl: process.env.NODE_ENV === 'development' ? 'http://47.98.163.147:9999/haisheng' : 'https://operate.sea-splendor.com/haisheng'
   baseUrl: process.env.NODE_ENV === 'development' ? 'https://operate.sea-splendor.com/haisheng' : 'https://operate.sea-splendor.com/haisheng'
 }
