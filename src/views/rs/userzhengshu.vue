@@ -35,8 +35,9 @@
       border
       fit
       highlight-current-row
-      stripe
       style="margin-top:1.04vw"
+      :span-method="arraySpanMethod"
+      :row-class-name="tableRowClassName"
     >
       <el-table-column align="center" label="#" width="95">
         <template slot-scope="scope">
@@ -49,8 +50,8 @@
 
       <el-table-column align="center" label="操作" width="280">
         <template slot-scope="scope">
-          <el-button @click="edit(scope.row)">编辑</el-button>
-          <el-button type="danger" @click="remove(scope.row)">删除</el-button>
+          <el-button v-if="scope.row.userCertificateId!=''" @click="edit(scope.row)">编辑</el-button>
+          <el-button v-if="scope.row.userCertificateId!=''" type="danger" @click="remove(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -102,6 +103,20 @@
           <el-date-picker v-model="form.expireDate" type="date" placeholder="请选择过期日期" />
         </el-form-item>
 
+        <el-form-item label="证书附件">
+          (点击列表查看附件)
+          <el-upload
+            action="#"
+            :on-change="handleChangeID"
+            :on-remove="handleRemoveID"
+            :on-preview="handlePreview"
+            :auto-upload="false"
+            :file-list="zhiweiList"
+          >
+            <el-button size="small" type="primary">点击上传</el-button>
+          </el-upload>
+        </el-form-item>
+
         <div style="text-align:center;margin-top:80px">
           <el-button @click="visible=false">取 消</el-button>
           <el-button v-if="visibleTitle=='新增用户证书'" type="primary" @click="sumbitCom">确 定</el-button>
@@ -117,6 +132,8 @@
 import Treeselect from '@riophae/vue-treeselect'
 // import the styles
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+import axios from 'axios'
+import setting from '@/settings'
 import {
   deleteUserCertificate,
   updateUserCertificate,
@@ -130,6 +147,9 @@ import {
   mapGetters
 } from 'vuex'
 import moment from 'moment'
+import {
+  getToken
+} from '@/utils/auth'
 // import moment from 'moment'
 export default {
   name: 'Userzhengshu',
@@ -158,6 +178,7 @@ export default {
       zhengshuList: [], // 全部药剂列表
       yaojiChoose: [], // 全部药剂列表
       userlist: [], // 全部药剂列表
+      zhiweiList: [], // 全部药剂列表
       rules: {
         certificateId: [{
           required: true,
@@ -215,6 +236,29 @@ export default {
     }
   },
   methods: {
+    handleChangeID(file, fileList) { // 身份附件上传
+      var formData = new FormData()
+      formData.append('file', file.raw)
+      formData.append('type', 'certificate')
+      axios.post(setting.baseUrl + '/sysSup/fileConvert', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'token': getToken()
+        }
+      })
+        .then(res => {
+          console.log(res.data)
+          this.zhiweiList.push(res.data.retData)
+        })
+    },
+    handleRemoveID(file, fileList) { // 身份附件删除
+      console.log(file, fileList)
+      this.zhiweiList = fileList
+    },
+    handlePreview(file) { // 预览
+      console.log(file)
+      window.open(file.url)
+    },
     listCertificateSel() {
       listCertificateSel({}).then(res => {
         console.log(res.retData)
@@ -235,10 +279,76 @@ export default {
         pageSize: this.pageSize
       }).then(res => {
         console.log(res)
-        this.records = res.retData.records
+
+        var temp = res.retData.records
+        var newArr = []
+        var people = []
+        var peopleNum = 0
+        temp.forEach((e, index) => {
+          peopleNum = 0
+          if (e.certificates.length === 0) {
+            newArr.push({
+              userName: e.userName,
+              certificateName: ' - ',
+              expireDate: ' - ',
+              userCertificateId: '',
+              index: index
+            })
+            people.push(1)
+          } else {
+            e.certificates.forEach(i => {
+              peopleNum++
+              // console.log(i)
+              newArr.push({
+                userName: e.userName,
+                certificateName: i.certificateName,
+                expireDate: i.expireDate,
+                userCertificateId: i.userCertificateId,
+                index: index
+              })
+            })
+            people.push(peopleNum)
+          }
+        })
+
+        let count = 1
+        for (let i = 0; i < people.length; i++) {
+          newArr[count - 1].people = people[i]
+          count += people[i]
+        }
+
+        console.log(people)
+        console.log(newArr)
+
+        this.records = newArr
         this.total = res.retData.total
       })
     },
+    // 表格合并方法
+    arraySpanMethod({
+      row,
+      column,
+      rowIndex,
+      columnIndex
+    }) {
+      if (columnIndex === 0 || columnIndex === 1) {
+        if (row.people) { // 如果有值,说明需要合并
+          return [row.people, 1]
+        } else return [0, 0]
+      }
+    },
+    tableRowClassName({
+      row,
+      rowIndex
+    }) {
+      // console.log('row', row)
+      if (row.index % 2 === 0) {
+        return 'bkred'
+      } else {
+        return 'bkgreen'
+      }
+    },
+
     handleSizeChange(val) {
       this.pageSize = val
       this.listUserCertificatePage()
@@ -250,14 +360,6 @@ export default {
     seach() {
       this.pageIndex = 1
       this.listUserCertificatePage()
-    },
-    editShiji(e) {
-      this.editVisible = true
-      this.form = Object.assign({}, e)
-      if (this.form.areaCode === 0) {
-        this.form.areaCode = null
-      }
-      console.log('🚀 ~ editShiji ~   this.form:', this.form)
     },
     remove(e) {
       console.log(e)
@@ -284,6 +386,7 @@ export default {
         console.log(res)
         this.visible = true
         this.form = res.retData
+        this.zhiweiList = res.retData.files
         this.visibleTitle = '编辑用户证书'
       })
     },
@@ -295,10 +398,19 @@ export default {
     sumbitCom() {
       this.$refs.form1.validate((valid) => {
         if (valid) {
+          var _zhiweiList = []
+          this.zhiweiList.forEach(e => {
+            _zhiweiList.push({
+              name: e.name,
+              url: e.url
+            })
+          })
+
           const newObj = {
             certificateId: this.form.certificateId,
             userId: this.form.userId,
-            expireDate: moment(this.form.expireDate).format('YYYY-MM-DD')
+            expireDate: moment(this.form.expireDate).format('YYYY-MM-DD'),
+            files: _zhiweiList
           }
           addUserCertificate(newObj).then(res => {
             console.log(res)
@@ -315,11 +427,19 @@ export default {
     editSubmit() {
       this.$refs.form1.validate((valid) => {
         if (valid) {
+          var _zhiweiList = []
+          this.zhiweiList.forEach(e => {
+            _zhiweiList.push({
+              name: e.name,
+              url: e.url
+            })
+          })
           const newObj = {
             id: this.form.id,
             certificateId: this.form.certificateId,
             userId: this.form.userId,
-            expireDate: moment(this.form.expireDate).format('YYYY-MM-DD')
+            expireDate: moment(this.form.expireDate).format('YYYY-MM-DD'),
+            files: _zhiweiList
           }
           updateUserCertificate(newObj).then(res => {
             console.log(res)
@@ -368,6 +488,16 @@ export default {
   .headClass {
     display: flex;
     align-items: center;
+  }
+
+</style>
+<style>
+  .el-table .bkred {
+    background: #ffffff;
+  }
+
+  .el-table .bkgreen {
+    background: #fafafa
   }
 
 </style>
