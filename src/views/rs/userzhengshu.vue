@@ -39,14 +39,25 @@
       :span-method="arraySpanMethod"
       :row-class-name="tableRowClassName"
     >
-      <el-table-column align="center" label="#" width="95">
+      <el-table-column align="center" label="序号" width="95">
         <template slot-scope="scope">
-          {{ scope.$index+1 }}
+          {{ scope.row.index+1 }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="用户名" prop="userName" />
+      <el-table-column align="center" label="用户名" prop="userName" width="95" />
       <el-table-column align="center" label="证书名称" prop="certificateName" />
-      <el-table-column align="center" label="到期时间" prop="expireDate" />
+      <el-table-column align="center" label="是否已上传证书">
+        <template slot-scope="scope">
+          {{ scope.row.uploadStatus==1?'已上传':scope.row.uploadStatus==0?'未上传':'-' }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="到期时间">
+        <template slot-scope="scope">
+          <span :class="[scope.row.expireStatus==1?'jijiang':scope.row.expireStatus==2?'guoqi':'']">
+            {{ scope.row.expireDate }}</span>
+
+        </template>
+      </el-table-column>
 
       <el-table-column align="center" label="操作" width="280">
         <template slot-scope="scope">
@@ -97,6 +108,9 @@
             placeholder="请选择证书"
             no-children-text="暂无数据"
           />
+        </el-form-item>
+        <el-form-item label="证书编号">
+          <el-input v-model="form.userCertificateCode" placeholder="请填写证书编号" />
         </el-form-item>
 
         <el-form-item label="过期日期" prop="expireDate">
@@ -291,6 +305,8 @@ export default {
               userName: e.userName,
               certificateName: ' - ',
               expireDate: ' - ',
+              uploadStatus: '',
+              expireStatus: '',
               userCertificateId: '',
               index: index
             })
@@ -304,6 +320,8 @@ export default {
                 certificateName: i.certificateName,
                 expireDate: i.expireDate,
                 userCertificateId: i.userCertificateId,
+                uploadStatus: i.uploadStatus,
+                expireStatus: i.expireStatus,
                 index: index
               })
             })
@@ -380,6 +398,7 @@ export default {
       })
     },
     edit(e) {
+      this.zhiweiList = []
       getUserCertificate({
         userCertificateId: e.userCertificateId
       }).then(res => {
@@ -394,6 +413,7 @@ export default {
       this.visible = true
       this.form = {}
       this.visibleTitle = '新增用户证书'
+      this.zhiweiList = []
     },
     sumbitCom() {
       this.$refs.form1.validate((valid) => {
@@ -409,6 +429,7 @@ export default {
           const newObj = {
             certificateId: this.form.certificateId,
             userId: this.form.userId,
+            userCertificateCode: this.form.userCertificateCode,
             expireDate: moment(this.form.expireDate).format('YYYY-MM-DD'),
             files: _zhiweiList
           }
@@ -438,6 +459,7 @@ export default {
             id: this.form.id,
             certificateId: this.form.certificateId,
             userId: this.form.userId,
+            userCertificateCode: this.form.userCertificateCode,
             expireDate: moment(this.form.expireDate).format('YYYY-MM-DD'),
             files: _zhiweiList
           }
@@ -488,6 +510,16 @@ export default {
   .headClass {
     display: flex;
     align-items: center;
+  }
+
+  .guoqi {
+    color: red;
+    font-weight: bold;
+  }
+
+  .jijiang {
+    color: rgb(255, 136, 0);
+    font-weight: bold;
   }
 
 </style>

@@ -793,3 +793,94 @@ export function addLoginLog(data) { // 获取所有因子
     data
   })
 }
+export function listOperateTaskPage(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/operate/listOperateTaskPage',
+    method: 'post',
+    data
+  })
+}
+export function listOperateTaskPageOnPC(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/operate/listOperateTaskPageOnPC',
+    method: 'post',
+    data
+  })
+}
+export function getBasicInfoNum(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/index/getBasicInfoNum',
+    method: 'post',
+    data
+  })
+}
+export function listOperateNumInThePastWeek(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/index/listOperateNumInThePastWeek',
+    method: 'post',
+    data
+  })
+}
+export function listReagentInfoInThePastMonth(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/index/listReagentInfoInThePastMonth',
+    method: 'post',
+    data
+  })
+}
+export function listStandardSolutionInfoInThePastMonth(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/index/listStandardSolutionInfoInThePastMonth',
+    method: 'post',
+    data
+  })
+}
+export function getRecentExam(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/index/getRecentExam',
+    method: 'post',
+    data
+  })
+}
+export function listVehicle(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/gps/listVehicle',
+    method: 'post',
+    data
+  })
+}
+export function getTripStatistics(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/gps/getTripStatistics',
+    method: 'post',
+    data
+  })
+}
+export function listDriveOilCost(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/oilFee/listDriveOilCost',
+    method: 'post',
+    data
+  })
+}
+export function oilFeeexportExcelDemo(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/oilFee/exportExcelDemo',
+    method: 'post',
+    data
+  })
+}
+export function listOilFeeTreeList(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/oilFee/listOilFeeTreeList',
+    method: 'post',
+    data
+  })
+}
+export function listTripDetailPage(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/gps/listTripDetailPage',
+    method: 'post',
+    data
+  })
+}

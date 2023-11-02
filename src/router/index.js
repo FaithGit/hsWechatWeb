@@ -54,7 +54,7 @@ export const constantRoutes = [{
     component: () => import('@/views/dashboard/index'),
     meta: {
       title: '工作台',
-      icon: 'dashboard'
+      icon: 'dashboard1'
     }
   }]
 }
@@ -128,6 +128,20 @@ export const asyncRoutes = [{
   }]
 },
 
+{
+  path: '/yunwei',
+  component: Layout,
+  children: [{
+    path: 'index',
+    name: 'YunweiList',
+    component: () => import('@/views/yunwei/list.vue'),
+    meta: {
+      title: '日常运维',
+      icon: 'yunwei',
+      roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl']
+    }
+  }]
+},
 {
   path: '/video',
   component: Layout,
@@ -241,8 +255,38 @@ export const asyncRoutes = [{
       icon: 'rizhi'
     }
   }
+
   ]
-}, {
+},
+{
+  path: '/yf',
+  component: Layout,
+  meta: {
+    title: '油费管理',
+    icon: 'yfgl',
+    roles: ['zjb', 'admin', 'ywybfjl', 'ywybjl', 'syy']
+  },
+  children: [{
+    path: 'yfgl',
+    name: 'Yfgl',
+    component: () => import('@/views/company/yfgl.vue'),
+    meta: {
+      title: '里程统计',
+      icon: 'licheng'
+    }
+  },
+  {
+    path: 'pjyh',
+    name: 'Pjyh',
+    component: () => import('@/views/company/pjyh.vue'),
+    meta: {
+      title: '月平均油耗',
+      icon: 'yfgl'
+    }
+  }
+  ]
+},
+{
   path: '/rs',
   component: Layout,
   meta: {
