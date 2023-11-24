@@ -40,7 +40,7 @@
       style="margin-top:1.04vw"
     >
 
-      <el-table-column align="center" label="#" width="95">
+      <el-table-column align="center" label="序号" width="95">
         <template slot-scope="scope">
           {{ scope.$index+1 }}
         </template>
@@ -48,6 +48,16 @@
       <el-table-column align="center" label="车牌号">
         <template slot-scope="scope">
           {{ computedNull(scope.row.licensePlate) }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="车辆分组">
+        <template slot-scope="scope">
+          {{ computedNull(scope.row.groupName) }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="组负责人" width="100">
+        <template slot-scope="scope">
+          {{ computedNull(scope.row.groupLeader) }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="应勤天数">
@@ -141,22 +151,18 @@
             {{ computedNull(scope.row.endTime) }}
           </template>
         </el-table-column>
-        <el-table-column align="center" label="地址">
+        <el-table-column align="center" label="起点">
           <template slot-scope="scope">
-            {{ computedNull(scope.row.address) }}
+            {{ computedNull(scope.row.startAddress) }}
           </template>
         </el-table-column>
-        <el-table-column align="center" label="经度" width="120">
+        <el-table-column align="center" label="终点">
           <template slot-scope="scope">
-            {{ computedNull(scope.row.lng) }}
+            {{ computedNull(scope.row.endAddress) }}
           </template>
         </el-table-column>
-        <el-table-column align="center" label="纬度" width="120">
-          <template slot-scope="scope">
-            {{ computedNull(scope.row.lat) }}
-          </template>
-        </el-table-column>
-        <el-table-column align="center" label="距离" width="100">
+
+        <el-table-column align="center" label="时长" width="100">
           <template slot-scope="scope">
             {{ computedNull(scope.row.duration) }}
           </template>
@@ -222,7 +228,7 @@ export default {
       var startTime = ''
       var endTime = ''
       startTime = moment(this.time2[0]).startOf('day').format('YYYY-MM-DD')
-      endTime = moment(this.time2[0]).startOf('day').format('YYYY-MM-DD')
+      endTime = moment(this.time2[1]).startOf('day').format('YYYY-MM-DD')
 
       listTripDetailPage({
         'licensePlate': this.licensePlatedig,
@@ -249,17 +255,16 @@ export default {
       console.log(row)
       this.chuVisible = true
       this.licensePlatedig = row.licensePlate
-      this.time2 = [moment(), moment()]
+      this.time2 = [moment(this.time).startOf('month'), moment(this.time).endOf('month').add(1, 'day')]
+      this.type = 4
       this.seach2()
     },
     getTripStatistics() {
       console.log('this.time', this.time)
       var startTime = ''
       var endTime = ''
-
       startTime = moment(this.time).startOf('month').format('YYYY-MM-DD')
-      endTime = moment(this.time).endOf('month').format('YYYY-MM-DD')
-
+      endTime = moment(this.time).endOf('month').add(1, 'day').format('YYYY-MM-DD')
       getTripStatistics({
         startDate: startTime,
         endDate: endTime,
@@ -279,6 +284,7 @@ export default {
     },
     seach2() {
       this.pageIndex = 1
+      console.log(this.time2)
       this.listTripDetailPage()
     },
     computedNull(val) {

@@ -48,7 +48,10 @@
       <el-table-column align="center" label="证书名称" prop="certificateName" />
       <el-table-column align="center" label="是否已上传证书">
         <template slot-scope="scope">
-          {{ scope.row.uploadStatus==1?'已上传':scope.row.uploadStatus==0?'未上传':'-' }}
+          <span :class="[scope.row.uploadStatus==0?'guoqi':'']">
+            {{ scope.row.uploadStatus==1?'已上传':scope.row.uploadStatus==0?'未上传':'-' }}
+          </span>
+
         </template>
       </el-table-column>
       <el-table-column align="center" label="到期时间">

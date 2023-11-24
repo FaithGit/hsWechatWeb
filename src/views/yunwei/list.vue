@@ -50,11 +50,6 @@
           {{ computedNull(scope.row.pointName) }}
         </template>
       </el-table-column>
-      <!-- <el-table-column align="center" label="异常内容">
-        <template slot-scope="scope">
-          {{ computedNull(scope.row.exceptionContent) }}
-        </template>
-      </el-table-column> -->
       <el-table-column align="center" label="运维人员">
         <template slot-scope="scope">
           {{ computedNull(scope.row.operateUsers) }}
@@ -66,11 +61,11 @@
         </template>
       </el-table-column>
 
-      <!-- <el-table-column align="center" label="操作">
+      <el-table-column align="center" label="操作" width="120">
         <template slot-scope="scope">
-          <el-button @click="editPoint(scope.row)">编辑</el-button>
+          <el-button type="primary" @click="openTaskIdDetails(scope.row)">详情</el-button>
         </template>
-      </el-table-column> -->
+      </el-table-column>
     </el-table>
     <!-- 分页 -->
     <div class="buttonPagination">
@@ -85,16 +80,78 @@
       />
     </div>
 
+    <el-dialog
+      v-if="chuVisible"
+      :title="pointNameDig"
+      :append-to-body="true"
+      :visible="chuVisible"
+      width="60%"
+      :close-on-click-modal="false"
+      @close="chuVisible=false"
+    >
+
+      <!-- 表格 -->
+      <el-table
+        :data="tableData"
+        element-loading-text="加载中"
+        border
+        fit
+        highlight-current-row
+        stripe
+        height="30.46vw"
+        style="margin-top:1.04vw"
+      >
+
+        <el-table-column align="center" label="序号" width="95">
+          <template slot-scope="scope">
+            {{ scope.$index+1 }}
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="设备名称">
+          <template slot-scope="scope">
+            {{ computedNull(scope.row.instrumentName) }}
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="设备状态">
+          <template slot-scope="scope">
+            {{ scope.row.operateStatus==1?'未开始':scope.row.operateStatus==2?'维护过程中':'已完成' }}
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="操作" width="120">
+          <template slot-scope="scope">
+            <el-button type="primary" :disabled="scope.row.operateStatus==1" @click="listStepTrees(scope.row)">详情
+            </el-button>
+          </template>
+        </el-table-column>
+
+      </el-table>
+    </el-dialog>
+
+    <el-dialog
+      v-if="innerVisible"
+      title="运维详情"
+      :append-to-body="true"
+      :visible="innerVisible"
+      width="40%"
+      :close-on-click-modal="false"
+      @close="innerVisible=false"
+    >
+      <ywStepAll :real-show-arr="realShowArr1" :instrumentName="instrumentName" />
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
 import Treeselect from '@riophae/vue-treeselect'
+import ywStepAll from './ywStepAll.vue'
 // import the styles
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import {
   listGroupSel,
-  listOperateTaskPageOnPC
+  listOperateTaskPageOnPC,
+  listOperate,
+  listStepTrees
 } from '@/api/table'
 import moment from 'moment'
 
@@ -104,21 +161,29 @@ import {
 export default {
   name: 'YunweiList',
   components: {
-    Treeselect
+    Treeselect,
+    ywStepAll
   },
   data() {
     return {
       factorCode: '',
       pointName: '',
+      pointNameDig: '',
       username: '',
       pageIndex: 1,
       groupId: null,
       pageSize: 10,
       listLoading: false,
       addVisible: false,
+      chuVisible: false,
+      innerVisible: false,
       total: 0,
+      instrumentName: '',
+      
       records: [],
+      tableData: [],
       groupList: [],
+      realShowArr1: [],
       time: [],
 
       normalizer2(node) {
@@ -170,56 +235,194 @@ export default {
     this.seach()
   },
   methods: {
-    listOperateTaskPageOnPC() {
-      console.log('this.time', this.time)
-      var startTime = ''
-      var endTime = ''
-      if (this.time == null) {
-        startTime = ''
-        endTime = ''
-      } else if (this.time.length === 0) {
-        startTime = ''
-        endTime = ''
-      } else {
-        startTime = moment(this.time[0]).format('YYYY-MM-DD')
-        endTime = moment(this.time[1]).format('YYYY-MM-DD')
-      }
-      listOperateTaskPageOnPC({
-        pointName: this.pointName,
-        username: this.username,
-        startTime: startTime,
-        endTime: endTime,
-        exceptionStatus: '', // 异常状态 1正常2异常未处理3异常已处理
-        groupId: this.groupId || '',
-        pageIndex: this.pageIndex,
-        pageSize: this.pageSize
+    listStepTrees(e) {
+      this.instrumentName=e.instrumentName
+      console.log(e)
+      listStepTrees({
+        operateId: e.operateId
       }).then(res => {
-        console.log(res)
-        this.records = res.retData.records
-        this.total = res.retData.total
+        console.log(res.retData, 'res.retData')
+        this.initArr(res.retData)
       })
     },
-    handleSizeChange(val) {
-      this.pageSize = val
-      this.listOperateTaskPageOnPC()
-    },
-    handleCurrentChange(val) {
-      this.pageIndex = val
-      this.listOperateTaskPageOnPC()
-    },
-    seach() {
-      this.pageIndex = 1
-      this.listOperateTaskPageOnPC()
-    },
-    computedNull(val) {
-      if (val === undefined || val === null || val === '' || val === ' ') {
-        return '-'
-      } else {
-        return val
+    initArr(retData) {
+      /* eslint-disable */
+        console.log('原始数组', retData)
+        console.log('原始数组长度', retData.length)
+        let realShowArr = []
+        retData.forEach(e => {
+          e.attributes.forEach(i => {
+            console.log("i", i)
+            console.log("i", i.label)
+            console.log("i", i.data)
+            if (i.controlCode == 'uploadImg') {
+              if (i.data == '') { //初始化图片
+                i.fileList = []
+              } else { //有数据，分割图片数组
+                let _fileList = i.data.split(',')
+                let arr = []
+                _fileList.forEach((y) => {
+                  arr.push(y)
+                })
+                i.fileList = arr
+              }
+            } else if (i.controlCode == 'radio') { //避免隐式转化
+              if (i.data !== '') {
+                i.data = parseInt(i.data)
+              }
+              console.log("???", i.data)
+            }
+
+          })
+          console.log('处理过upimg控件数据', e)
+
+          if (e.childSteps.length == 0) {
+            realShowArr.push(e)
+          } else {
+            realShowArr.push(e)
+            if (e.judgeType == 1) {
+              let _flag = false
+              console.log("e.judgeType == 1")
+              e.attributes.forEach(inner => {
+                // console.log(inner)
+                if (inner.data === '0') {
+                  _flag = true
+                }
+              })
+              console.log("是否有子步骤", _flag)
+
+              if (_flag) {
+                e.childSteps.forEach(innobj => {
+                  innobj.orderNum = e.orderNum + '.' + innobj.orderNum
+                  innobj.attributes.forEach(ziInner => {
+                    if (ziInner.controlCode == 'uploadImg') {
+                      if (ziInner.data == '') { //初始化图片
+                        ziInner.fileList = []
+                      } else { //有数据，分割图片数组
+                        let _fileList = ziInner.data.split(',')
+                        let arr = []
+                        _fileList.forEach((y, yindex) => {
+                          arr.push({
+                            name: yindex,
+                            url: y
+                          })
+                        })
+                        ziInner.fileList = arr
+                      }
+                    }
+                  })
+                  realShowArr.push(innobj)
+                })
+              }
+            } else if (e.judgeType == 2) {
+              let _flag = false
+              console.log("e.judgeType == 2")
+              e.attributes.forEach(inner => {
+                // console.log(inner)
+                if (inner.data === '1') {
+                  _flag = true
+                }
+
+              })
+              console.log("是否有子步骤", _flag)
+              if (_flag) {
+                e.childSteps.forEach(innobj => {
+                  console.log("innobj", innobj)
+                  innobj.orderNum = e.orderNum + '.' + innobj.orderNum
+
+                  innobj.attributes.forEach(ziInner => {
+                    if (ziInner.controlCode == 'uploadImg') {
+                      if (ziInner.data == '') { //初始化图片
+                        ziInner.fileList = []
+                      } else { //有数据，分割图片数组
+                        let _fileList = ziInner.data.split(',')
+                        let arr = []
+                        _fileList.forEach((y, yindex) => {
+                          arr.push({
+                            name: yindex,
+                            url: y
+                          })
+                        })
+                        ziInner.fileList = arr
+                      }
+                    }
+                  })
+                  realShowArr.push(innobj)
+                })
+              }
+            }
+
+            //judgeType 判断类型 0不做判断1存在否就走子流程2存在是就走子流程
+
+          }
+        })
+
+        console.log('打平后的数组', realShowArr)
+        console.log('打平后的数组长度', realShowArr.length)
+        this.realShowArr1 = realShowArr
+        this.innerVisible = true
+      },
+      openTaskIdDetails(e) { // 打开运维详情
+        console.log(e)
+        this.pointNameDig = e.pointName
+        listOperate({
+          operateTaskId: e.operateTaskId
+        }).then(res => {
+          console.log(res)
+          this.tableData = res.retData.operates
+          this.chuVisible = true
+        })
+      },
+      listOperateTaskPageOnPC() {
+        console.log('this.time', this.time)
+        var startTime = ''
+        var endTime = ''
+        if (this.time == null) {
+          startTime = ''
+          endTime = ''
+        } else if (this.time.length == 0) {
+          startTime = ''
+          endTime = ''
+        } else {
+          startTime = moment(this.time[0]).format('YYYY-MM-DD')
+          endTime = moment(this.time[1]).format('YYYY-MM-DD')
+        }
+        listOperateTaskPageOnPC({
+          pointName: this.pointName,
+          username: this.username,
+          startTime: startTime,
+          endTime: endTime,
+          exceptionStatus: '', // 异常状态 1正常2异常未处理3异常已处理
+          groupId: this.groupId || '',
+          pageIndex: this.pageIndex,
+          pageSize: this.pageSize
+        }).then(res => {
+          console.log(res)
+          this.records = res.retData.records
+          this.total = res.retData.total
+        })
+      },
+      handleSizeChange(val) {
+        this.pageSize = val
+        this.listOperateTaskPageOnPC()
+      },
+      handleCurrentChange(val) {
+        this.pageIndex = val
+        this.listOperateTaskPageOnPC()
+      },
+      seach() {
+        this.pageIndex = 1
+        this.listOperateTaskPageOnPC()
+      },
+      computedNull(val) {
+        if (val === undefined || val === null || val === '' || val === ' ') {
+          return '-'
+        } else {
+          return val
+        }
       }
     }
   }
-}
 
 </script>
 

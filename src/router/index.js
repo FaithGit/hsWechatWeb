@@ -31,33 +31,33 @@ import Layout from '@/layout'
  * all roles can be accessed
  */
 export const constantRoutes = [{
-  path: '/login',
-  component: () => import('@/views/login/index'),
-  hidden: true
-},
-{
-  path: '/redirect', // 跳转页
-  component: Layout,
-  hidden: true,
-  children: [{
-    path: '/redirect/:path*',
-    component: () => import('@/views/redirect/index.vue')
-  }]
-},
-{
-  path: '/',
-  component: Layout,
-  redirect: '/dashboard',
-  children: [{
-    path: 'dashboard',
-    name: 'Dashboard',
-    component: () => import('@/views/dashboard/index'),
-    meta: {
-      title: '工作台',
-      icon: 'dashboard1'
-    }
-  }]
-}
+    path: '/login',
+    component: () => import('@/views/login/index'),
+    hidden: true
+  },
+  {
+    path: '/redirect', // 跳转页
+    component: Layout,
+    hidden: true,
+    children: [{
+      path: '/redirect/:path*',
+      component: () => import('@/views/redirect/index.vue')
+    }]
+  },
+  {
+    path: '/',
+    component: Layout,
+    redirect: '/dashboard',
+    children: [{
+      path: 'dashboard',
+      name: 'Dashboard',
+      component: () => import('@/views/dashboard/index'),
+      meta: {
+        title: '工作台',
+        icon: 'dashboard1'
+      }
+    }]
+  }
 
 ]
 
@@ -78,294 +78,331 @@ export function resetRouter() {
 }
 
 export const asyncRoutes = [{
-  path: '/testPaper',
-  component: Layout,
-  meta: {
-    title: '试卷管理',
-    icon: 'shijuan',
-    roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl']
-  },
-  children: [{
-    path: 'shiti',
-    name: 'Shiti',
-    component: () => import('@/views/testPaper/shiti'),
-    meta: {
-      title: '试题管理',
-      icon: 'shijuan'
-    }
-  }, {
-    path: 'index',
-    name: 'TestPaper',
-    component: () => import('@/views/testPaper/index'),
+    path: '/testPaper',
+    component: Layout,
     meta: {
       title: '试卷管理',
-      icon: 'shijuan'
-    }
-  }, {
-    path: 'yuejuan',
-    name: 'Yuejuan',
-    component: () => import('@/views/testPaper/yuejuan'),
-    meta: {
-      title: '阅卷',
-      icon: 'yuejuan'
-    }
-  }, {
-    path: 'cuotiji',
-    name: 'Cuotiji',
-    component: () => import('@/views/testPaper/cuotiji'),
-    meta: {
-      title: '试题答题情况',
-      icon: 'cuotiji'
-    }
-  }, {
-    path: 'testPaper',
-    name: 'TestPaper',
-    component: () => import('@/views/testPaper/testPaper'),
-    meta: {
-      title: '答题试卷列表',
-      icon: 'testList'
-    }
-  }]
-},
-
-{
-  path: '/yunwei',
-  component: Layout,
-  children: [{
-    path: 'index',
-    name: 'YunweiList',
-    component: () => import('@/views/yunwei/list.vue'),
-    meta: {
-      title: '日常运维',
-      icon: 'yunwei',
+      icon: 'shijuan',
       roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl']
-    }
-  }]
-},
-{
-  path: '/video',
-  component: Layout,
-  children: [{
-    path: 'index',
-    name: 'Video',
-    component: () => import('@/views/video/index'),
-    meta: {
-      title: '视频管理',
-      icon: 'video',
-      roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl']
-    }
-  }]
-},
-{
-  path: '/sjby',
-  component: Layout,
-  meta: {
-    title: '标液试剂管理',
-    icon: 'pf',
-    roles: ['syy', 'admin']
-  },
-  children: [{
-    path: 'yaoji',
-    name: 'Yaoji',
-    component: () => import('@/views/yaoji/index'),
-    meta: {
-      title: '药剂管理',
-      icon: 'yaoji'
-    }
-  },
-  {
-    path: 'shiji',
-    name: 'Shiji',
-    component: () => import('@/views/shiji/index'),
-    meta: {
-      title: '试剂管理',
-      icon: 'shiji'
-    }
-  },
-  {
-    path: 'biaoye',
-    name: 'Biaoye',
-    component: () => import('@/views/biaoye/index'),
-    meta: {
-      title: '标液管理',
-      icon: 'biaoye'
-    }
-  }
-  ]
-},
-{
-  path: '/system',
-  component: Layout,
-  meta: {
-    title: '系统管理',
-    icon: 'dashboard',
-    roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl', 'ywybzz', 'ywybzy', 'ywybfzz']
-  },
-  children: [{
-    path: 'company',
-    name: 'Company',
-    component: () => import('@/views/company/index'),
-    meta: {
-      title: '企业管理',
-      icon: 'company'
-    }
-  },
-  {
-    path: 'ponit',
-    name: 'Ponit',
-    component: () => import('@/views/company/ponit'),
-    meta: {
-      title: '点位管理',
-      icon: 'Ponit'
-    }
-  },
-  {
-    path: 'shebei',
-    name: 'Shebei',
-    component: () => import('@/views/company/shebei'),
-    meta: {
-      title: '设备管理',
-      icon: 'shebei'
-    }
-  },
-  {
-    path: 'yinziList',
-    name: 'YinziList',
-    component: () => import('@/views/company/yinziList'),
-    meta: {
-      title: '点位因子管理',
-      icon: 'pointYinzi'
-    }
-  },
-  {
-    path: 'yinzi',
-    name: 'Yinzi',
-    component: () => import('@/views/company/yinzi'),
-    meta: {
-      title: '因子管理',
-      icon: 'yinzi'
-    }
-  },
-  {
-    path: 'rizhi',
-    name: 'Rizhi',
-    component: () => import('@/views/company/rizhi.vue'),
-    meta: {
-      title: '系统日志',
-      icon: 'rizhi'
-    }
-  }
-
-  ]
-},
-{
-  path: '/yf',
-  component: Layout,
-  meta: {
-    title: '油费管理',
-    icon: 'yfgl',
-    roles: ['zjb', 'admin', 'ywybfjl', 'ywybjl', 'syy']
-  },
-  children: [{
-    path: 'yfgl',
-    name: 'Yfgl',
-    component: () => import('@/views/company/yfgl.vue'),
-    meta: {
-      title: '里程统计',
-      icon: 'licheng'
-    }
-  },
-  {
-    path: 'pjyh',
-    name: 'Pjyh',
-    component: () => import('@/views/company/pjyh.vue'),
-    meta: {
-      title: '月平均油耗',
-      icon: 'yfgl'
-    }
-  }
-  ]
-},
-{
-  path: '/rs',
-  component: Layout,
-  meta: {
-    title: '人事管理',
-    icon: 'rs',
-    roles: ['zjb', 'admin', 'rs', 'ywybjl']
-  },
-  children: [{
-    path: 'rygk',
-    name: 'Rygk',
-    component: () => import('@/views/rs/index'),
-    meta: {
-      title: '人员管理',
-      icon: 'rs'
-    }
+    },
+    children: [{
+      path: 'shiti',
+      name: 'Shiti',
+      component: () => import('@/views/testPaper/shiti'),
+      meta: {
+        title: '试题管理',
+        icon: 'shijuan'
+      }
+    }, {
+      path: 'index',
+      name: 'TestPaper',
+      component: () => import('@/views/testPaper/index'),
+      meta: {
+        title: '试卷管理',
+        icon: 'shijuan'
+      }
+    }, {
+      path: 'yuejuan',
+      name: 'Yuejuan',
+      component: () => import('@/views/testPaper/yuejuan'),
+      meta: {
+        title: '阅卷',
+        icon: 'yuejuan'
+      }
+    }, {
+      path: 'cuotiji',
+      name: 'Cuotiji',
+      component: () => import('@/views/testPaper/cuotiji'),
+      meta: {
+        title: '试题答题情况',
+        icon: 'cuotiji'
+      }
+    }, {
+      path: 'testPaper',
+      name: 'TestPaper',
+      component: () => import('@/views/testPaper/testPaper'),
+      meta: {
+        title: '答题试卷列表',
+        icon: 'testList'
+      }
+    }]
   },
 
   {
-    path: 'userzhengshu',
-    name: 'Userzhengshu',
-    component: () => import('@/views/rs/userzhengshu.vue'),
+    path: '/yunwei',
+    component: Layout,
     meta: {
-      title: '用户证书管理',
-      icon: 'zhengshu'
-    }
+      title: '运维管理',
+      icon: 'yunwei'
+    },
+    children: [{
+      path: 'index',
+      name: 'YunweiList',
+      component: () => import('@/views/yunwei/list.vue'),
+      meta: {
+        title: '日常运维',
+        icon: 'yunwei',
+        roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl']
+      }
+    }]
   },
   {
-    path: 'zhengshu',
-    name: 'Zhengshu',
-    component: () => import('@/views/rs/zhengshu.vue'),
+    path: '/event',
+    component: Layout,
     meta: {
-      title: '证书管理',
-      icon: 'zhengshu'
-    }
+      title: '事件',
+      icon: 'errEvent'
+    },
+    children: [{
+      path: 'errEvent',
+      name: 'ErrEvent',
+      component: () => import('@/views/yunwei/errEvent.vue'),
+      meta: {
+        title: '异常事件',
+        icon: 'errEvent',
+        roles: ['zjb', 'admin', 'ywybjl', 'ywybfjl']
+      }
+    }]
   },
   {
-    path: 'userPeixun',
-    name: 'UserPeixun',
-    component: () => import('@/views/rs/userPeixun.vue'),
-    meta: {
-      title: '用户培训管理',
-      icon: 'peixun'
-    }
+    path: '/video',
+    component: Layout,
+    children: [{
+      path: 'index',
+      name: 'Video',
+      component: () => import('@/views/video/index'),
+      meta: {
+        title: '视频管理',
+        icon: 'video',
+        roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl']
+      }
+    }]
   },
   {
-    path: 'peixun',
-    name: 'Peixun',
-    component: () => import('@/views/rs/peixun.vue'),
+    path: '/sjby',
+    component: Layout,
     meta: {
-      title: '培训管理',
-      icon: 'peixun'
-    }
+      title: '标液试剂管理',
+      icon: 'pf',
+      roles: ['syy', 'admin']
+    },
+    children: [{
+        path: 'yaoji',
+        name: 'Yaoji',
+        component: () => import('@/views/yaoji/index'),
+        meta: {
+          title: '药剂管理',
+          icon: 'yaoji'
+        }
+      },
+      {
+        path: 'shiji',
+        name: 'Shiji',
+        component: () => import('@/views/shiji/index'),
+        meta: {
+          title: '试剂管理',
+          icon: 'shiji'
+        }
+      },
+      {
+        path: 'biaoye',
+        name: 'Biaoye',
+        component: () => import('@/views/biaoye/index'),
+        meta: {
+          title: '标液管理',
+          icon: 'biaoye'
+        }
+      },
+      {
+        path: 'peizhi',
+        name: 'Peizhi',
+        component: () => import('@/views/peizhi/index'),
+        meta: {
+          title: '配置过程',
+          icon: 'guocheng'
+        }
+      }
+    ]
   },
   {
-    path: 'zhiwei',
-    name: 'Zhiwei',
-    component: () => import('@/views/rs/zhiwei.vue'),
+    path: '/system',
+    component: Layout,
     meta: {
-      title: '用户职位变迁',
-      icon: 'zhiwei'
-    }
+      title: '系统管理',
+      icon: 'dashboard',
+      roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl', 'ywybzz', 'ywybzy', 'ywybfzz']
+    },
+    children: [{
+        path: 'company',
+        name: 'Company',
+        component: () => import('@/views/company/index'),
+        meta: {
+          title: '企业管理',
+          icon: 'company'
+        }
+      },
+      {
+        path: 'ponit',
+        name: 'Ponit',
+        component: () => import('@/views/company/ponit'),
+        meta: {
+          title: '点位管理',
+          icon: 'Ponit'
+        }
+      },
+      {
+        path: 'shebei',
+        name: 'Shebei',
+        component: () => import('@/views/company/shebei'),
+        meta: {
+          title: '设备管理',
+          icon: 'shebei'
+        }
+      },
+      {
+        path: 'yinziList',
+        name: 'YinziList',
+        component: () => import('@/views/company/yinziList'),
+        meta: {
+          title: '点位因子管理',
+          icon: 'pointYinzi'
+        }
+      },
+      {
+        path: 'yinzi',
+        name: 'Yinzi',
+        component: () => import('@/views/company/yinzi'),
+        meta: {
+          title: '因子管理',
+          icon: 'yinzi'
+        }
+      },
+      {
+        path: 'rizhi',
+        name: 'Rizhi',
+        component: () => import('@/views/company/rizhi.vue'),
+        meta: {
+          title: '系统日志',
+          icon: 'rizhi'
+        }
+      }
+
+    ]
   },
   {
-    path: 'jiangcheng',
-    name: 'Jiangcheng',
-    component: () => import('@/views/rs/jiangcheng.vue'),
+    path: '/yf',
+    component: Layout,
     meta: {
-      title: '用户奖惩记录',
-      icon: 'jiangcheng'
-    }
+      title: '油费管理',
+      icon: 'yfgl',
+      roles: ['zjb', 'admin', 'ywybfjl', 'ywybjl', 'syy']
+    },
+    children: [{
+        path: 'yfgl',
+        name: 'Yfgl',
+        component: () => import('@/views/company/yfgl.vue'),
+        meta: {
+          title: '里程统计',
+          icon: 'licheng'
+        }
+      },
+      {
+        path: 'pjyh',
+        name: 'Pjyh',
+        component: () => import('@/views/company/pjyh.vue'),
+        meta: {
+          title: '月平均油耗',
+          icon: 'yfgl'
+        }
+      }
+    ]
+  },
+  {
+    path: '/rs',
+    component: Layout,
+    meta: {
+      title: '人事管理',
+      icon: 'rs',
+    },
+    children: [{
+        path: 'rygk',
+        name: 'Rygk',
+        component: () => import('@/views/rs/index'),
+        meta: {
+          title: '人员管理',
+          icon: 'rs',
+          roles: ['zjb', 'admin', 'rs', 'ywybjl', 'bgsfzr']
+        }
+      },
+
+      {
+        path: 'userzhengshu',
+        name: 'Userzhengshu',
+        component: () => import('@/views/rs/userzhengshu.vue'),
+        meta: {
+          title: '用户证书管理',
+          icon: 'zhengshu',
+          roles: ['zjb', 'admin', 'rs', 'ywybjl', 'bgsfzr', 'sales']
+        }
+      },
+      {
+        path: 'zhengshu',
+        name: 'Zhengshu',
+        component: () => import('@/views/rs/zhengshu.vue'),
+        meta: {
+          title: '证书管理',
+          icon: 'zhengshu',
+          roles: ['zjb', 'admin', 'rs', 'ywybjl', 'bgsfzr']
+        }
+      },
+      {
+        path: 'userPeixun',
+        name: 'UserPeixun',
+        component: () => import('@/views/rs/userPeixun.vue'),
+        meta: {
+          title: '用户培训管理',
+          icon: 'peixun',
+          roles: ['zjb', 'admin', 'rs', 'ywybjl', 'bgsfzr']
+        }
+      },
+      {
+        path: 'peixun',
+        name: 'Peixun',
+        component: () => import('@/views/rs/peixun.vue'),
+        meta: {
+          title: '培训管理',
+          icon: 'peixun',
+          roles: ['zjb', 'admin', 'rs', 'ywybjl', 'bgsfzr']
+        }
+      },
+      {
+        path: 'zhiwei',
+        name: 'Zhiwei',
+        component: () => import('@/views/rs/zhiwei.vue'),
+        meta: {
+          title: '用户职位变迁',
+          icon: 'zhiwei',
+          roles: ['zjb', 'admin', 'rs', 'ywybjl', 'bgsfzr']
+        }
+      },
+      {
+        path: 'jiangcheng',
+        name: 'Jiangcheng',
+        component: () => import('@/views/rs/jiangcheng.vue'),
+        meta: {
+          title: '用户奖惩记录',
+          icon: 'jiangcheng',
+          roles: ['zjb', 'admin', 'rs', 'ywybjl', 'bgsfzr']
+        }
+      }
+    ]
+  },
+  {
+    path: '*',
+    id: '999',
+    redirect: '/404',
+    hidden: true
   }
-  ]
-},
-{
-  path: '*',
-  id: '999',
-  redirect: '/404',
-  hidden: true
-}
 ]
 
 export default router

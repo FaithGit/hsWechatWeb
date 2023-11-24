@@ -331,7 +331,6 @@ export default {
     },
     getAreaCodeTree() {
       getAreaCodeTree({
-        areaCode: 3304
       }).then(res => {
         console.log(res)
         this.allAreacode.push(res.retData)

@@ -884,3 +884,46 @@ export function listTripDetailPage(data) { // 获取所有因子
     data
   })
 }
+export function listOperate(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/operate/listOperate',
+    method: 'post',
+    data
+  })
+}
+export function listStepTrees(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/operate/listStepTrees',
+    method: 'post',
+    data
+  })
+}
+export function listReagentConfigurationProcess(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/reagent/listReagentConfigurationProcess',
+    method: 'post',
+    data
+  })
+}
+
+export function listEventCodeChoose(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/online/listEventCodeChoose',
+    method: 'post',
+    data
+  })
+}
+export function listOnlineEvent(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/online/listOnlineEvent',
+    method: 'post',
+    data
+  })
+}
+export function listPointFactorByPointId(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/online/listPointFactorByPointId',
+    method: 'post',
+    data
+  })
+}

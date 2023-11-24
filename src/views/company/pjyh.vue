@@ -24,12 +24,12 @@
       style="margin-top:1.04vw"
     >
 
-      <el-table-column align="center" label="#" width="序号">
+      <el-table-column align="center" label="序号" width="95">
         <template slot-scope="scope">
           {{ scope.$index+1 }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="车牌号">
+      <el-table-column align="center" label="车牌号" width="160">
         <template slot-scope="scope">
           {{ computedNull(scope.row.licensePlate) }}
         </template>
@@ -37,6 +37,11 @@
       <el-table-column align="center" label="车辆分组">
         <template slot-scope="scope">
           {{ computedNull(scope.row.groupName) }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="组负责人" width="100">
+        <template slot-scope="scope">
+          {{ computedNull(scope.row.groupLeader) }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="油耗计算日期">
