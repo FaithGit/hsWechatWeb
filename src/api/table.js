@@ -927,3 +927,10 @@ export function listPointFactorByPointId(data) { // 获取所有因子
     data
   })
 }
+export function listDictionarySel(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/sysSup/listDictionarySel',
+    method: 'post',
+    data
+  })
+}
