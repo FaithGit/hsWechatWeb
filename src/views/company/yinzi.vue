@@ -18,16 +18,8 @@
     </div>
 
     <!-- 表格 -->
-    <el-table
-      v-loading="listLoading"
-      :data="records"
-      element-loading-text="加载中"
-      border
-      fit
-      highlight-current-row
-      stripe
-      style="margin-top:1.04vw"
-    >
+    <el-table v-loading="listLoading" :data="records" element-loading-text="加载中" border fit highlight-current-row stripe
+      style="margin-top:1.04vw">
       <el-table-column align="center" label="#" width="95">
         <template slot-scope="scope">
           {{ scope.$index+1 }}
@@ -58,7 +50,7 @@
           {{ computedNull(scope.row.dischargeUnit) }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="缺省数据类型(浓度)">
+      <!-- <el-table-column align="center" label="缺省数据类型(浓度)">
         <template slot-scope="scope">
 
           {{ computedNull(scope.row.concentrationDataType) }}
@@ -68,15 +60,41 @@
         <template slot-scope="scope">
           {{ computedNull(scope.row.concentrationUnit) }}
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column align="center" label="排序号">
         <template slot-scope="scope">
           {{ computedNull(scope.row.orderNum) }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="原编码">
+      <!-- <el-table-column align="center" label="原编码">
         <template slot-scope="scope">
           {{ computedNull(scope.row.originalCode) }}
+        </template>
+      </el-table-column> -->
+      <el-table-column align="center" label="超标预警">
+        <template slot-scope="scope">
+          {{ computedNull(scope.row.defaultMinuteName) }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="恒值预警">
+        <template slot-scope="scope">
+          {{ computedNull(scope.row.defaultConstantName) }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="出零预警">
+        <template slot-scope="scope">
+          {{ computedNull(scope.row.defaultZeroOutName) }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="折算校验">
+        <template slot-scope="scope">
+          {{ computedNull(scope.row.defaultCorrectedName) }}
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" label="小程序展示">
+        <template slot-scope="scope">
+          {{ computedNull(scope.row.defaultDisplayName) }}
         </template>
       </el-table-column>
 
@@ -88,26 +106,13 @@
     </el-table>
     <!-- 分页 -->
     <div class="buttonPagination">
-      <el-pagination
-        :current-page="pageIndex"
-        :page-sizes="[10,20,30,40,50]"
-        :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
+      <el-pagination :current-page="pageIndex" :page-sizes="[10,20,30,40,50]" :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
+        @current-change="handleCurrentChange" />
     </div>
 
-    <el-dialog
-      v-if="addVisible"
-      :title="digTitle"
-      :append-to-body="true"
-      :visible="addVisible"
-      width="50%"
-      :close-on-click-modal="false"
-      @close="addVisible=false"
-    >
+    <el-dialog v-if="addVisible" :title="digTitle" :append-to-body="true" :visible="addVisible" width="50%"
+      :close-on-click-modal="false" @close="addVisible=false">
       <el-form ref="form1" :model="form" :rules="rules">
         <el-row :gutter="20">
           <el-col :span="12">
@@ -155,86 +160,51 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="默认预警系数" prop="defaultCoefficient">
+            <el-form-item label="预警系数" prop="defaultCoefficient">
               <el-input-number v-model="form.defaultCoefficient" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="默认是否展示" prop="defaultDisplay">
-              <el-switch
-                v-model="form.defaultDisplay"
-                active-text="是"
-                inactive-text="否"
-                :active-value="1"
-                :inactive-value="0"
-              />
+            <el-form-item label="是否展示" prop="defaultDisplay">
+              <el-switch v-model="form.defaultDisplay" active-text="是" inactive-text="否" :active-value="1"
+                :inactive-value="0" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="默认是否参与分钟值超标预警判断" prop="defaultMinute">
-              <el-switch
-                v-model="form.defaultMinute"
-                active-text="是"
-                inactive-text="否"
-                :active-value="1"
-                :inactive-value="0"
-              />
+            <el-form-item label="是否参与分钟值超标预警判断" prop="defaultMinute">
+              <el-switch v-model="form.defaultMinute" active-text="是" inactive-text="否" :active-value="1"
+                :inactive-value="0" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="默认是否参与恒值预警判断" prop="defaultConstant">
-              <el-switch
-                v-model="form.defaultConstant"
-                active-text="是"
-                inactive-text="否"
-                :active-value="1"
-                :inactive-value="0"
-              />
+            <el-form-item label="是否参与恒值预警判断" prop="defaultConstant">
+              <el-switch v-model="form.defaultConstant" active-text="是" inactive-text="否" :active-value="1"
+                :inactive-value="0" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="默认是否参与出零预警判断" prop="defaultZeroOut">
-              <el-switch
-                v-model="form.defaultZeroOut"
-                active-text="是"
-                inactive-text="否"
-                :active-value="1"
-                :inactive-value="0"
-              />
+            <el-form-item label="是否参与出零预警判断" prop="defaultZeroOut">
+              <el-switch v-model="form.defaultZeroOut" active-text="是" inactive-text="否" :active-value="1"
+                :inactive-value="0" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="默认是否参与脱机预警判断" prop="defaultOffLine">
-              <el-switch
-                v-model="form.defaultOffLine"
-                active-text="是"
-                inactive-text="否"
-                :active-value="1"
-                :inactive-value="0"
-              />
+            <el-form-item label="是否参与脱机预警判断" prop="defaultOffLine">
+              <el-switch v-model="form.defaultOffLine" active-text="是" inactive-text="否" :active-value="1"
+                :inactive-value="0" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="默认是否参与异常波动预警判断" prop="defaultAbnormalFluctuation">
-              <el-switch
-                v-model="form.defaultAbnormalFluctuation"
-                active-text="是"
-                inactive-text="否"
-                :active-value="1"
-                :inactive-value="0"
-              />
+            <el-form-item label="是否参与异常波动预警判断" prop="defaultAbnormalFluctuation">
+              <el-switch v-model="form.defaultAbnormalFluctuation" active-text="是" inactive-text="否" :active-value="1"
+                :inactive-value="0" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
 
-            <el-form-item label="默认是否参与折算" prop="defaultCorrected">
-              <el-switch
-                v-model="form.defaultCorrected"
-                active-text="是"
-                inactive-text="否"
-                :active-value="1"
-                :inactive-value="0"
-              />
+            <el-form-item label="是否参与折算校验" prop="defaultCorrected">
+              <el-switch v-model="form.defaultCorrected" active-text="是" inactive-text="否" :active-value="1"
+                :inactive-value="0" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -257,176 +227,176 @@
 </template>
 
 <script>
-import {
-  listFactorPage,
-  addFactor,
-  getFactorById,
-  updateFactor
-} from '@/api/table'
-import {
-  mapGetters
-} from 'vuex'
-export default {
-  name: 'YinziList',
-  data() {
-    return {
-      factorCode: '',
-      factorName: '',
-      factorType: '',
-      pageIndex: 1,
-      pageSize: 10,
-      listLoading: false,
-      addVisible: false,
-      digTitle: '新增因子',
-      total: 0,
-      records: [],
-      form: {},
-      rules: {
-        factorName: [{
-          required: true,
-          message: '请输入因子名称',
-          trigger: 'blur'
-        }],
-        factorCode: [{
-          required: true,
-          message: '请输入因子编码',
-          trigger: 'blur'
-        }],
-        factorType: [{
-          required: true,
-          message: '请输入因子编码',
-          trigger: 'blur'
-        }]
-
-      }
-    }
-  },
-  computed: {
-    ...mapGetters([
-      'userId'
-    ])
-  },
-  mounted() {
-    this.listFactorPage()
-  },
-  methods: {
-    listFactorPage() {
-      listFactorPage({
-        factorCode: this.factorCode || '',
-        factorName: this.factorName || '',
-        factorType: this.factorType || '',
-        pageIndex: this.pageIndex,
-        pageSize: this.pageSize
-      }).then(res => {
-        console.log(res)
-        this.records = res.retData.records
-        this.total = res.retData.total
-      })
-    },
-    handleSizeChange(val) {
-      this.pageSize = val
-      this.listFactorPage()
-    },
-    handleCurrentChange(val) {
-      this.pageIndex = val
-      this.listFactorPage()
-    },
-    seach() {
-      this.pageIndex = 1
-      this.listFactorPage()
-    },
-    editPoint(e) {
-      this.addVisible = true
-      this.digTitle = '编辑因子'
-
-      getFactorById({
-        factorId: e.factorId
-      }).then(res => {
-        this.form = res.retData
-      })
-
-      console.log('🚀 ~ editPoint ~   this.form:', this.form)
-    },
-    remove(e) {
-      this.$confirm('此操作将永久删除点位因子, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        // deletePointFactor({
-        //   pointFactorId: e.pointFactorId
-        // }).then(res => {
-        //   this.$notify({
-        //     type: 'success',
-        //     message: res.retMsg
-        //   })
-        //   this.listFactorPage()
-        // })
-      })
-    },
-    addShebei(e) {
-      this.addVisible = true
-      this.digTitle = '新增因子'
-      this.form = {
+  import {
+    listFactorPage,
+    addFactor,
+    getFactorById,
+    updateFactor
+  } from '@/api/table'
+  import {
+    mapGetters
+  } from 'vuex'
+  export default {
+    name: 'YinziList',
+    data() {
+      return {
         factorCode: '',
         factorName: '',
-        factorShortName: '',
         factorType: '',
-        originalCode: '',
-        concentrationUnit: '',
-        dischargeUnit: '',
-        concentrationDataType: '',
-        defaultCoefficient: 0,
-        defaultDisplay: 0,
-        defaultMinute: 0,
-        defaultConstant: 0,
-        defaultZeroOut: 0,
-        defaultOffLine: 0,
-        defaultAbnormalFluctuation: 0,
-        defaultCorrected: 0,
-        remark: '',
-        orderNum: 0
+        pageIndex: 1,
+        pageSize: 10,
+        listLoading: false,
+        addVisible: false,
+        digTitle: '新增因子',
+        total: 0,
+        records: [],
+        form: {},
+        rules: {
+          factorName: [{
+            required: true,
+            message: '请输入因子名称',
+            trigger: 'blur'
+          }],
+          factorCode: [{
+            required: true,
+            message: '请输入因子编码',
+            trigger: 'blur'
+          }],
+          factorType: [{
+            required: true,
+            message: '请输入因子编码',
+            trigger: 'blur'
+          }]
+
+        }
       }
     },
-    sumbitPoint() {
-      this.$refs.form1.validate((valid) => {
-        if (valid) {
-          addFactor(this.form).then(res => {
-            console.log(res)
-            this.$notify({
-              type: 'success',
-              message: res.retMsg
-            })
-            this.addVisible = false
-            this.listFactorPage()
-          })
-        }
-      })
+    computed: {
+      ...mapGetters([
+        'userId'
+      ])
     },
-    editSubmit() {
-      this.$refs.form1.validate((valid) => {
-        if (valid) {
-          updateFactor(this.form).then(res => {
-            console.log(res)
-            this.$notify({
-              type: 'success',
-              message: res.retMsg
-            })
-            this.addVisible = false
-            this.listFactorPage()
-          })
-        }
-      })
+    mounted() {
+      this.listFactorPage()
     },
-    computedNull(val) {
-      if (val === undefined || val === null || val === '' || val === ' ') {
-        return '-'
-      } else {
-        return val
+    methods: {
+      listFactorPage() {
+        listFactorPage({
+          factorCode: this.factorCode || '',
+          factorName: this.factorName || '',
+          factorType: this.factorType || '',
+          pageIndex: this.pageIndex,
+          pageSize: this.pageSize
+        }).then(res => {
+          console.log(res)
+          this.records = res.retData.records
+          this.total = res.retData.total
+        })
+      },
+      handleSizeChange(val) {
+        this.pageSize = val
+        this.listFactorPage()
+      },
+      handleCurrentChange(val) {
+        this.pageIndex = val
+        this.listFactorPage()
+      },
+      seach() {
+        this.pageIndex = 1
+        this.listFactorPage()
+      },
+      editPoint(e) {
+        this.addVisible = true
+        this.digTitle = '编辑因子'
+
+        getFactorById({
+          factorId: e.factorId
+        }).then(res => {
+          this.form = res.retData
+        })
+
+        console.log('🚀 ~ editPoint ~   this.form:', this.form)
+      },
+      remove(e) {
+        this.$confirm('此操作将永久删除点位因子, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          // deletePointFactor({
+          //   pointFactorId: e.pointFactorId
+          // }).then(res => {
+          //   this.$notify({
+          //     type: 'success',
+          //     message: res.retMsg
+          //   })
+          //   this.listFactorPage()
+          // })
+        })
+      },
+      addShebei(e) {
+        this.addVisible = true
+        this.digTitle = '新增因子'
+        this.form = {
+          factorCode: '',
+          factorName: '',
+          factorShortName: '',
+          factorType: '',
+          originalCode: '',
+          concentrationUnit: '',
+          dischargeUnit: '',
+          concentrationDataType: '',
+          defaultCoefficient: 0,
+          defaultDisplay: 0,
+          defaultMinute: 0,
+          defaultConstant: 0,
+          defaultZeroOut: 0,
+          defaultOffLine: 0,
+          defaultAbnormalFluctuation: 0,
+          defaultCorrected: 0,
+          remark: '',
+          orderNum: 0
+        }
+      },
+      sumbitPoint() {
+        this.$refs.form1.validate((valid) => {
+          if (valid) {
+            addFactor(this.form).then(res => {
+              console.log(res)
+              this.$notify({
+                type: 'success',
+                message: res.retMsg
+              })
+              this.addVisible = false
+              this.listFactorPage()
+            })
+          }
+        })
+      },
+      editSubmit() {
+        this.$refs.form1.validate((valid) => {
+          if (valid) {
+            updateFactor(this.form).then(res => {
+              console.log(res)
+              this.$notify({
+                type: 'success',
+                message: res.retMsg
+              })
+              this.addVisible = false
+              this.listFactorPage()
+            })
+          }
+        })
+      },
+      computedNull(val) {
+        if (val === undefined || val === null || val === '' || val === ' ') {
+          return '-'
+        } else {
+          return val
+        }
       }
     }
   }
-}
 
 </script>
 

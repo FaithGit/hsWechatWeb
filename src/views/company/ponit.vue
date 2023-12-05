@@ -52,12 +52,13 @@
         </template>
       </el-table-column>
       <el-table-column align="center" label="企业名称" prop="comName" />
-      <el-table-column align="center" label="点位名称" prop="pointName" />
+      <!-- <el-table-column align="center" label="点位名称" prop="pointName" /> -->
       <el-table-column align="center" label="点位简称" prop="pointShortName" width="60" />
       <el-table-column align="center" label="站点状态" prop="pointStatusName" width="60" />
-      <el-table-column align="center" label="运维组" width="80">
+      <el-table-column align="center" label="运维组" width="100">
         <template slot-scope="scope">
           {{ computedNull(scope.row.groupName) }}
+          <div> ({{ computedNull(scope.row.groupLeader) }})</div>
         </template>
       </el-table-column>
       <el-table-column align="center" label="排放标准" width="200">
