@@ -142,7 +142,7 @@ export const asyncRoutes = [{
       meta: {
         title: '日常运维',
         icon: 'yunwei',
-        roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl']
+        roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl','xz']
       }
     }]
   },
@@ -160,7 +160,7 @@ export const asyncRoutes = [{
       meta: {
         title: '异常事件',
         icon: 'errEvent',
-        roles: ['zjb', 'admin', 'ywybjl', 'ywybfjl']
+        roles: ['zjb', 'admin', 'ywybjl', 'ywybfjl','xz']
       }
     }]
   },
@@ -293,9 +293,9 @@ export const asyncRoutes = [{
     path: '/yf',
     component: Layout,
     meta: {
-      title: '油费管理',
+      title: '车辆管理',
       icon: 'yfgl',
-      roles: ['zjb', 'admin', 'ywybfjl', 'ywybjl', 'syy']
+      roles: ['zjb', 'admin', 'ywybfjl', 'ywybjl', 'syy','rs']
     },
     children: [{
         path: 'yfgl',
@@ -331,7 +331,7 @@ export const asyncRoutes = [{
         meta: {
           title: '人员管理',
           icon: 'rs',
-          roles: ['zjb', 'admin', 'rs', 'ywybjl', 'bgsfzr']
+          roles: ['zjb', 'admin', 'rs', 'ywybjl', 'bgsfzr','xz']
         }
       },
 
