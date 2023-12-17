@@ -3,50 +3,34 @@
     <!-- 条件栏 -->
     <div class="headClass">
       企业名称：
-      <treeselect
-        v-model="companyId"
-        :multiple="false"
-        :options="comlist"
-        :normalizer="normalizer"
-        placeholder="请选择企业"
-        class="seachInput"
-        style="width:300px"
-        @input="changeCom"
-      />
+      <treeselect v-model="companyId" :multiple="false" :options="comlist" :normalizer="normalizer" placeholder="请选择企业"
+        class="seachInput" style="width:300px" @input="changeCom" />
       点位名称：
-      <treeselect
-        v-model="pointId"
-        :multiple="false"
-        :options="dianweiList"
-        :normalizer="normalizer2"
-        placeholder="请选择点位名称"
-        class="seachInput"
-        style="width:300px"
-      />
+      <treeselect v-model="pointId" :multiple="false" :options="dianweiList" :normalizer="normalizer2"
+        placeholder="请选择点位名称" class="seachInput" style="width:300px" />
       设备类型：
       <el-select v-model="pointStatus" placeholder="请选择设备类型" class="seachInput" clearable>
-        <el-option
-          v-for="item in shebeilist"
-          :key="item.instrumentType+item.instrumentTypeName"
-          :label="item.instrumentTypeName"
-          :value="item.instrumentType"
-        />
+        <el-option v-for="item in shebeilist" :key="item.instrumentType+item.instrumentTypeName"
+          :label="item.instrumentTypeName" :value="item.instrumentType" />
+      </el-select>
+      污染源种类：
+      <el-select v-model="pollutionType" placeholder="请选择污染源种类" clearable class="seachInput">
+        <el-option label="废水" :value="1" />
+        <el-option label="废气" :value="2" />
+        <el-option label="vocs" :value="3" />
+        <el-option label="地表水" :value="4" />
+        <el-option label="其他" :value="5" />
+
       </el-select>
       <el-button type="primary" @click="seach">搜索</el-button>
       <el-button type="primary" @click="addShebei">新增设备</el-button>
     </div>
 
     <!-- 表格 -->
-    <el-table
-      v-loading="listLoading"
-      :data="records"
-      element-loading-text="加载中"
-      border
-      fit
-      :span-method="arraySpanMethod"
-      :row-class-name="tableRowClassName"
-      style="margin-top:1.04vw"
-    >
+    <el-table v-loading="listLoading" :data="records" element-loading-text="加载中" border fit
+      :span-method="arraySpanMethod" :row-class-name="tableRowClassName" style="margin-top:1.04vw"
+      height="calc(100vh - 84px - 60px - 40px - 32px - 1.04vw - 17px)"
+      >
       <el-table-column align="center" label="#" width="95">
         <template slot-scope="scope">
           {{ (scope.row.index+1)+(pageIndex-1)*pageSize }}
@@ -74,56 +58,26 @@
     </el-table>
     <!-- 分页 -->
     <div class="buttonPagination">
-      <el-pagination
-        :current-page="pageIndex"
-        :page-sizes="[10,20,30,40,50]"
-        :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
+      <el-pagination :current-page="pageIndex" :page-sizes="[10,20,30,40,50]" :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
+        @current-change="handleCurrentChange" />
     </div>
 
-    <el-dialog
-      v-if="addVisible"
-      title="新增设备"
-      :append-to-body="true"
-      :visible="addVisible"
-      width="40%"
-      :close-on-click-modal="false"
-      @close="addVisible=false"
-    >
+    <el-dialog v-if="addVisible" title="新增设备" :append-to-body="true" :visible="addVisible" width="40%"
+      :close-on-click-modal="false" @close="addVisible=false">
       <el-form ref="form1" :model="form" label-width="140px" :rules="rules">
         <el-form-item label="企业名称" prop="companyId">
-          <treeselect
-            v-model="form.companyId"
-            :multiple="false"
-            :options="comlist"
-            :normalizer="normalizer"
-            placeholder="请选择企业"
-            :clearable="false"
-            @input="changeCom2"
-          />
+          <treeselect v-model="form.companyId" :multiple="false" :options="comlist" :normalizer="normalizer"
+            placeholder="请选择企业" :clearable="false" @input="changeCom2" />
         </el-form-item>
         <el-form-item label="点位名称" prop="pointId">
-          <treeselect
-            v-model="form.pointId"
-            :multiple="false"
-            :options="dianweiList2"
-            :normalizer="normalizer2"
-            placeholder="请选择点位名称"
-            @input="riskPersonDeptChangeValue"
-          />
+          <treeselect v-model="form.pointId" :multiple="false" :options="dianweiList2" :normalizer="normalizer2"
+            placeholder="请选择点位名称" @input="riskPersonDeptChangeValue" />
         </el-form-item>
         <el-form-item label="设备类型" prop="instrumentType">
           <el-select v-model="form.instrumentType" placeholder="请选择设备类型" @change="toggleInstrumentType">
-            <el-option
-              v-for="item in shebeilist"
-              :key="'3'+item.instrumentType+item.instrumentTypeName"
-              :label="item.instrumentTypeName"
-              :value="item.instrumentType"
-            />
+            <el-option v-for="item in shebeilist" :key="'3'+item.instrumentType+item.instrumentTypeName"
+              :label="item.instrumentTypeName" :value="item.instrumentType" />
           </el-select>
         </el-form-item>
         <el-form-item label="运维时设备名称" prop="instrumentName">
@@ -155,25 +109,14 @@
       </el-form>
     </el-dialog>
 
-    <el-dialog
-      v-if="editVisible"
-      title="编辑设备"
-      :append-to-body="true"
-      :visible="editVisible"
-      width="40%"
-      :close-on-click-modal="false"
-      @close="editVisible=false"
-    >
+    <el-dialog v-if="editVisible" title="编辑设备" :append-to-body="true" :visible="editVisible" width="40%"
+      :close-on-click-modal="false" @close="editVisible=false">
 
       <el-form ref="form1" :model="form" label-width="140px" :rules="rules">
         <el-form-item label="设备类型" prop="instrumentType">
           <el-select v-model="form.instrumentType" placeholder="请选择设备类型" @change="toggleInstrumentType">
-            <el-option
-              v-for="item in shebeilist"
-              :key="'2'+item.instrumentType+item.instrumentTypeName"
-              :label="item.instrumentTypeName"
-              :value="item.instrumentType"
-            />
+            <el-option v-for="item in shebeilist" :key="'2'+item.instrumentType+item.instrumentTypeName"
+              :label="item.instrumentTypeName" :value="item.instrumentType" />
           </el-select>
         </el-form-item>
         <el-form-item label="运维时设备名称" prop="instrumentName">
@@ -207,456 +150,458 @@
 </template>
 
 <script>
-import Treeselect from '@riophae/vue-treeselect'
-// import the styles
-import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+  import Treeselect from '@riophae/vue-treeselect'
+  // import the styles
+  import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
-import {
-  listInstrumentPage,
-  updateInstrument,
-  listCompanySel,
-  listShortPointSel,
-  listInstrumentTypeSel,
-  addInstrument,
-  deleteInstrument,
-  getInstrumentById
-} from '@/api/table'
-import {
-  mapGetters
-} from 'vuex'
-// import moment from 'moment'
-export default {
-  name: 'Shebei',
-  components: {
-    Treeselect
-  },
-  data() {
-    return {
-      pageIndex: 1,
-      pageSize: 10,
-      companyId: null,
-      groupId: null,
-      pointId: null,
-      total: 0,
-      records: [],
-      comlist: [],
-      groupList: [],
-      pointStatus: '',
+  import {
+    listInstrumentPage,
+    updateInstrument,
+    listCompanySel,
+    listShortPointSel,
+    listInstrumentTypeSel,
+    addInstrument,
+    deleteInstrument,
+    getInstrumentById
+  } from '@/api/table'
+  import {
+    mapGetters
+  } from 'vuex'
+  // import moment from 'moment'
+  export default {
+    name: 'Shebei',
+    components: {
+      Treeselect
+    },
+    data() {
+      return {
+        pageIndex: 1,
+        pageSize: 10,
+        companyId: null,
+        groupId: null,
+        pointId: null,
+        total: 0,
+        records: [],
+        comlist: [],
+        groupList: [],
+        pointStatus: '',
 
-      comName: '',
-      pointName: '',
-      status: '',
-      addVisible: false,
-      editVisible: false,
-      listLoading: false,
-      form: {},
-      allyjList: [], // 全部药剂列表
-      yaojiChoose: [], // 全部药剂列表
-      shebeilist: [], // 全部药剂列表
-      dianweiList: [], // 全部药剂列表
-      dianweiList2: [], // 全部药剂列表
-      options: [{
-        value: 1,
-        label: '在用'
-      }, {
-        value: 2,
-        label: '停运'
-      }, {
-        value: 3,
-        label: '建设'
-      }, {
-        value: 4,
-        label: '合同转包'
-      }, {
-        value: 5,
-        label: '合同终止'
-      }, {
-        value: 6,
-        label: '拆除'
-      }],
-      rules: {
+        comName: '',
+        pointName: '',
+        status: '',
+        pollutionType: '',
+        addVisible: false,
+        editVisible: false,
+        listLoading: false,
+        form: {},
+        allyjList: [], // 全部药剂列表
+        yaojiChoose: [], // 全部药剂列表
+        shebeilist: [], // 全部药剂列表
+        dianweiList: [], // 全部药剂列表
+        dianweiList2: [], // 全部药剂列表
+        options: [{
+          value: 1,
+          label: '在用'
+        }, {
+          value: 2,
+          label: '停运'
+        }, {
+          value: 3,
+          label: '建设'
+        }, {
+          value: 4,
+          label: '合同转包'
+        }, {
+          value: 5,
+          label: '合同终止'
+        }, {
+          value: 6,
+          label: '拆除'
+        }],
+        rules: {
 
-        instrumentType: [{
-          required: true,
-          message: '请输入设备类型',
-          trigger: 'change'
-        }],
+          instrumentType: [{
+            required: true,
+            message: '请输入设备类型',
+            trigger: 'change'
+          }],
 
-        companyId: [{
-          required: true,
-          message: '请选择企业名称',
-          trigger: 'input'
-        }],
-        pointId: [{
-          required: true,
-          message: '请选择点位名称',
-          trigger: 'input'
-        }],
-        checkStatus: [{
-          required: true,
-          message: '请输入运维状态',
-          trigger: 'change'
-        }],
-        startYear: [{
-          required: true,
-          message: '请输入开始时间年份',
-          trigger: 'blur'
-        }],
-        instrumentName: [{
-          required: true,
-          message: '运维时设备名称',
-          trigger: 'blur'
-        }],
-        instrumentRealName: [{
-          required: true,
-          message: '设备名称',
-          trigger: 'blur'
-        }],
-        instrumentFactoryModel: [{
-          required: true,
-          message: '设备厂家型号',
-          trigger: 'blur'
-        }]
-        // socialCreditCode: [{
-        //   required: true,
-        //   message: '请输入统一社会信用代码',
-        //   trigger: 'blur'
-        // }, {
-        //   len: 18,
-        //   message: '请输入18位统一社会信用代码',
-        //   trigger: 'blur'
-        // }]
-      },
-      normalizer(node) {
-        return {
-          id: node.companyId,
-          label: node.comName,
-          children: node.children && node.children.length ? node.children : 0
+          companyId: [{
+            required: true,
+            message: '请选择企业名称',
+            trigger: 'input'
+          }],
+          pointId: [{
+            required: true,
+            message: '请选择点位名称',
+            trigger: 'input'
+          }],
+          checkStatus: [{
+            required: true,
+            message: '请输入运维状态',
+            trigger: 'change'
+          }],
+          startYear: [{
+            required: true,
+            message: '请输入开始时间年份',
+            trigger: 'blur'
+          }],
+          instrumentName: [{
+            required: true,
+            message: '运维时设备名称',
+            trigger: 'blur'
+          }],
+          instrumentRealName: [{
+            required: true,
+            message: '设备名称',
+            trigger: 'blur'
+          }],
+          instrumentFactoryModel: [{
+            required: true,
+            message: '设备厂家型号',
+            trigger: 'blur'
+          }]
+          // socialCreditCode: [{
+          //   required: true,
+          //   message: '请输入统一社会信用代码',
+          //   trigger: 'blur'
+          // }, {
+          //   len: 18,
+          //   message: '请输入18位统一社会信用代码',
+          //   trigger: 'blur'
+          // }]
+        },
+        normalizer(node) {
+          return {
+            id: node.companyId,
+            label: node.comName,
+            children: node.children && node.children.length ? node.children : 0
+          }
+        },
+        normalizer2(node) {
+          return {
+            id: node.pointId,
+            label: node.pointName,
+            children: node.children && node.children.length ? node.children : 0
+          }
         }
-      },
-      normalizer2(node) {
-        return {
-          id: node.pointId,
-          label: node.pointName,
-          children: node.children && node.children.length ? node.children : 0
-        }
-      }
 
-    }
-  },
-  computed: {
-    ...mapGetters([
-      'userId', 'roleId', 'userGroupId'
-    ])
-  },
-  activated() {
-    console.log(this.$route.params)
-    if (JSON.stringify(this.$route.params) !== '{}') {
-      this.companyId = this.$route.params.companyId
-      console.log('更新数据')
-      setTimeout(() => {
-        this.pointId = this.$route.params.pointId
-        this.listInstrumentPage()
-      }, 1000)
-    } else {
-      this.listInstrumentPage()
-    }
-  },
-  mounted() {
-    this.listCompanySel()
-    // this.listShortPointSel2()
-    this.listInstrumentTypeSel()
-    // this.listShortPointSel()
-  },
-  methods: {
-    computedNull(val) {
-      if (val === undefined || val === null || val === '' || val === ' ') {
-        return '-'
-      } else {
-        return val
       }
     },
-    // 表格合并方法
-    arraySpanMethod({
-      row,
-      column,
-      rowIndex,
-      columnIndex
-    }) {
-      if (columnIndex === 0 || columnIndex === 1) {
-        if (row.comIndex) { // 如果有值,说明需要合并
-          return [row.comIndex, 1]
-        } else return [0, 0]
-      }
-      if (columnIndex === 2) {
-        if (row.pointIndex) { // 如果有值,说明需要合并
-          return [row.pointIndex, 1]
-        } else return [0, 0]
-      }
+    computed: {
+      ...mapGetters([
+        'userId', 'roleId', 'userGroupId'
+      ])
     },
-    tableRowClassName({
-      row,
-      rowIndex
-    }) {
-      // console.log('row', row)
-      if (row.index % 2 === 0) {
-        return 'bkred'
-      } else {
-        return 'bkgreen'
-      }
-    },
-    toggleInstrumentType(e) {
-      console.log(e)
-      var findObj = this.shebeilist.find(i => {
-        return i.instrumentType === e
-      })
-      console.log(findObj)
-      this.form.instrumentName = findObj.instrumentTypeName
-      this.form.instrumentRealName = findObj.instrumentTypeName
-    },
-    riskPersonDeptChangeValue() {
-      // form是表单名 riskPersonDept是prop名
-
-      this.$refs['form1'].validateField('pointId')
-    },
-    remove(e) {
-      this.$confirm('此操作将永久删除该设备, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        deleteInstrument({
-          instrumentId: e.instrumentId
-        }).then(res => {
-          this.$notify({
-            type: 'success',
-            message: res.retMsg
-          })
+    activated() {
+      console.log(this.$route.params)
+      if (JSON.stringify(this.$route.params) !== '{}') {
+        this.companyId = this.$route.params.companyId
+        console.log('更新数据')
+        setTimeout(() => {
+          this.pointId = this.$route.params.pointId
           this.listInstrumentPage()
-        })
-      })
-    },
-    changeCom(node, instanceId) {
-      console.log('🚀 ~ changeCom ~ node,instanceId:', node, instanceId)
-      if (node === undefined) {
-        this.dianweiList = []
+        }, 1000)
       } else {
-        this.listShortPointSel()
+        this.listInstrumentPage()
       }
-      this.pointId = null
     },
-    changeCom2(node, instanceId) {
-      console.log('🚀 ~ changeCom ~ node,instanceId:', node, instanceId)
-      this.listShortPointSel2()
-      // this.form.pointId = null
-      this.$set(this.form, 'pointId', null)
-      this.$refs['form1'].validateField('companyId')
+    mounted() {
+      this.listCompanySel()
+      // this.listShortPointSel2()
+      this.listInstrumentTypeSel()
+      // this.listShortPointSel()
     },
-    listInstrumentTypeSel() { // 设备类型
-      listInstrumentTypeSel({}).then(res => {
-        this.shebeilist = res.retData
-      })
-    },
-    listShortPointSel() { // 点位id
-      listShortPointSel({
-        companyId: this.companyId || ''
-      }).then(res => {
-        console.log(res)
-        this.dianweiList = res.retData
-      })
-    },
-    listShortPointSel2() { // 点位id
-      listShortPointSel({
-        companyId: this.form.companyId || ''
-      }).then(res => {
-        console.log(res)
-        this.dianweiList2 = res.retData
-      })
-    },
-    listCompanySel() { // 公司id
-      listCompanySel({}).then(res => {
-        console.log(res)
-        this.comlist = res.retData
-      })
-    },
-    listInstrumentPage() {
-      listInstrumentPage({
-        companyId: this.companyId || '',
-        pointId: this.pointId || '',
-        instrumentType: this.pointStatus || '',
-        roleId: this.roleId,
-        groupId: this.userGroupId,
-        pageIndex: this.pageIndex,
-        pageSize: this.pageSize
-      }).then(res => {
-        console.log(res)
-        var temp = res.retData.records
-        // this.records = res.retData.records
-        var newRecords = []
+    methods: {
+      computedNull(val) {
+        if (val === undefined || val === null || val === '' || val === ' ') {
+          return '-'
+        } else {
+          return val
+        }
+      },
+      // 表格合并方法
+      arraySpanMethod({
+        row,
+        column,
+        rowIndex,
+        columnIndex
+      }) {
+        if (columnIndex === 0 || columnIndex === 1) {
+          if (row.comIndex) { // 如果有值,说明需要合并
+            return [row.comIndex, 1]
+          } else return [0, 0]
+        }
+        if (columnIndex === 2) {
+          if (row.pointIndex) { // 如果有值,说明需要合并
+            return [row.pointIndex, 1]
+          } else return [0, 0]
+        }
+      },
+      tableRowClassName({
+        row,
+        rowIndex
+      }) {
+        // console.log('row', row)
+        if (row.index % 2 === 0) {
+          return 'bkred'
+        } else {
+          return 'bkgreen'
+        }
+      },
+      toggleInstrumentType(e) {
+        console.log(e)
+        var findObj = this.shebeilist.find(i => {
+          return i.instrumentType === e
+        })
+        console.log(findObj)
+        this.form.instrumentName = findObj.instrumentTypeName
+        this.form.instrumentRealName = findObj.instrumentTypeName
+      },
+      riskPersonDeptChangeValue() {
+        // form是表单名 riskPersonDept是prop名
 
-        const comIndex = [] // 公司行数
-        const pointIndex = [] // 点位行数
-        var comNum = 0 // 公司基数
-        var pointNum = 0 // 点位基数
-
-        temp.forEach((e, index) => {
-          comNum = 0
-          if (e.points.length === 0) { // 企业没有点位
-            newRecords.push({
-              comName: e.comName,
-              companyId: e.companyId,
-              index: index,
-              pointName: '-',
-              pointId: '-',
-              instrumentName: '-',
-              instrumentId: '-',
-              checkStatusName: '-',
-              checkStatus: '-'
+        this.$refs['form1'].validateField('pointId')
+      },
+      remove(e) {
+        this.$confirm('此操作将永久删除该设备, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          deleteInstrument({
+            instrumentId: e.instrumentId
+          }).then(res => {
+            this.$notify({
+              type: 'success',
+              message: res.retMsg
             })
-            comNum++
-            pointIndex.push(1)
-          } else {
-            e.points.forEach(i => {
-              // console.log(i)
-              if (i.instruments.length === 0) { // 点位没有点位设备
-                newRecords.push({
-                  comName: e.comName,
-                  companyId: e.companyId,
-                  index: index,
-                  pointName: i.pointName,
-                  pointId: i.pointId,
-                  instrumentName: '-',
-                  instrumentId: '-',
-                  checkStatusName: '-',
-                  checkStatus: '-'
-                })
-                comNum++
-                pointIndex.push(1)
-              } else {
-                pointNum = 0
-                i.instruments.forEach(iiner => {
+            this.listInstrumentPage()
+          })
+        })
+      },
+      changeCom(node, instanceId) {
+        console.log('🚀 ~ changeCom ~ node,instanceId:', node, instanceId)
+        if (node === undefined) {
+          this.dianweiList = []
+        } else {
+          this.listShortPointSel()
+        }
+        this.pointId = null
+      },
+      changeCom2(node, instanceId) {
+        console.log('🚀 ~ changeCom ~ node,instanceId:', node, instanceId)
+        this.listShortPointSel2()
+        // this.form.pointId = null
+        this.$set(this.form, 'pointId', null)
+        this.$refs['form1'].validateField('companyId')
+      },
+      listInstrumentTypeSel() { // 设备类型
+        listInstrumentTypeSel({}).then(res => {
+          this.shebeilist = res.retData
+        })
+      },
+      listShortPointSel() { // 点位id
+        listShortPointSel({
+          companyId: this.companyId || ''
+        }).then(res => {
+          console.log(res)
+          this.dianweiList = res.retData
+        })
+      },
+      listShortPointSel2() { // 点位id
+        listShortPointSel({
+          companyId: this.form.companyId || ''
+        }).then(res => {
+          console.log(res)
+          this.dianweiList2 = res.retData
+        })
+      },
+      listCompanySel() { // 公司id
+        listCompanySel({}).then(res => {
+          console.log(res)
+          this.comlist = res.retData
+        })
+      },
+      listInstrumentPage() {
+        listInstrumentPage({
+          companyId: this.companyId || '',
+          pointId: this.pointId || '',
+          instrumentType: this.pointStatus || '',
+          pollutionType: this.pollutionType || '',
+          roleId: this.roleId,
+          groupId: this.userGroupId,
+          pageIndex: this.pageIndex,
+          pageSize: this.pageSize
+        }).then(res => {
+          console.log(res)
+          var temp = res.retData.records
+          // this.records = res.retData.records
+          var newRecords = []
+
+          const comIndex = [] // 公司行数
+          const pointIndex = [] // 点位行数
+          var comNum = 0 // 公司基数
+          var pointNum = 0 // 点位基数
+
+          temp.forEach((e, index) => {
+            comNum = 0
+            if (e.points.length === 0) { // 企业没有点位
+              newRecords.push({
+                comName: e.comName,
+                companyId: e.companyId,
+                index: index,
+                pointName: '-',
+                pointId: '-',
+                instrumentName: '-',
+                instrumentId: '-',
+                checkStatusName: '-',
+                checkStatus: '-'
+              })
+              comNum++
+              pointIndex.push(1)
+            } else {
+              e.points.forEach(i => {
+                // console.log(i)
+                if (i.instruments.length === 0) { // 点位没有点位设备
                   newRecords.push({
                     comName: e.comName,
                     companyId: e.companyId,
                     index: index,
                     pointName: i.pointName,
                     pointId: i.pointId,
-                    instrumentName: iiner.instrumentName,
-                    instrumentId: iiner.instrumentId,
-                    checkStatusName: iiner.checkStatusName,
-                    checkStatus: iiner.checkStatus
+                    instrumentName: '-',
+                    instrumentId: '-',
+                    checkStatusName: '-',
+                    checkStatus: '-'
                   })
                   comNum++
-                  pointNum++
-                })
-                pointIndex.push(pointNum)
-              }
+                  pointIndex.push(1)
+                } else {
+                  pointNum = 0
+                  i.instruments.forEach(iiner => {
+                    newRecords.push({
+                      comName: e.comName,
+                      companyId: e.companyId,
+                      index: index,
+                      pointName: i.pointName,
+                      pointId: i.pointId,
+                      instrumentName: iiner.instrumentName,
+                      instrumentId: iiner.instrumentId,
+                      checkStatusName: iiner.checkStatusName,
+                      checkStatus: iiner.checkStatus
+                    })
+                    comNum++
+                    pointNum++
+                  })
+                  pointIndex.push(pointNum)
+                }
+              })
+            }
+            comIndex.push(comNum)
+          })
+          console.log('comIndex', comIndex)
+          console.log('pointIndex', pointIndex)
+
+          let com = 1
+          for (let i = 0; i < comIndex.length; i++) {
+            newRecords[com - 1].comIndex = comIndex[i]
+            com += comIndex[i]
+          }
+
+          com = 1
+          for (let i = 0; i < pointIndex.length; i++) {
+            newRecords[com - 1].pointIndex = pointIndex[i]
+            com += pointIndex[i]
+          }
+
+          this.records = newRecords
+          console.log(newRecords)
+          this.total = res.retData.total
+        })
+      },
+      handleSizeChange(val) {
+        this.pageSize = val
+        this.listInstrumentPage()
+      },
+      handleCurrentChange(val) {
+        this.pageIndex = val
+        this.listInstrumentPage()
+      },
+      seach() {
+        this.pageIndex = 1
+        this.listInstrumentPage()
+      },
+      editPoint(e) {
+        console.log(e)
+        getInstrumentById({
+          instrumentId: e.instrumentId
+        }).then(res => {
+          console.log(res)
+          this.editVisible = true
+          this.form = res.retData
+        })
+
+        console.log('🚀 ~ editPoint ~   this.form:', this.form)
+      },
+      addShebei(e) {
+        this.addVisible = true
+        this.form = {
+          companyId: null,
+          pointId: null,
+          checkStatus: 1,
+          startYear: ''
+        }
+        if (this.companyId) {
+          this.form.companyId = this.companyId
+        }
+        if (this.pointId) {
+          this.form.pointId = this.pointId
+        }
+        this.listShortPointSel2()
+      },
+      sumbitPoint() {
+        // if (this.form.pointId == null || this.form.pointId == undefined || this.form.pointId == '') {
+        //   this.$notify({
+        //     type: 'error',
+        //     message: '请选择点位名称'
+        //   })
+        //   return
+        // }
+        this.$refs.form1.validate((valid) => {
+          if (valid) {
+            addInstrument(this.form).then(res => {
+              console.log(res)
+              this.$notify({
+                type: 'success',
+                message: res.retMsg
+              })
+              this.addVisible = false
+              this.listInstrumentPage()
             })
           }
-          comIndex.push(comNum)
         })
-        console.log('comIndex', comIndex)
-        console.log('pointIndex', pointIndex)
-
-        let com = 1
-        for (let i = 0; i < comIndex.length; i++) {
-          newRecords[com - 1].comIndex = comIndex[i]
-          com += comIndex[i]
-        }
-
-        com = 1
-        for (let i = 0; i < pointIndex.length; i++) {
-          newRecords[com - 1].pointIndex = pointIndex[i]
-          com += pointIndex[i]
-        }
-
-        this.records = newRecords
-        console.log(newRecords)
-        this.total = res.retData.total
-      })
-    },
-    handleSizeChange(val) {
-      this.pageSize = val
-      this.listInstrumentPage()
-    },
-    handleCurrentChange(val) {
-      this.pageIndex = val
-      this.listInstrumentPage()
-    },
-    seach() {
-      this.pageIndex = 1
-      this.listInstrumentPage()
-    },
-    editPoint(e) {
-      console.log(e)
-      getInstrumentById({
-        instrumentId: e.instrumentId
-      }).then(res => {
-        console.log(res)
-        this.editVisible = true
-        this.form = res.retData
-      })
-
-      console.log('🚀 ~ editPoint ~   this.form:', this.form)
-    },
-    addShebei(e) {
-      this.addVisible = true
-      this.form = {
-        companyId: null,
-        pointId: null,
-        checkStatus: 1,
-        startYear: ''
-      }
-      if (this.companyId) {
-        this.form.companyId = this.companyId
-      }
-      if (this.pointId) {
-        this.form.pointId = this.pointId
-      }
-      this.listShortPointSel2()
-    },
-    sumbitPoint() {
-      // if (this.form.pointId == null || this.form.pointId == undefined || this.form.pointId == '') {
-      //   this.$notify({
-      //     type: 'error',
-      //     message: '请选择点位名称'
-      //   })
-      //   return
-      // }
-      this.$refs.form1.validate((valid) => {
-        if (valid) {
-          addInstrument(this.form).then(res => {
-            console.log(res)
-            this.$notify({
-              type: 'success',
-              message: res.retMsg
+      },
+      editSubmit() {
+        this.$refs.form1.validate((valid) => {
+          if (valid) {
+            updateInstrument(this.form).then(res => {
+              console.log(res)
+              this.$notify({
+                type: 'success',
+                message: res.retMsg
+              })
+              this.editVisible = false
+              this.listInstrumentPage()
             })
-            this.addVisible = false
-            this.listInstrumentPage()
-          })
-        }
-      })
-    },
-    editSubmit() {
-      this.$refs.form1.validate((valid) => {
-        if (valid) {
-          updateInstrument(this.form).then(res => {
-            console.log(res)
-            this.$notify({
-              type: 'success',
-              message: res.retMsg
-            })
-            this.editVisible = false
-            this.listInstrumentPage()
-          })
-        }
-      })
-    },
-    gotoPoint(e) {
-      console.log(e)
+          }
+        })
+      },
+      gotoPoint(e) {
+        console.log(e)
+      }
     }
   }
-}
 
 </script>
 

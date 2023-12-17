@@ -38,6 +38,7 @@
       style="margin-top:1.04vw"
       :span-method="arraySpanMethod"
       :row-class-name="tableRowClassName"
+           height="calc(100vh - 84px - 60px - 40px - 32px - 1.04vw - 17px)"
     >
       <el-table-column align="center" label="序号" width="95">
         <template slot-scope="scope">

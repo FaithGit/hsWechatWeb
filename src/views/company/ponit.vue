@@ -45,7 +45,7 @@
 
     <!-- 表格 -->
     <el-table v-loading="listLoading" :data="records" element-loading-text="加载中" border fit highlight-current-row stripe
-      style="margin-top:1.04vw">
+      style="margin-top:1.04vw" height="calc(100vh - 84px - 60px - 40px - 32px - 1.04vw - 17px - 50px)">
       <el-table-column align="center" label="#" width="30">
         <template slot-scope="scope">
           {{ scope.$index+1 }}

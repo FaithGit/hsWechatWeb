@@ -25,7 +25,7 @@
       stripe
       highlight-current-row
       style="margin-top:1.04vw"
-      stripe
+      height="calc(100vh - 84px - 60px - 40px - 32px - 1.04vw - 17px)"
     >
       <el-table-column align="center" label="#" width="95">
         <template slot-scope="scope">

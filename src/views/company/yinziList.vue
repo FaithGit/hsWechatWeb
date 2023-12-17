@@ -27,7 +27,7 @@
 
     <!-- 表格 -->
     <el-table v-loading="listLoading" :data="records" element-loading-text="加载中" border fit highlight-current-row stripe
-      style="margin-top:1.04vw">
+      style="margin-top:1.04vw" height="calc(100vh - 84px - 60px - 40px - 32px - 1.04vw - 17px)">
       <el-table-column align="center" label="企业简称" prop="comShortName" />
       <el-table-column align="center" label="点位名称" prop="pointName" />
       <el-table-column align="center" label="因子名称">
@@ -410,7 +410,7 @@
           this.shebeilist = res.retData
         })
       },
-      listFactorSel() { // 设备类型
+      listFactorSel() { // 所有因子列表
         listFactorSel({}).then(res => {
           this.factorList = res.retData
         })

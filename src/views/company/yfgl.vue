@@ -29,16 +29,8 @@
     </div>
 
     <!-- 表格 -->
-    <el-table
-      v-loading="listLoading"
-      :data="records"
-      element-loading-text="加载中"
-      border
-      fit
-      highlight-current-row
-      stripe
-      style="margin-top:1.04vw"
-    >
+    <el-table v-loading="listLoading" :data="records" element-loading-text="加载中" border fit highlight-current-row stripe
+      style="margin-top:1.04vw" height="calc(100vh - 84px - 110px - 60px - 50px)">
 
       <el-table-column align="center" label="序号" width="95">
         <template slot-scope="scope">
@@ -98,15 +90,8 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog
-      v-if="chuVisible"
-      :title="licensePlatedig+'出行明细'"
-      :append-to-body="true"
-      :visible="chuVisible"
-      width="60%"
-      :close-on-click-modal="false"
-      @close="chuVisible=false"
-    >
+    <el-dialog v-if="chuVisible" :title="licensePlatedig+'出行明细'" :append-to-body="true" :visible="chuVisible"
+      width="60%" :close-on-click-modal="false" @close="chuVisible=false">
       状态类型：
       <el-select v-model="type" placeholder="请选择" clearable>
         <el-option label="静止" :value="1" />
@@ -116,25 +101,12 @@
       </el-select>
 
       时间范围：
-      <el-date-picker
-        v-model="time2"
-        type="daterange"
-        range-separator="至"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-      />
+      <el-date-picker v-model="time2" type="daterange" range-separator="至" start-placeholder="开始日期"
+        end-placeholder="结束日期" />
       <el-button type="primary" style="margin-left:10px" @click="seach2">搜索</el-button>
       <!-- 表格 -->
-      <el-table
-        :data="tableData"
-        element-loading-text="加载中"
-        border
-        fit
-        highlight-current-row
-        stripe
-        height="30.46vw"
-        style="margin-top:1.04vw"
-      >
+      <el-table :data="tableData" element-loading-text="加载中" border fit highlight-current-row stripe height="30.46vw"
+        style="margin-top:1.04vw">
 
         <el-table-column align="center" label="#" width="95">
           <template slot-scope="scope">
@@ -175,15 +147,9 @@
       </el-table>
       <!-- 分页 -->
       <div class="buttonPagination">
-        <el-pagination
-          :current-page="pageIndex"
-          :page-sizes="[10,20,30,40,50]"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
+        <el-pagination :current-page="pageIndex" :page-sizes="[10,20,30,40,50]" :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
+          @current-change="handleCurrentChange" />
       </div>
     </el-dialog>
 
@@ -191,111 +157,111 @@
 </template>
 
 <script>
-import {
-  getTripStatistics,
-  listTripDetailPage
-} from '@/api/table'
-import moment from 'moment'
+  import {
+    getTripStatistics,
+    listTripDetailPage
+  } from '@/api/table'
+  import moment from 'moment'
 
-export default {
-  name: 'Yfgl',
-  data() {
-    return {
-      licensePlate: '',
-      licensePlatedig: '', // 弹窗内的车牌号
-      time: new Date(),
-      time2: [],
-      tableData: [],
-      listLoading: false,
-      chuVisible: false,
-      records: [],
-      carNum: '',
-      date: '',
-      travelNum: '',
-      travelRate: '',
-      type: '',
-      pageIndex: 1,
-      pageSize: 10,
-      total: 0
+  export default {
+    name: 'Yfgl',
+    data() {
+      return {
+        licensePlate: '',
+        licensePlatedig: '', // 弹窗内的车牌号
+        time: new Date(),
+        time2: [],
+        tableData: [],
+        listLoading: false,
+        chuVisible: false,
+        records: [],
+        carNum: '',
+        date: '',
+        travelNum: '',
+        travelRate: '',
+        type: '',
+        pageIndex: 1,
+        pageSize: 10,
+        total: 0
 
-    }
-  },
-  mounted() {
-    this.seach()
-  },
-  methods: {
-    listTripDetailPage() {
-      var startTime = ''
-      var endTime = ''
-      startTime = moment(this.time2[0]).startOf('day').format('YYYY-MM-DD')
-      endTime = moment(this.time2[1]).startOf('day').format('YYYY-MM-DD')
+      }
+    },
+    mounted() {
+      this.seach()
+    },
+    methods: {
+      listTripDetailPage() {
+        var startTime = ''
+        var endTime = ''
+        startTime = moment(this.time2[0]).startOf('day').format('YYYY-MM-DD')
+        endTime = moment(this.time2[1]).startOf('day').format('YYYY-MM-DD')
 
-      listTripDetailPage({
-        'licensePlate': this.licensePlatedig,
-        'type': this.type,
-        'startDate': startTime,
-        'endDate': endTime,
-        'pageIndex': this.pageIndex,
-        'pageSize': this.pageSize
-      }).then(res => {
-        console.log(res)
-        this.total = res.retData.total
-        this.tableData = res.retData.records
-      })
-    },
-    handleSizeChange(val) {
-      this.pageSize = val
-      this.listTripDetailPage()
-    },
-    handleCurrentChange(val) {
-      this.pageIndex = val
-      this.listTripDetailPage()
-    },
-    openDeatils(row) {
-      console.log(row)
-      this.chuVisible = true
-      this.licensePlatedig = row.licensePlate
-      this.time2 = [moment(this.time).startOf('month'), moment(this.time).endOf('month').add(1, 'day')]
-      this.type = 4
-      this.seach2()
-    },
-    getTripStatistics() {
-      console.log('this.time', this.time)
-      var startTime = ''
-      var endTime = ''
-      startTime = moment(this.time).startOf('month').format('YYYY-MM-DD')
-      endTime = moment(this.time).endOf('month').add(1, 'day').format('YYYY-MM-DD')
-      getTripStatistics({
-        startDate: startTime,
-        endDate: endTime,
-        licensePlate: this.licensePlate
-      }).then(res => {
-        console.log(res)
-        this.records = res.retData.tripInfo
-        this.carNum = res.retData.carNum
-        this.date = res.retData.date
-        this.travelNum = res.retData.travelNum
-        this.travelRate = res.retData.travelRate
-      })
-    },
+        listTripDetailPage({
+          'licensePlate': this.licensePlatedig,
+          'type': this.type,
+          'startDate': startTime,
+          'endDate': endTime,
+          'pageIndex': this.pageIndex,
+          'pageSize': this.pageSize
+        }).then(res => {
+          console.log(res)
+          this.total = res.retData.total
+          this.tableData = res.retData.records
+        })
+      },
+      handleSizeChange(val) {
+        this.pageSize = val
+        this.listTripDetailPage()
+      },
+      handleCurrentChange(val) {
+        this.pageIndex = val
+        this.listTripDetailPage()
+      },
+      openDeatils(row) {
+        console.log(row)
+        this.chuVisible = true
+        this.licensePlatedig = row.licensePlate
+        this.time2 = [moment(this.time).startOf('month'), moment(this.time).endOf('month').add(1, 'day')]
+        this.type = 4
+        this.seach2()
+      },
+      getTripStatistics() {
+        console.log('this.time', this.time)
+        var startTime = ''
+        var endTime = ''
+        startTime = moment(this.time).startOf('month').format('YYYY-MM-DD')
+        endTime = moment(this.time).endOf('month').add(1, 'day').format('YYYY-MM-DD')
+        getTripStatistics({
+          startDate: startTime,
+          endDate: endTime,
+          licensePlate: this.licensePlate
+        }).then(res => {
+          console.log(res)
+          this.records = res.retData.tripInfo
+          this.carNum = res.retData.carNum
+          this.date = res.retData.date
+          this.travelNum = res.retData.travelNum
+          this.travelRate = res.retData.travelRate
+        })
+      },
 
-    seach() {
-      this.getTripStatistics()
-    },
-    seach2() {
-      this.pageIndex = 1
-      console.log(this.time2)
-      this.listTripDetailPage()
-    },
-    computedNull(val) {
-      if (val === undefined || val === null || val === '' || val === ' ') {
-        return '-'
-      } else {
-        return val
+      seach() {
+        this.getTripStatistics()
+      },
+      seach2() {
+        this.pageIndex = 1
+        console.log(this.time2)
+        this.listTripDetailPage()
+      },
+      computedNull(val) {
+        if (val === undefined || val === null || val === '' || val === ' ') {
+          return '-'
+        } else {
+          return val
+        }
       }
     }
   }
-}
 
 </script>
 

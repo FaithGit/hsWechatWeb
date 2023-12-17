@@ -39,6 +39,7 @@
       highlight-current-row
       stripe
       style="margin-top:1.04vw"
+      height="calc(100vh - 84px - 60px - 40px - 32px - 1.04vw - 17px)"
     >
       <el-table-column align="center" label="#" width="95">
         <template slot-scope="scope">
@@ -58,6 +59,16 @@
       <el-table-column align="center" label="运维时间">
         <template slot-scope="scope">
           {{ computedNull(scope.row.completeTime) }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="完成状态">
+        <template slot-scope="scope">
+          {{ computedNull(scope.row.completeStatusName) }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="异常状态">
+        <template slot-scope="scope">
+          {{ computedNull(scope.row.exceptionStatusName) }}
         </template>
       </el-table-column>
 

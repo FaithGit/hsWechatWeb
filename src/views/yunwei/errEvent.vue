@@ -7,13 +7,12 @@
         class="seachInput" style="width:300px" @input="changeCom" :clearable="true" />
       点位名称：
       <treeselect v-model="pointId" :multiple="false" :options="dianweiList" :normalizer="normalizer2"
-        placeholder="请选择点位" class="seachInput" style="width:300px" :clearable="true" @input="changePoint" />
+        placeholder="请选择点位" class="seachInput" style="width:200px" :clearable="true" />
 
       点位因子：
-      <el-select v-model="factorCode" placeholder="请选择" clearable class="seachInput">
-        <el-option v-for="item in factorList" :key="item.factorCode" :label="item.factorName" :value="item.factorCode">
-        </el-option>
-      </el-select>
+
+      <treeselect v-model="factorCode" :multiple="false" :options="factorList" :normalizer="normalizer3"
+        placeholder="请选择点位因子" class="seachInput" style="width:220px" :clearable="true" />
 
       异常类型：
       <el-select v-model="eventCode" placeholder="请选择" clearable class="seachInput">
@@ -27,7 +26,9 @@
 
     <!-- 表格 -->
     <el-table v-loading="listLoading" :data="records" element-loading-text="加载中" border fit highlight-current-row stripe
-      style="margin-top:1.04vw">
+      style="margin-top:1.04vw"
+      height="calc(100vh - 84px - 60px - 40px - 32px - 1.04vw - 17px)"
+      >
       <el-table-column align="center" label="序号" width="95">
         <template slot-scope="scope">
           {{ scope.$index+1 }}
@@ -79,10 +80,9 @@
   import {
     listCompanySel,
     listShortPointSel,
-
     listEventCodeChoose,
-    listOnlineEvent,
-    listPointFactorByPointId
+    listFactorSel,
+    listOnlineEvent
   } from '@/api/table'
   import {
     mapGetters
@@ -108,7 +108,7 @@
         dianweiList: [],
         pointStatus: '',
         eventCode: "",
-        factorCode: "",
+        factorCode: null,
         comName: '',
         pointName: '',
         status: '',
@@ -149,6 +149,7 @@
     },
     mounted() {
       this.listCompanySel()
+      this.listFactorSel()
       this.listEventCodeChoose()
       setTimeout(() => {
         this.seach()
@@ -156,6 +157,11 @@
 
     },
     methods: {
+      listFactorSel() { // 所有因子列表
+        listFactorSel({}).then(res => {
+          this.factorList = res.retData
+        })
+      },
       listEventCodeChoose() { //listEventCodeChoose
         listEventCodeChoose({
 
@@ -192,25 +198,6 @@
 
 
       },
-      changePoint(e) {
-        console.log(e)
-        this.factorCode = ''
-        if (e === undefined) {
-          this.factorList = []
-        } else {
-          this.listPointFactorByPointId()
-        }
-
-
-      },
-      listPointFactorByPointId() {
-        listPointFactorByPointId({
-          pointId: this.pointId
-        }).then(res => {
-          console.log(res)
-          this.factorList = res.retData
-        })
-      },
       listShortPointSel() { // 点位id
         listShortPointSel({
           companyId: this.companyId || ''
@@ -229,9 +216,9 @@
       },
       listOnlineEvent() {
         listOnlineEvent({
-          pointId: this.pointId||'',
-          factorCode: this.factorCode||'',
-          eventCode: this.eventCode||'',
+          pointId: this.pointId || '',
+          factorCode: this.factorCode || '',
+          eventCode: this.eventCode || '',
           pageIndex: this.pageIndex,
           pageSize: this.pageSize,
         }).then(res => {

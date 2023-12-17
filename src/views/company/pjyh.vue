@@ -13,16 +13,8 @@
     </div>
 
     <!-- 表格 -->
-    <el-table
-      v-loading="listLoading"
-      :data="records"
-      element-loading-text="加载中"
-      border
-      fit
-      highlight-current-row
-      stripe
-      style="margin-top:1.04vw"
-    >
+    <el-table v-loading="listLoading" :data="records" element-loading-text="加载中" border fit highlight-current-row stripe
+      style="margin-top:1.04vw" height="calc(100vh - 84px  - 60px - 50px - 10px)">
 
       <el-table-column align="center" label="序号" width="95">
         <template slot-scope="scope">
@@ -67,28 +59,13 @@
     </el-table>
 
     <!-- 导入题目 -->
-    <el-dialog
-      v-if="youfeiVisible"
-      title="导入油费"
-      :append-to-body="true"
-      :visible="youfeiVisible"
-      width="30%"
-      :close-on-click-modal="false"
-      @close="youfeiVisible=false"
-    >
+    <el-dialog v-if="youfeiVisible" title="导入油费" :append-to-body="true" :visible="youfeiVisible" width="30%"
+      :close-on-click-modal="false" @close="youfeiVisible=false">
 
       <el-form ref="form" label-width="80px">
         <el-form-item label="附件">
-          <el-upload
-            class="upload-demo"
-            action="#"
-            :on-remove="upRemove"
-            :on-change="upChangeFile"
-            :limit="1"
-            :file-list="uplist"
-            accept=".xlsx"
-            :auto-upload="false"
-          >
+          <el-upload class="upload-demo" action="#" :on-remove="upRemove" :on-change="upChangeFile" :limit="1"
+            :file-list="uplist" accept=".xlsx" :auto-upload="false">
             <el-button size="small" type="primary">点击上传</el-button>
             <div slot="tip" class="el-upload__tip">限单个xlsx文件</div>
           </el-upload>
@@ -103,130 +80,130 @@
 </template>
 
 <script>
-import {
-  listOilFeeTreeList,
-  listDriveOilCost,
-  oilFeeexportExcelDemo
-} from '@/api/table'
-// import moment from 'moment'
-import axios from 'axios'
-import setting from '@/settings'
-import {
-  getToken
-} from '@/utils/auth'
+  import {
+    listOilFeeTreeList,
+    listDriveOilCost,
+    oilFeeexportExcelDemo
+  } from '@/api/table'
+  // import moment from 'moment'
+  import axios from 'axios'
+  import setting from '@/settings'
+  import {
+    getToken
+  } from '@/utils/auth'
 
-import {
-  mapGetters
-} from 'vuex'
+  import {
+    mapGetters
+  } from 'vuex'
 
-export default {
-  name: 'Yfgl',
-  data() {
-    return {
-      time: new Date(),
-      listLoading: false,
-      loading: false,
-      youfeiVisible: false,
-      records: [],
-      uplist: [],
-      chooseList: [],
-      statisticalTime: ''
-    }
-  },
-  computed: {
-    ...mapGetters([
-      'userId'
-    ])
-  },
-  mounted() {
-    listOilFeeTreeList({}).then(res => {
-      console.log(res)
-      this.chooseList = res.retData
-      this.statisticalTime = res.retData[res.retData.length - 1].value
-      this.seach()
-    })
-  },
-  methods: {
-    openDaoru() {
-      this.youfeiVisible = true
-      this.uplist = []
-    },
-    upChangeFile(file, fileList) { // 导入题目 更改文件
-      this.uplist = fileList
-    },
-    upRemove(file, fileList) { // 导入题目 删除上传文件
-      console.log(file, fileList)
-      this.uplist = fileList
-    },
-    upFile() { // look youfei
-      console.log(this.uplist)
-      if (this.uplist.length === 0) {
-        this.$notify({
-          type: 'warning',
-          message: '附件不能为空'
-        })
-        return
+  export default {
+    name: 'Yfgl',
+    data() {
+      return {
+        time: new Date(),
+        listLoading: false,
+        loading: false,
+        youfeiVisible: false,
+        records: [],
+        uplist: [],
+        chooseList: [],
+        statisticalTime: ''
       }
-      this.loading = true
-      var formData = new FormData()
-      formData.append('file', this.uplist[0].raw)
-      formData.append('userId', this.userId)
-
-      axios.post(setting.baseUrl + '/oilFee/importExcel', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'token': getToken()
-        }
-      })
-        .then(res => {
-          console.log(res)
-          if (res.retCode === 1000) {
-            this.loading = false
-            this.youfeiVisible = false
-            this.$notify({
-              type: 'success',
-              message: '操作成功'
-            })
-            this.listDriveOilCost()
-          } else {
-            this.loading = false
-            this.$notify({
-              type: 'warning',
-              message: res.retMsg
-            })
-          }
-        }).catch((e) => {
-          console.log(e)
-          this.loading = false
-        })
     },
-    listDriveOilCost() {
-      listDriveOilCost({
-        'statisticalTime': this.statisticalTime
-      }).then(res => {
+    computed: {
+      ...mapGetters([
+        'userId'
+      ])
+    },
+    mounted() {
+      listOilFeeTreeList({}).then(res => {
         console.log(res)
-        this.records = res.retData
+        this.chooseList = res.retData
+        this.statisticalTime = res.retData[res.retData.length - 1].value
+        this.seach()
       })
     },
+    methods: {
+      openDaoru() {
+        this.youfeiVisible = true
+        this.uplist = []
+      },
+      upChangeFile(file, fileList) { // 导入题目 更改文件
+        this.uplist = fileList
+      },
+      upRemove(file, fileList) { // 导入题目 删除上传文件
+        console.log(file, fileList)
+        this.uplist = fileList
+      },
+      upFile() { // look youfei
+        console.log(this.uplist)
+        if (this.uplist.length === 0) {
+          this.$notify({
+            type: 'warning',
+            message: '附件不能为空'
+          })
+          return
+        }
+        this.loading = true
+        var formData = new FormData()
+        formData.append('file', this.uplist[0].raw)
+        formData.append('userId', this.userId)
 
-    seach() {
-      this.listDriveOilCost()
-    },
-    computedNull(val) {
-      if (val === undefined || val === null || val === '' || val === ' ') {
-        return '-'
-      } else {
-        return val
+        axios.post(setting.baseUrl + '/oilFee/importExcel', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              'token': getToken()
+            }
+          })
+          .then(res => {
+            console.log(res)
+            if (res.retCode === 1000) {
+              this.loading = false
+              this.youfeiVisible = false
+              this.$notify({
+                type: 'success',
+                message: '操作成功'
+              })
+              this.listDriveOilCost()
+            } else {
+              this.loading = false
+              this.$notify({
+                type: 'warning',
+                message: res.retMsg
+              })
+            }
+          }).catch((e) => {
+            console.log(e)
+            this.loading = false
+          })
+      },
+      listDriveOilCost() {
+        listDriveOilCost({
+          'statisticalTime': this.statisticalTime
+        }).then(res => {
+          console.log(res)
+          this.records = res.retData
+        })
+      },
+
+      seach() {
+        this.listDriveOilCost()
+      },
+      computedNull(val) {
+        if (val === undefined || val === null || val === '' || val === ' ') {
+          return '-'
+        } else {
+          return val
+        }
+      },
+      daochu() {
+        oilFeeexportExcelDemo({}).then(res => {
+          console.log('xxx')
+          window.open(res.retData)
+        })
       }
-    },
-    daochu() {
-      oilFeeexportExcelDemo({}).then(res => {
-        console.log('xxx')
-        window.open(res.retData)
-      })
     }
   }
-}
 
 </script>
 
