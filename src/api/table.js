@@ -934,3 +934,171 @@ export function listDictionarySel(data) { // 获取所有因子
     data
   })
 }
+export function listReagentDepartment(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/reagent/listReagentDepartment',
+    method: 'post',
+    data
+  })
+}
+export function listGroupByDepartment(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/group/listGroupByDepartment',
+    method: 'post',
+    data
+  })
+}
+export function getReagentStatement(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/reagent/getReagentStatement',
+    method: 'post',
+    data
+  })
+}
+export function getPharmaceuticalStatement(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/reagent/getPharmaceuticalStatement',
+    method: 'post',
+    data
+  })
+}
+export function reagentStatementDetail(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/reagent/reagentStatementDetail',
+    method: 'post',
+    data
+  })
+}
+export function getStandardSolutionStatement(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/standardSolution/getStandardSolutionStatement',
+    method: 'post',
+    data
+  })
+}
+export function getStandardLiquidStatement(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/standardSolution/getStandardLiquidStatement',
+    method: 'post',
+    data
+  })
+}
+export function listStandardSolutionStatementDetail(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/standardSolution/listStandardSolutionStatementDetail',
+    method: 'post',
+    data
+  })
+}
+export function listSignInPage(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/signIn/listSignInPage',
+    method: 'post',
+    data
+  })
+}
+export function exportReagentStatement(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/reagent/exportReagentStatement',
+    method: 'post',
+    data
+  })
+}
+export function exportPharmaceuticalStatement(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/reagent/exportPharmaceuticalStatement',
+    method: 'post',
+    data
+  })
+}
+export function exportReagentStatementDetail(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/reagent/exportReagentStatementDetail',
+    method: 'post',
+    data
+  })
+}
+export function exportStandardSolutionStatement(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/standardSolution/exportStandardSolutionStatement',
+    method: 'post',
+    data
+  })
+}
+export function exportStandardLiquidStatement(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/standardSolution/exportStandardLiquidStatement',
+    method: 'post',
+    data
+  })
+}
+export function exportStandardSolutionStatementDetail(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/standardSolution/exportStandardSolutionStatementDetail',
+    method: 'post',
+    data
+  })
+}
+export function addSignIn(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/signIn/addSignIn',
+    method: 'post',
+    data
+  })
+}
+export function removeUser(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/sysUser/removeUser',
+    method: 'post',
+    data
+  })
+}
+export function listWxMessageLog(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/wechatPublicAccount/listWxMessageLog',
+    method: 'post',
+    data
+  })
+}
+export function listWorkload(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/instrument/listWorkload',
+    method: 'post',
+    data
+  })
+}
+export function listInstrumentType(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/instrument/listInstrumentType',
+    method: 'post',
+    data
+  })
+}
+export function getInstrumentType(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/instrument/getInstrumentType',
+    method: 'post',
+    data
+  })
+}
+export function updateInstrumentType(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/instrument/updateInstrumentType',
+    method: 'post',
+    data
+  })
+}
+export function updateWorkloadCoefficient(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/point/updateWorkloadCoefficient',
+    method: 'post',
+    data
+  })
+}
+export function updateInstrumentWorkload(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/instrument/updateInstrumentWorkload',
+    method: 'post',
+    data
+  })
+}

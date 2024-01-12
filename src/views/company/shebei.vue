@@ -7,14 +7,14 @@
         class="seachInput" style="width:300px" @input="changeCom" />
       点位名称：
       <treeselect v-model="pointId" :multiple="false" :options="dianweiList" :normalizer="normalizer2"
-        placeholder="请选择点位名称" class="seachInput" style="width:300px" />
+        placeholder="请选择点位名称" class="seachInput" style="width:200px" />
       设备类型：
       <el-select v-model="pointStatus" placeholder="请选择设备类型" class="seachInput" clearable>
         <el-option v-for="item in shebeilist" :key="item.instrumentType+item.instrumentTypeName"
           :label="item.instrumentTypeName" :value="item.instrumentType" />
       </el-select>
       污染源种类：
-      <el-select v-model="pollutionType" placeholder="请选择污染源种类" clearable class="seachInput">
+      <el-select v-model="pollutionType" placeholder="请选择污染源种类" clearable class="seachInput" style="width:160px">
         <el-option label="废水" :value="1" />
         <el-option label="废气" :value="2" />
         <el-option label="vocs" :value="3" />
@@ -24,13 +24,13 @@
       </el-select>
       <el-button type="primary" @click="seach">搜索</el-button>
       <el-button type="primary" @click="addShebei">新增设备</el-button>
+      <el-button type="primary" @click="sdType=true">设备类型</el-button>
     </div>
 
     <!-- 表格 -->
     <el-table v-loading="listLoading" :data="records" element-loading-text="加载中" border fit
       :span-method="arraySpanMethod" :row-class-name="tableRowClassName" style="margin-top:1.04vw"
-      height="calc(100vh - 84px - 60px - 40px - 32px - 1.04vw - 17px)"
-      >
+      height="calc(100vh - 84px - 60px - 40px - 32px - 1.04vw - 17px)">
       <el-table-column align="center" label="#" width="95">
         <template slot-scope="scope">
           {{ (scope.row.index+1)+(pageIndex-1)*pageSize }}
@@ -48,11 +48,16 @@
           {{ computedNull(scope.row.checkStatusName) }}
         </template>
       </el-table-column>
+      <el-table-column align="center" label="工作量">
+        <template slot-scope="scope">
+          {{ computedNull(scope.row.workload) }}
+        </template>
+      </el-table-column>
 
       <el-table-column align="center" label="操作">
         <template slot-scope="scope">
-          <el-button @click="editPoint(scope.row)">编辑</el-button>
-          <el-button type="danger" @click="remove(scope.row)"> 删除</el-button>
+          <el-button v-if="scope.row.instrumentId!='-'" @click="editPoint(scope.row)">编辑</el-button>
+          <el-button v-if="scope.row.instrumentId!='-'" type="danger" @click="remove(scope.row)"> 删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -85,6 +90,9 @@
         </el-form-item>
         <el-form-item label="设备名称" prop="instrumentRealName">
           <el-input v-model="form.instrumentRealName" placeholder="请输入设备名称" />
+        </el-form-item>
+        <el-form-item label="工作量" prop="workload">
+          <el-input v-model="form.workload" placeholder="请输入工作量" />
         </el-form-item>
 
         <el-form-item label="开始时间年份" prop="startYear">
@@ -125,6 +133,9 @@
         <el-form-item label="设备名称" prop="instrumentRealName">
           <el-input v-model="form.instrumentRealName" placeholder="请输入设备名称" />
         </el-form-item>
+        <el-form-item label="工作量" prop="workload">
+          <el-input v-model="form.workload" placeholder="请输入工作量" />
+        </el-form-item>
 
         <el-form-item label="开始时间年份" prop="startYear">
           <el-input v-model="form.startYear" placeholder="请输入开始时间年份" />
@@ -146,11 +157,21 @@
         </div>
       </el-form>
     </el-dialog>
+
+
+    <!-- 设备类型 -->
+
+    <el-dialog v-if="sdType" title="设备类型" :append-to-body="true" :visible="sdType" width="60%"
+      :close-on-click-modal="false" @close="sdType=false" >
+      <shebeiZhonglei></shebeiZhonglei>
+
+    </el-dialog>
   </div>
 </template>
 
 <script>
   import Treeselect from '@riophae/vue-treeselect'
+  import shebeiZhonglei from './shebeiZhonglei.vue'
   // import the styles
   import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
@@ -171,7 +192,8 @@
   export default {
     name: 'Shebei',
     components: {
-      Treeselect
+      Treeselect,
+      shebeiZhonglei
     },
     data() {
       return {
@@ -193,6 +215,7 @@
         addVisible: false,
         editVisible: false,
         listLoading: false,
+        sdType: false,
         form: {},
         allyjList: [], // 全部药剂列表
         yaojiChoose: [], // 全部药剂列表
@@ -260,7 +283,14 @@
             required: true,
             message: '设备厂家型号',
             trigger: 'blur'
-          }]
+          }],
+          workload: [{
+            required: true,
+            type: 'number',
+            message: '必须为数字',
+            transform: value =>
+              this.$options.filters.formValidateFun(value, 'number')
+          }],
           // socialCreditCode: [{
           //   required: true,
           //   message: '请输入统一社会信用代码',
@@ -357,6 +387,7 @@
         console.log(findObj)
         this.form.instrumentName = findObj.instrumentTypeName
         this.form.instrumentRealName = findObj.instrumentTypeName
+        this.form.workload = findObj.workload
       },
       riskPersonDeptChangeValue() {
         // form是表单名 riskPersonDept是prop名
@@ -456,7 +487,8 @@
                 instrumentName: '-',
                 instrumentId: '-',
                 checkStatusName: '-',
-                checkStatus: '-'
+                checkStatus: '-',
+                workload: '-',
               })
               comNum++
               pointIndex.push(1)
@@ -473,7 +505,8 @@
                     instrumentName: '-',
                     instrumentId: '-',
                     checkStatusName: '-',
-                    checkStatus: '-'
+                    checkStatus: '-',
+                    workload: '-',
                   })
                   comNum++
                   pointIndex.push(1)
@@ -489,7 +522,8 @@
                       instrumentName: iiner.instrumentName,
                       instrumentId: iiner.instrumentId,
                       checkStatusName: iiner.checkStatusName,
-                      checkStatus: iiner.checkStatus
+                      checkStatus: iiner.checkStatus,
+                      workload: iiner.workload,
                     })
                     comNum++
                     pointNum++

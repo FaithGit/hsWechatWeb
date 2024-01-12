@@ -111,6 +111,22 @@
         </template>
       </el-table-column>
 
+      <el-table-column align="center" label="备案资料">
+        <template slot-scope="scope">
+
+          <div>
+
+            <template v-for="item in scope.row.recordFiles">
+              <img src="@/assets/file.png" alt="" srcset="" :title="item.name" style="width:20px" :key="item.fileId"
+                @click="handlePreview(item)">
+            </template>
+
+          </div>
+
+        </template>
+      </el-table-column>
+
+
       <el-table-column align="center" label="操作" width="300">
         <template slot-scope="scope">
           <el-button @click="editPoint(scope.row)">编辑</el-button>
@@ -129,7 +145,7 @@
     </div>
 
     <el-dialog v-if="addVisible" :title="futitle" :append-to-body="true" :visible="addVisible" width="41vw"
-      :close-on-click-modal="false" @close="addVisible=false">
+      :close-on-click-modal="false" @close="addVisible=false" top="2vh">
       <el-form ref="form1" :model="form" :inline="true" label-width="120px" :rules="rules" label-position="top">
         <el-form-item v-if="futitle=='新增点位'" label="企业名称" prop="companyId" class="formWidth2">
           <treeselect v-model="form.companyId" :multiple="false" :options="comlist" :normalizer="normalizer"
@@ -234,6 +250,19 @@
           <el-input v-model="form.excessAirFactor" placeholder="请输入过量空气系数" />
         </el-form-item>
 
+        <el-form-item label="工作量系数" prop="workloadCoefficient" class="formWidth4">
+          <el-input v-model="form.workloadCoefficient" placeholder="请输入工作量系数" />
+        </el-form-item>
+
+        <el-form-item label="备案资料" prop="educationFiles">
+          (点击列表查看附件)
+          <el-upload action="#" :on-change="handleChangeID" :on-remove="handleRemoveID" :on-preview="handlePreview"
+            :auto-upload="false" :file-list="IDList">
+            <el-button size="small" type="primary">点击上传</el-button>
+          </el-upload>
+        </el-form-item>
+
+
         <div style="text-align:center;margin-top:80px">
           <el-button @click="addVisible=false">取 消</el-button>
           <el-button v-if="futitle=='新增点位'" type="primary" @click="sumbitPoint">确 定</el-button>
@@ -269,6 +298,12 @@
   import {
     mapGetters
   } from 'vuex'
+  import {
+    getToken
+  } from '@/utils/auth'
+  import axios from 'axios'
+  import setting from '@/settings'
+
   // import moment from 'moment'
   export default {
     name: 'Ponit',
@@ -288,6 +323,7 @@
         records: [],
         comlist: [],
         allAreacode: [],
+        IDList: [],
         dciTypeList: [],
         concernLevelList: [],
         groupList: [],
@@ -384,6 +420,13 @@
             transform: value =>
               this.$options.filters.formValidateFun(value, 'number')
           }],
+          workloadCoefficient: [{
+            required: true,
+            type: 'number',
+            message: '必须为数字',
+            transform: value =>
+              this.$options.filters.formValidateFun(value, 'number')
+          }],
           lat: [{
             required: true,
             type: 'number',
@@ -459,6 +502,30 @@
       }
     },
     methods: {
+      handlePreview(file) { // 预览
+        console.log(file)
+        window.open(file.url)
+      },
+      handleRemoveID(file, fileList) { // 身份附件删除
+        console.log(file, fileList)
+        this.IDList = fileList
+      },
+      handleChangeID(file, fileList) { // 身份附件上传
+        var formData = new FormData()
+        formData.append('file', file.raw)
+        formData.append('type', 'education')
+        axios.post(setting.baseUrl + '/sysSup/fileConvert', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              'token': getToken()
+            }
+          })
+          .then(res => {
+            console.log(res.data)
+            this.IDList.push(res.data.retData)
+          })
+      },
+
       listDictionarySel() {
         listDictionarySel({
           dicCode: "pointStatus"
@@ -592,6 +659,7 @@
       editPoint(e) {
         this.addVisible = true
         this.futitle = '编辑点位'
+        this.IDList = []
         // this.form = Object.assign({}, e)
 
         getPointById({
@@ -599,6 +667,7 @@
         }).then(res => {
           console.log(res)
           this.form = res.retData
+          this.IDList = res.retData.recordFiles
 
           lisDischargeStandard({
             pollutionType: this.form.pollutionType
@@ -623,6 +692,7 @@
           groupId: null,
           isDataSend: 0
         }
+        this.IDList = []
         if (this.companyId) {
           this.form.companyId = this.companyId
         }
@@ -630,6 +700,7 @@
       sumbitPoint() {
         this.$refs.form1.validate((valid) => {
           if (valid) {
+            this.form.recordFiles = this.IDList
             addPoint(this.form).then(res => {
               console.log(res)
               this.$notify({
@@ -645,6 +716,7 @@
       editSubmit() {
         this.$refs.form1.validate((valid) => {
           if (valid) {
+            this.form.recordFiles = this.IDList
             updatePoint(this.form).then(res => {
               console.log(res)
               this.$notify({

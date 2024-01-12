@@ -157,7 +157,7 @@
           })
           .then(res => {
             console.log(res)
-            if (res.retCode === 1000) {
+            if (res.data.retCode === 1000) {
               this.loading = false
               this.youfeiVisible = false
               this.$notify({
@@ -169,7 +169,7 @@
               this.loading = false
               this.$notify({
                 type: 'warning',
-                message: res.retMsg
+                message: res.data.retMsg
               })
             }
           }).catch((e) => {

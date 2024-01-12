@@ -15,7 +15,7 @@
 
     <!-- 表格 -->
     <el-table v-loading="listLoading" :data="records" element-loading-text="加载中" border fit stripe highlight-current-row
-      style="margin-top:1.04vw"      height="calc(100vh - 84px - 60px - 40px - 32px - 1.04vw - 17px)">
+      style="margin-top:1.04vw" height="calc(100vh - 84px - 60px - 40px - 32px - 1.04vw - 17px)">
       <el-table-column align="center" label="#" width="95">
         <template slot-scope="scope">
           {{ scope.$index+1 }}
@@ -74,8 +74,11 @@
           <el-button @click="gotopx(scope.row)">培训管理</el-button>
           <el-button @click="gotozw(scope.row)">职位变迁</el-button>
           <el-button @click="gotojc(scope.row)">奖惩记录</el-button>
-          <el-button type="success" @click="edit(scope.row)">编辑</el-button>
-          <!-- <el-button @click="remove(scope.row)">删除</el-button> -->
+          <div style="margin-top:10px">
+            <el-button type="success" @click="edit(scope.row)">编辑</el-button>
+            <el-button type="danger" @click="remove(scope.row)">删除</el-button>
+          </div>
+
         </template>
       </el-table-column>
     </el-table>
@@ -166,7 +169,8 @@
     listRoleSel,
     addUserInfo,
     getUserInfoDetail,
-    updateUserInfo
+    updateUserInfo,
+    removeUser
   } from '@/api/table'
   import {
     mapGetters
@@ -288,7 +292,7 @@
       gotopx(e) {
         console.log(e.userId)
         this.$router.push({
-          name: 'UserPeixun',
+          name: 'Peixun',
           params: {
             pmId: e.userId
           }
@@ -440,20 +444,21 @@
         })
       },
       remove(e) {
-        this.$confirm('此操作将永久删除该企业, 是否继续?', '提示', {
+        console.log(e.userId)
+        this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          // deletePharmaceutical({
-          //   id: e.id
-          // }).then(res => {
-          //   this.$notify({
-          //     type: "success",
-          //     message: res.retMsg
-          //   })
-          //   this.listUserInfoPage()
-          // })
+          removeUser({
+            userId: e.userId
+          }).then(res => {
+            this.$notify({
+              type: "success",
+              message: res.retMsg
+            })
+            this.listUserInfoPage()
+          })
         })
       },
       addPeople(e) {
@@ -462,9 +467,9 @@
         this.form = {
 
         }
-        this.xueliList=[]
-        this.userImages=[]
-        this.IDList=[]
+        this.xueliList = []
+        this.userImages = []
+        this.IDList = []
       },
       sumbitPeople() {
         // console.log('学习列表', this.xueliList)

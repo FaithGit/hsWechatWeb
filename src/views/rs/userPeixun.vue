@@ -26,6 +26,12 @@
       <el-table-column align="center" label="考核分数" prop="trainingScore" />
       <el-table-column align="center" label="培训时间" prop="trainingTime" />
 
+      <el-table-column align="center" label="签到状态">
+        <template slot-scope="scope">
+          {{scope.row.signInStatus===0?'':scope.row.signInStatus===1?'未签到':scope.row.signInStatus===2?'已签到':''}}
+        </template>
+      </el-table-column>
+
       <el-table-column align="center" label="操作" width="280">
         <template slot-scope="scope">
           <el-button @click="edit(scope.row)">编辑</el-button>
