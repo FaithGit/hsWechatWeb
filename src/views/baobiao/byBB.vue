@@ -144,7 +144,7 @@
   } from 'vuex'
   import moment from 'moment'
   export default {
-    name: 'YinziList',
+    name: 'Bybb',
     components: {
       Treeselect
     },

@@ -184,7 +184,7 @@
   import moment from 'moment'
 
   export default {
-    name: 'Rygk',
+    name: 'UserInfo',
     data() {
       return {
         pageIndex: 1,
@@ -283,7 +283,7 @@
       gotoZs(e) {
         console.log(e.userId)
         this.$router.push({
-          name: 'Userzhengshu',
+          name: 'UserCertificate',
           params: {
             pmId: e.userId
           }
@@ -292,7 +292,7 @@
       gotopx(e) {
         console.log(e.userId)
         this.$router.push({
-          name: 'Peixun',
+          name: 'Training',
           params: {
             pmId: e.userId
           }
@@ -301,7 +301,7 @@
       gotozw(e) {
         console.log(e.userId)
         this.$router.push({
-          name: 'Zhiwei',
+          name: 'JobChange',
           params: {
             pmId: e.userId
           }
@@ -310,7 +310,7 @@
       gotojc(e) {
         console.log(e.userId)
         this.$router.push({
-          name: 'Jiangcheng',
+          name: 'RewardPunish',
           params: {
             pmId: e.userId
           }

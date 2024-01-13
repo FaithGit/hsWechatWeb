@@ -13,12 +13,8 @@
         class="seachInput"
         no-children-text="暂无数据"
       />
-      奖惩名称：
-      <el-select v-model="rewardPunishType" clearable class="seachInput">
-        <el-option v-for="item in rewardPunishTypeList" :key="item.label" :label="item.label" :value="item.value" />
-      </el-select>
       <el-button type="primary" @click="seach">搜索</el-button>
-      <el-button type="primary" @click="addCom">新增用户奖惩</el-button>
+      <el-button type="primary" @click="addCom">新增职位变迁</el-button>
     </div>
 
     <!-- 表格 -->
@@ -37,11 +33,10 @@
           {{ scope.$index+1 }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="用户名" prop="username" />
-      <el-table-column align="center" label="部门名" prop="departmentName" />
-      <el-table-column align="center" label="奖惩类型" prop="rewardPunishTypeName" />
-      <el-table-column align="center" label="奖惩内容" prop="rewardPunishContent" />
-      <el-table-column align="center" label="奖惩时间" prop="rewardPunishTime" />
+      <el-table-column align="center" label="用户名" prop="userName" />
+      <el-table-column align="center" label="旧职位" prop="oldJob" />
+      <el-table-column align="center" label="新职位" prop="newJob" />
+      <el-table-column align="center" label="变更时间" prop="operateTime" />
 
       <el-table-column align="center" label="操作" width="280">
         <template slot-scope="scope">
@@ -83,22 +78,33 @@
             no-children-text="暂无数据"
           />
         </el-form-item>
-        <el-form-item label="奖惩类型" prop="rewardPunishType">
-          <el-select v-model="form.rewardPunishType">
-            <el-option v-for="item in rewardPunishTypeList" :key="item.label" :label="item.label" :value="item.value" />
-          </el-select>
+        <el-form-item label="旧职位" prop="oldJob">
+          <el-input v-model="form.oldJob" placeholder="请输入旧职位" />
         </el-form-item>
-        <el-form-item label="奖惩内容" prop="rewardPunishContent">
-          <el-input v-model="form.rewardPunishContent" type="textarea" :rows="2" placeholder="请选择奖惩内容" />
+        <el-form-item label="新职位" prop="newJob">
+          <el-input v-model="form.newJob" placeholder="请输入新职位" />
         </el-form-item>
-        <el-form-item label="奖惩时间" prop="rewardPunishTime">
-          <el-date-picker v-model="form.rewardPunishTime" type="datetime" placeholder="请选择奖惩时间" />
+        <el-form-item label="变更时间" prop="operateTime">
+          <el-date-picker v-model="form.operateTime" type="datetime" placeholder="请选择变更时间" />
+        </el-form-item>
+        <el-form-item label="考核记录文件">
+          (点击列表查看附件)
+          <el-upload
+            action="#"
+            :on-change="handleChangeID"
+            :on-remove="handleRemoveID"
+            :on-preview="handlePreview"
+            :auto-upload="false"
+            :file-list="zhiweiList"
+          >
+            <el-button size="small" type="primary">点击上传</el-button>
+          </el-upload>
         </el-form-item>
 
         <div style="text-align:center;margin-top:80px">
           <el-button @click="visible=false">取 消</el-button>
-          <el-button v-if="visibleTitle=='新增用户奖惩'" type="primary" @click="sumbitCom">确 定</el-button>
-          <el-button v-if="visibleTitle=='编辑用户奖惩'" type="primary" @click="editSubmit">更 改</el-button>
+          <el-button v-if="visibleTitle=='新增职位变迁'" type="primary" @click="sumbitCom">确 定</el-button>
+          <el-button v-if="visibleTitle=='编辑职位变迁'" type="primary" @click="editSubmit">更 改</el-button>
         </div>
       </el-form>
     </el-dialog>
@@ -111,21 +117,26 @@ import Treeselect from '@riophae/vue-treeselect'
 // import the styles
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import {
-  deleteRewardPunish,
-  updateRewardPunish,
+  deleteJobChange,
+  updateJobChange,
   listCertificateSel,
   listUser,
-  listRewardPunishPage,
-  addRewardPunish,
-  getRewardPunish
+  listJobChangePage,
+  addJobChange,
+  getJobChangeDetail
 } from '@/api/table'
 import {
   mapGetters
 } from 'vuex'
+import axios from 'axios'
+import setting from '@/settings'
 import moment from 'moment'
+import {
+  getToken
+} from '@/utils/auth'
 // import moment from 'moment'
 export default {
-  name: 'Jiangcheng',
+  name: 'JobChange',
   components: {
     Treeselect
   },
@@ -149,6 +160,7 @@ export default {
       listLoading: false,
       form: {},
       allyjList: [], // 全部药剂列表
+      zhiweiList: [], // 全部药剂列表
       zhengshuList: [], // 全部药剂列表
       yaojiChoose: [], // 全部药剂列表
       userlist: [], // 全部药剂列表
@@ -165,20 +177,20 @@ export default {
           message: '请选择用户',
           trigger: 'change'
         }],
-        rewardPunishType: [{
+        oldJob: [{
           required: true,
-          message: '请选择奖惩类型',
-          trigger: 'change'
-        }],
-        rewardPunishTime: [{
-          required: true,
-          message: '请选择奖惩时间',
-          trigger: 'change'
-        }],
-        rewardPunishContent: [{
-          required: true,
-          message: '请输入奖惩内容',
+          message: '请输入旧职位',
           trigger: 'blur'
+        }],
+        newJob: [{
+          required: true,
+          message: '请输入新职位',
+          trigger: 'blur'
+        }],
+        operateTime: [{
+          required: true,
+          message: '请输入变更时间',
+          trigger: 'change'
         }]
       },
       normalizer(node) {
@@ -207,20 +219,43 @@ export default {
   },
   mounted() {
     this.listCertificateSel()
+    // this.listJobChangePage()
     this.listUser()
-
     if (!this.$route.params.pmId) {
-      this.listRewardPunishPage()
+      this.listJobChangePage()
     }
   },
   activated() {
     if (this.$route.params.pmId) {
       console.log('执行吗')
       this.userIdShow = this.$route.params.pmId
-      this.listUserCertificatePage()
+      this.listJobChangePage()
     }
   },
   methods: {
+    handleChangeID(file, fileList) { // 身份附件上传
+      var formData = new FormData()
+      formData.append('file', file.raw)
+      formData.append('type', 'education')
+      axios.post(setting.baseUrl + '/sysSup/fileConvert', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'token': getToken()
+        }
+      })
+        .then(res => {
+          console.log(res.data)
+          this.zhiweiList.push(res.data.retData)
+        })
+    },
+    handleRemoveID(file, fileList) { // 身份附件删除
+      console.log(file, fileList)
+      this.zhiweiList = fileList
+    },
+    handlePreview(file) { // 预览
+      console.log(file)
+      window.open(file.url)
+    },
     listCertificateSel() {
       listCertificateSel({}).then(res => {
         console.log(res.retData)
@@ -233,10 +268,9 @@ export default {
         this.userlist = res.retData
       })
     },
-    listRewardPunishPage() {
-      listRewardPunishPage({
+    listJobChangePage() {
+      listJobChangePage({
         userId: this.userIdShow || '',
-        rewardPunishType: this.rewardPunishType || '',
         pageIndex: this.pageIndex,
         pageSize: this.pageSize
       }).then(res => {
@@ -247,15 +281,15 @@ export default {
     },
     handleSizeChange(val) {
       this.pageSize = val
-      this.listRewardPunishPage()
+      this.listJobChangePage()
     },
     handleCurrentChange(val) {
       this.pageIndex = val
-      this.listRewardPunishPage()
+      this.listJobChangePage()
     },
     seach() {
       this.pageIndex = 1
-      this.listRewardPunishPage()
+      this.listJobChangePage()
     },
     editShiji(e) {
       this.editVisible = true
@@ -267,54 +301,76 @@ export default {
     },
     remove(e) {
       console.log(e)
-      this.$confirm('此操作将永久删除该用户奖惩记录, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除该条职位变迁, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteRewardPunish({
-          rewardPunishId: e.rewardPunishId
+        deleteJobChange({
+          jobChangeId: e.jobChangeId
         }).then(res => {
           this.$notify({
             type: 'success',
             message: res.retMsg
           })
-          this.listRewardPunishPage()
+          this.listJobChangePage()
         })
       })
     },
     edit(e) {
-      getRewardPunish({
-        rewardPunishId: e.rewardPunishId
+      getJobChangeDetail({
+        jobChangeId: e.jobChangeId
       }).then(res => {
         console.log(res)
+        const {
+          retData
+        } = res
         this.visible = true
         this.form = res.retData
-        this.visibleTitle = '编辑用户奖惩'
+        this.form = {
+          jobChangeId: retData.jobChangeId,
+          newJob: retData.newJob,
+          oldJob: retData.oldJob,
+          operateTime: retData.operateTime,
+          userId: retData.userId
+        }
+        this.zhiweiList = retData.files
+        this.visibleTitle = '编辑职位变迁'
       })
     },
     addCom(e) {
       this.visible = true
       this.form = {}
-      this.visibleTitle = '新增用户奖惩'
+      this.visibleTitle = '新增职位变迁'
     },
     sumbitCom() {
       this.$refs.form1.validate((valid) => {
         if (valid) {
+          var _zhiweiList = []
+          this.zhiweiList.forEach(e => {
+            _zhiweiList.push({
+              name: e.name,
+              url: e.url
+            })
+          })
           const newObj = {
+            operateUserId: this.userId,
             userId: this.form.userId,
-            rewardPunishType: this.form.rewardPunishType,
-            rewardPunishTime: moment(this.form.rewardPunishTime).format('YYYY-MM-DD HH:mm:ss'),
-            rewardPunishContent: this.form.rewardPunishContent
+            oldJob: this.form.oldJob,
+            newJob: this.form.newJob,
+            operateTime: moment(this.form.operateTime).format('YYYY-MM-DD HH:mm:ss'),
+            rewardPunishContent: this.form.rewardPunishContent,
+            files: _zhiweiList
           }
-          addRewardPunish(newObj).then(res => {
+
+          addJobChange(newObj).then(res => {
             console.log(res)
             this.$notify({
               type: 'success',
               message: res.retMsg
             })
             this.visible = false
-            this.listRewardPunishPage()
+            this.listJobChangePage()
           })
         }
       })
@@ -322,21 +378,31 @@ export default {
     editSubmit() {
       this.$refs.form1.validate((valid) => {
         if (valid) {
+          var _zhiweiList = []
+          this.zhiweiList.forEach(e => {
+            _zhiweiList.push({
+              name: e.name,
+              url: e.url
+            })
+          })
           const newObj = {
-            id: this.form.id,
+            operateUserId: this.userId,
+            jobChangeId: this.form.jobChangeId,
             userId: this.form.userId,
-            rewardPunishType: this.form.rewardPunishType,
-            rewardPunishTime: moment(this.form.rewardPunishTime).format('YYYY-MM-DD HH:mm:ss'),
-            rewardPunishContent: this.form.rewardPunishContent
+            oldJob: this.form.oldJob,
+            newJob: this.form.newJob,
+            operateTime: moment(this.form.operateTime).format('YYYY-MM-DD HH:mm:ss'),
+            rewardPunishContent: this.form.rewardPunishContent,
+            files: _zhiweiList
           }
-          updateRewardPunish(newObj).then(res => {
+          updateJobChange(newObj).then(res => {
             console.log(res)
             this.$notify({
               type: 'success',
               message: res.retMsg
             })
             this.visible = false
-            this.listRewardPunishPage()
+            this.listJobChangePage()
           })
         }
       })

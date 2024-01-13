@@ -1102,3 +1102,10 @@ export function updateInstrumentWorkload(data) { // 获取所有因子
     data
   })
 }
+export function listKhLoginInfo(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/sysSup/listKhLoginInfo',
+    method: 'post',
+    data
+  })
+}

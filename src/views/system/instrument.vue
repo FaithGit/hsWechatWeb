@@ -85,11 +85,8 @@
               :label="item.instrumentTypeName" :value="item.instrumentType" />
           </el-select>
         </el-form-item>
-        <el-form-item label="运维时设备名称" prop="instrumentName">
-          <el-input v-model="form.instrumentName" placeholder="请输入运维时设备名称" />
-        </el-form-item>
-        <el-form-item label="设备名称" prop="instrumentRealName">
-          <el-input v-model="form.instrumentRealName" placeholder="请输入设备名称" />
+        <el-form-item label="设备名称" prop="instrumentName">
+          <el-input v-model="form.instrumentName" placeholder="请输入设备名称" />
         </el-form-item>
         <el-form-item label="工作量" prop="workload">
           <el-input v-model="form.workload" placeholder="请输入工作量" />
@@ -127,11 +124,8 @@
               :label="item.instrumentTypeName" :value="item.instrumentType" />
           </el-select>
         </el-form-item>
-        <el-form-item label="运维时设备名称" prop="instrumentName">
-          <el-input v-model="form.instrumentName" placeholder="请输入运维时设备名称" />
-        </el-form-item>
-        <el-form-item label="设备名称" prop="instrumentRealName">
-          <el-input v-model="form.instrumentRealName" placeholder="请输入设备名称" />
+        <el-form-item label="设备名称" prop="instrumentName">
+          <el-input v-model="form.instrumentName" placeholder="请输入设备名称" />
         </el-form-item>
         <el-form-item label="工作量" prop="workload">
           <el-input v-model="form.workload" placeholder="请输入工作量" />
@@ -162,7 +156,7 @@
     <!-- 设备类型 -->
 
     <el-dialog v-if="sdType" title="设备类型" :append-to-body="true" :visible="sdType" width="60%"
-      :close-on-click-modal="false" @close="sdType=false" >
+      :close-on-click-modal="false" @close="sdType=false">
       <shebeiZhonglei></shebeiZhonglei>
 
     </el-dialog>
@@ -171,7 +165,7 @@
 
 <script>
   import Treeselect from '@riophae/vue-treeselect'
-  import shebeiZhonglei from './shebeiZhonglei.vue'
+  import shebeiZhonglei from './component/shebeiZhonglei.vue'
   // import the styles
   import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
@@ -190,7 +184,7 @@
   } from 'vuex'
   // import moment from 'moment'
   export default {
-    name: 'Shebei',
+    name: 'Instrument',
     components: {
       Treeselect,
       shebeiZhonglei

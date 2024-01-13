@@ -2,6 +2,10 @@
   <div class="testPaper">
     <!-- 条件栏 -->
     <div class="headClass">
+      用户名称：
+      <treeselect v-model="userIdSeach" :multiple="false" :disable-branch-nodes="true" :options="userlist"
+        :normalizer="normalizer2" placeholder="请选择用户" class="seachInput" no-children-text="暂无数据" />
+
       培训主题：
       <el-input v-model="trainingTheme" class="seachInput" placeholder="请选择输入关键字" clearable />
       <el-button type="primary" @click="seach">搜索</el-button>
@@ -113,7 +117,7 @@
   import moment from 'moment'
   // import moment from 'moment'
   export default {
-    name: 'Peixun',
+    name: 'Training',
     components: {
       Treeselect
     },
@@ -125,6 +129,7 @@
         records: [],
         allAreacode: [],
         certificateName: '',
+        userIdSeach: null,
         trainingTheme: '',
         visibleTitle: '',
         comName: '',
@@ -203,6 +208,13 @@
         'userId'
       ])
     },
+    activated() {
+      if (this.$route.params.pmId) {
+        console.log('执行吗')
+        this.userIdSeach = this.$route.params.pmId
+        this.listTrainingPage()
+      }
+    },
     mounted() {
       this.listTrainingPage()
       this.listUserTree()
@@ -218,9 +230,9 @@
         var f = a.concat(b.filter(function (v) {
           return !(a.indexOf(v) > -1)
         }));
-        console.log("a",a)
-        console.log("b",b)
-        console.log("f",f)
+        console.log("a", a)
+        console.log("b", b)
+        console.log("f", f)
         this.form.trainees = f
       },
       listSignInPage() {
@@ -242,6 +254,7 @@
       },
       listTrainingPage() {
         listTrainingPage({
+          userId: this.userIdSeach,
           trainingTheme: this.trainingTheme,
           pageIndex: this.pageIndex,
           pageSize: this.pageSize
@@ -306,7 +319,7 @@
       addCom(e) {
         this.visible = true
         this.form = {
-          trainees:[]
+          trainees: []
         }
         this.visibleTitle = '新增培训'
       },

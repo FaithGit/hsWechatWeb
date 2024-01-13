@@ -88,7 +88,7 @@ export const asyncRoutes = [{
     children: [{
         path: 'company',
         name: 'Company',
-        component: () => import('@/views/company/index'),
+        component: () => import('@/views/system/index'),
         meta: {
           title: '企业管理',
           icon: 'company'
@@ -97,34 +97,34 @@ export const asyncRoutes = [{
       {
         path: 'ponit',
         name: 'Ponit',
-        component: () => import('@/views/company/ponit'),
+        component: () => import('@/views/system/ponit'),
         meta: {
           title: '点位管理',
           icon: 'Ponit'
         }
       },
       {
-        path: 'shebei',
-        name: 'Shebei',
-        component: () => import('@/views/company/shebei'),
+        path: 'instrument',
+        name: 'Instrument',
+        component: () => import('@/views/system/instrument'),
         meta: {
           title: '设备管理',
           icon: 'shebei'
         }
       },
       {
-        path: 'yinziList',
-        name: 'YinziList',
-        component: () => import('@/views/company/yinziList'),
+        path: 'pointFactor',
+        name: 'PointFactor',
+        component: () => import('@/views/system/pointFactor'),
         meta: {
           title: '点位因子管理',
           icon: 'pointYinzi'
         }
       },
       {
-        path: 'yinzi',
-        name: 'Yinzi',
-        component: () => import('@/views/company/yinzi'),
+        path: 'factor',
+        name: 'Factor',
+        component: () => import('@/views/system/factor'),
         meta: {
           title: '因子管理',
           icon: 'yinzi'
@@ -134,7 +134,7 @@ export const asyncRoutes = [{
       {
         path: 'workLoad',
         name: 'WorkLoad',
-        component: () => import('@/views/company/workLoad.vue'),
+        component: () => import('@/views/system/workLoad.vue'),
         meta: {
           title: '运维工作量',
           icon: 'workLoad'
@@ -152,9 +152,9 @@ export const asyncRoutes = [{
       icon: 'rs',
     },
     children: [{
-        path: 'rygk',
-        name: 'Rygk',
-        component: () => import('@/views/rs/index'),
+        path: 'userInfo',
+        name: 'UserInfo',
+        component: () => import('@/views/rs/userInfo'),
         meta: {
           title: '人员信息管理',
           icon: 'rs',
@@ -163,9 +163,9 @@ export const asyncRoutes = [{
       },
 
       {
-        path: 'userzhengshu',
-        name: 'Userzhengshu',
-        component: () => import('@/views/rs/userzhengshu.vue'),
+        path: 'userCertificate',
+        name: 'UserCertificate',
+        component: () => import('@/views/rs/userCertificate.vue'),
         meta: {
           title: '人员证书管理',
           icon: 'zhengshu',
@@ -173,9 +173,9 @@ export const asyncRoutes = [{
         }
       },
       {
-        path: 'peixun',
-        name: 'Peixun',
-        component: () => import('@/views/rs/peixun.vue'),
+        path: 'training',
+        name: 'Training',
+        component: () => import('@/views/rs/training.vue'),
         meta: {
           title: '人员培训管理',
           icon: 'peixun',
@@ -183,19 +183,19 @@ export const asyncRoutes = [{
         }
       },
       {
-        path: 'qiandao',
-        name: 'Qiandao',
-        component: () => import('@/views/rs/qiaodao.vue'),
+        path: 'signIn',
+        name: 'SignIn',
+        component: () => import('@/views/rs/signIn.vue'),
         meta: {
           title: '签到记录',
           icon: 'qiandao',
           roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywebjl']
         }
       },
-      {
-        path: 'zhiwei',
-        name: 'Zhiwei',
-        component: () => import('@/views/rs/zhiwei.vue'),
+      { 
+        path: 'jobChange',
+        name: 'JobChange',
+        component: () => import('@/views/rs/jobChange.vue'),
         meta: {
           title: '人员职位变迁',
           icon: 'zhiwei',
@@ -203,15 +203,16 @@ export const asyncRoutes = [{
         }
       },
       {
-        path: 'jiangcheng',
-        name: 'Jiangcheng',
-        component: () => import('@/views/rs/jiangcheng.vue'),
+        path: 'rewardPunish',
+        name: 'RewardPunish',
+        component: () => import('@/views/rs/rewardPunish.vue'),
         meta: {
           title: '人员奖惩记录',
           icon: 'jiangcheng',
           roles: ['zjb', 'admin', 'rs', 'ywybjl', 'bgsfzr', 'ywebjl']
         }
-      }
+      },
+
     ]
   },
 
@@ -245,7 +246,7 @@ export const asyncRoutes = [{
       {
         path: 'wechatRz',
         name: 'WechatRz',
-        component: () => import('@/views/company/wechatRz.vue'),
+        component: () => import('@/views/system/wechatRz.vue'),
         meta: {
           title: '公众号通知记录',
           icon: 'rizhi'
@@ -254,7 +255,7 @@ export const asyncRoutes = [{
       {
         path: 'rizhi',
         name: 'Rizhi',
-        component: () => import('@/views/company/rizhi.vue'),
+        component: () => import('@/views/system/rizhi.vue'),
         meta: {
           title: '系统日志记录',
           icon: 'rizhi'
@@ -263,7 +264,7 @@ export const asyncRoutes = [{
       {
         path: 'yfgl',
         name: 'Yfgl',
-        component: () => import('@/views/company/yfgl.vue'),
+        component: () => import('@/views/system/yfgl.vue'),
         meta: {
           title: '车辆里程统计',
           icon: 'licheng'
@@ -272,10 +273,19 @@ export const asyncRoutes = [{
       {
         path: 'pjyh',
         name: 'Pjyh',
-        component: () => import('@/views/company/pjyh.vue'),
+        component: () => import('@/views/system/pjyh.vue'),
         meta: {
           title: '车辆油耗统计',
           icon: 'yfgl'
+        }
+      },
+      {
+        path: 'loggingStatus',
+        name: 'LoggingStatus',
+        component: () => import('@/views/system/loggingStatus.vue'),
+        meta: {
+          title: '人员登录情况',
+          icon: 'rizhi'
         }
       }
     ]

@@ -237,11 +237,11 @@
     mapGetters
   } from 'vuex'
   export default {
-    name: 'YinziList',
+    name: 'Factor',
     data() {
       return {
         factorCode: '',
-        factorName: '',
+        factorName: '', 
         factorType: '',
         pageIndex: 1,
         pageSize: 10,

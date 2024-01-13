@@ -108,7 +108,7 @@
 
     <el-dialog v-if="zsVisible" title="证书管理" :append-to-body="true" :visible="zsVisible" width="60%"
       :close-on-click-modal="false" @close="zsVisible=false">
-      <zhengshu></zhengshu>
+      <certificate></certificate>
     </el-dialog>
   </div>
 </template>
@@ -120,7 +120,7 @@
   import '@riophae/vue-treeselect/dist/vue-treeselect.css'
   import axios from 'axios'
   import setting from '@/settings'
-  import zhengshu from './zhengshu.vue'
+  import certificate from './component/certificate.vue'
   import {
     deleteUserCertificate,
     updateUserCertificate,
@@ -139,10 +139,10 @@
   } from '@/utils/auth'
   // import moment from 'moment'
   export default {
-    name: 'Userzhengshu',
+    name: 'UserCertificate',
     components: {
       Treeselect,
-      zhengshu
+      certificate
     },
     data() {
       return {

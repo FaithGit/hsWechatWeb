@@ -53,7 +53,7 @@
       </el-table-column>
       <el-table-column align="center" label="企业名称" prop="comName" />
       <!-- <el-table-column align="center" label="点位名称" prop="pointName" /> -->
-      <el-table-column align="center" label="点位简称" prop="pointShortName" width="60" />
+      <el-table-column align="center" label="点位名称" prop="pointName" width="60" />
       <el-table-column align="center" label="站点状态" prop="pointStatusName" width="60" />
       <el-table-column align="center" label="运维组" width="100">
         <template slot-scope="scope">
@@ -154,12 +154,12 @@
         <el-form-item v-if="futitle!='新增点位'" label="企业名称" prop="companyId" class="formWidth2">
           <el-input v-model="form.comName" placeholder="请输入点位名称" readonly="" />
         </el-form-item>
-        <el-form-item label="点位名称" prop="pointName" class="formWidth4">
+        <el-form-item label="点位名称" prop="pointName" class="formWidth2">
           <el-input v-model="form.pointName" placeholder="请输入点位名称" />
         </el-form-item>
-        <el-form-item label="点位简称" prop="pointShortName" class="formWidth4">
+        <!-- <el-form-item label="点位简称" prop="pointShortName" class="formWidth4">
           <el-input v-model="form.pointShortName" placeholder="请输入点位简称" />
-        </el-form-item>
+        </el-form-item> -->
 
         <el-form-item label="污染源种类" prop="pollutionType" class="formWidth4">
           <el-select v-model="form.pollutionType" placeholder="请选择污染源种类" @change="lisDischargeStandard">
@@ -701,6 +701,7 @@
         this.$refs.form1.validate((valid) => {
           if (valid) {
             this.form.recordFiles = this.IDList
+            this.form.pointShortName = this.form.pointName
             addPoint(this.form).then(res => {
               console.log(res)
               this.$notify({
@@ -717,13 +718,14 @@
         this.$refs.form1.validate((valid) => {
           if (valid) {
             this.form.recordFiles = this.IDList
+            this.form.pointShortName = this.form.pointName
             updatePoint(this.form).then(res => {
               console.log(res)
               this.$notify({
                 type: 'success',
                 message: res.retMsg
               })
-              this.editVisible = false
+              this.addVisible = false
               this.listPointPage()
             })
           }
@@ -732,7 +734,7 @@
       gotoShebei(e) {
         console.log(e)
         this.$router.push({
-          name: 'Shebei',
+          name: 'Instrument',
           params: {
             companyId: e.companyId,
             pointId: e.pointId
@@ -742,7 +744,7 @@
       gotoyinzi(e) {
         console.log(e)
         this.$router.push({
-          name: 'YinziList',
+          name: 'PointFactor',
           params: {
             companyId: e.companyId,
             pointId: e.pointId

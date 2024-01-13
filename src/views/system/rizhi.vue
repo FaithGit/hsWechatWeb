@@ -80,7 +80,7 @@ import {
 // import moment from 'moment'
 // import moment from 'moment'
 export default {
-  name: 'Jiangcheng',
+  name: 'Rizhi',
   components: {
     Treeselect
   },

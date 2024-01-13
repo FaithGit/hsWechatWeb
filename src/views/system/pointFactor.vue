@@ -223,7 +223,7 @@
   } from 'vuex'
   // import moment from 'moment'
   export default {
-    name: 'YinziList',
+    name: 'PointFactor',
     components: {
       Treeselect
     },

@@ -539,7 +539,7 @@
           return
         }
         this.$router.push({
-          name: 'YinziList',
+          name: 'PointFactor',
           params: {
             companyId: e.companyId,
             pointId: e.pointId
