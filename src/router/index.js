@@ -192,7 +192,7 @@ export const asyncRoutes = [{
           roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywebjl']
         }
       },
-      { 
+      {
         path: 'jobChange',
         name: 'JobChange',
         component: () => import('@/views/rs/jobChange.vue'),
@@ -224,9 +224,9 @@ export const asyncRoutes = [{
       icon: 'yunwei'
     },
     children: [{
-        path: 'index',
-        name: 'YunweiList',
-        component: () => import('@/views/yunwei/list.vue'),
+        path: 'operateTask',
+        name: 'OperateTask',
+        component: () => import('@/views/dataQuery/operateTask.vue'),
         meta: {
           title: '在线运维记录',
           icon: 'yunwei',
@@ -234,9 +234,9 @@ export const asyncRoutes = [{
         }
       },
       {
-        path: 'errEvent',
-        name: 'ErrEvent',
-        component: () => import('@/views/yunwei/errEvent.vue'),
+        path: 'onlineEvent',
+        name: 'OnlineEvent',
+        component: () => import('@/views/dataQuery/OnlineEvent.vue'),
         meta: {
           title: '在线点位异常事件',
           icon: 'errEvent',
@@ -246,7 +246,7 @@ export const asyncRoutes = [{
       {
         path: 'wechatRz',
         name: 'WechatRz',
-        component: () => import('@/views/system/wechatRz.vue'),
+        component: () => import('@/views/dataQuery/wechatRz.vue'),
         meta: {
           title: '公众号通知记录',
           icon: 'rizhi'
@@ -255,25 +255,25 @@ export const asyncRoutes = [{
       {
         path: 'rizhi',
         name: 'Rizhi',
-        component: () => import('@/views/system/rizhi.vue'),
+        component: () => import('@/views/dataQuery/rizhi.vue'),
         meta: {
           title: '系统日志记录',
           icon: 'rizhi'
         }
       },
       {
-        path: 'yfgl',
-        name: 'Yfgl',
-        component: () => import('@/views/system/yfgl.vue'),
+        path: 'tripStatistics',
+        name: 'TripStatistics',
+        component: () => import('@/views/dataQuery/tripStatistics.vue'),
         meta: {
           title: '车辆里程统计',
           icon: 'licheng'
         }
       },
       {
-        path: 'pjyh',
-        name: 'Pjyh',
-        component: () => import('@/views/system/pjyh.vue'),
+        path: 'driveOilCost',
+        name: 'DriveOilCost',
+        component: () => import('@/views/dataQuery/driveOilCost.vue'),
         meta: {
           title: '车辆油耗统计',
           icon: 'yfgl'
@@ -282,7 +282,7 @@ export const asyncRoutes = [{
       {
         path: 'loggingStatus',
         name: 'LoggingStatus',
-        component: () => import('@/views/system/loggingStatus.vue'),
+        component: () => import('@/views/dataQuery/loggingStatus.vue'),
         meta: {
           title: '人员登录情况',
           icon: 'rizhi'
@@ -422,6 +422,20 @@ export const asyncRoutes = [{
       component: () => import('@/views/video/index'),
       meta: {
         title: '视频管理',
+        icon: 'video',
+        roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl']
+      }
+    }]
+  },
+  {
+    path: '/test',
+    component: Layout,
+    children: [{
+      path: 'test',
+      name: 'Test',
+      component: () => import('@/views/test'),
+      meta: {
+        title: 'test',
         icon: 'video',
         roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl']
       }

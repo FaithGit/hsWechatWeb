@@ -97,7 +97,7 @@
   } from 'vuex'
 
   export default {
-    name: 'Yfgl',
+    name: 'DriveOilCost',
     data() {
       return {
         time: new Date(),

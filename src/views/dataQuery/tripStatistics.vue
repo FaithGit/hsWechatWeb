@@ -164,7 +164,7 @@
   import moment from 'moment'
 
   export default {
-    name: 'Yfgl',
+    name: 'TripStatistics',
     data() {
       return {
         licensePlate: '',

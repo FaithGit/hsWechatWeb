@@ -155,7 +155,7 @@
 
 <script>
 import Treeselect from '@riophae/vue-treeselect'
-import ywStepAll from './ywStepAll.vue'
+import ywStepAll from './component/ywStepAll.vue'
 // import the styles
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import {
