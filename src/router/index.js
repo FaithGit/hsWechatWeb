@@ -83,7 +83,6 @@ export const asyncRoutes = [{
     meta: {
       title: '在线信息管理',
       icon: 'dashboard',
-      roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl', 'ywybzz', 'ywybzy', 'ywybfzz']
     },
     children: [{
         path: 'company',
@@ -91,7 +90,8 @@ export const asyncRoutes = [{
         component: () => import('@/views/system/index'),
         meta: {
           title: '企业管理',
-          icon: 'company'
+          icon: 'company',
+          roles: ['zjb', 'admin', 'ywybjl', 'ywybfjl', 'gcbzz']
         }
       },
       {
@@ -100,7 +100,8 @@ export const asyncRoutes = [{
         component: () => import('@/views/system/ponit'),
         meta: {
           title: '点位管理',
-          icon: 'Ponit'
+          icon: 'Ponit',
+          roles: ['zjb', 'admin', 'ywybjl', 'ywybfjl', 'gcbzz']
         }
       },
       {
@@ -109,7 +110,8 @@ export const asyncRoutes = [{
         component: () => import('@/views/system/instrument'),
         meta: {
           title: '设备管理',
-          icon: 'shebei'
+          icon: 'shebei',
+          roles: ['zjb', 'admin', 'ywybjl', 'ywybfjl', 'gcbzz']
         }
       },
       {
@@ -118,7 +120,8 @@ export const asyncRoutes = [{
         component: () => import('@/views/system/pointFactor'),
         meta: {
           title: '点位因子管理',
-          icon: 'pointYinzi'
+          icon: 'pointYinzi',
+          roles: ['zjb', 'admin', 'ywybjl', 'ywybfjl', 'gcbzz']
         }
       },
       {
@@ -127,7 +130,8 @@ export const asyncRoutes = [{
         component: () => import('@/views/system/factor'),
         meta: {
           title: '因子管理',
-          icon: 'yinzi'
+          icon: 'yinzi',
+          roles: ['zjb', 'admin', 'ywybjl', 'ywybfjl', 'gcbzz']
         }
       },
 
@@ -137,7 +141,8 @@ export const asyncRoutes = [{
         component: () => import('@/views/system/workLoad.vue'),
         meta: {
           title: '运维工作量',
-          icon: 'workLoad'
+          icon: 'workLoad',
+          roles: ['zjb', 'admin', 'ywybjl', 'ywybfjl']
         }
       }
 
@@ -158,7 +163,8 @@ export const asyncRoutes = [{
         meta: {
           title: '人员信息管理',
           icon: 'rs',
-          roles: ['zjb', 'admin', 'rs', 'ywybjl', 'bgsfzr', 'xz', 'ywebjl']
+          roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl', 'xz']
+
         }
       },
 
@@ -169,7 +175,8 @@ export const asyncRoutes = [{
         meta: {
           title: '人员证书管理',
           icon: 'zhengshu',
-          roles: ['zjb', 'admin', 'rs', 'ywybjl', 'bgsfzr', 'sales', 'ywebjl']
+          roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl', 'xz']
+
         }
       },
       {
@@ -179,7 +186,8 @@ export const asyncRoutes = [{
         meta: {
           title: '人员培训管理',
           icon: 'peixun',
-          roles: ['zjb', 'admin', 'rs', 'ywybjl', 'bgsfzr', 'ywebjl']
+          roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl', 'xz']
+
         }
       },
       {
@@ -189,7 +197,8 @@ export const asyncRoutes = [{
         meta: {
           title: '签到记录',
           icon: 'qiandao',
-          roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywebjl']
+          roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl', 'xz']
+
         }
       },
       {
@@ -199,7 +208,8 @@ export const asyncRoutes = [{
         meta: {
           title: '人员职位变迁',
           icon: 'zhiwei',
-          roles: ['zjb', 'admin', 'rs', 'ywybjl', 'bgsfzr', 'ywebjl']
+          roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl', 'xz']
+
         }
       },
       {
@@ -209,7 +219,8 @@ export const asyncRoutes = [{
         meta: {
           title: '人员奖惩记录',
           icon: 'jiangcheng',
-          roles: ['zjb', 'admin', 'rs', 'ywybjl', 'bgsfzr', 'ywebjl']
+          roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl', 'xz']
+
         }
       },
 
@@ -240,7 +251,7 @@ export const asyncRoutes = [{
         meta: {
           title: '在线点位异常事件',
           icon: 'errEvent',
-          roles: ['zjb', 'admin', 'ywybjl', 'ywybfjl', 'xz']
+          roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl', 'xz']
         }
       },
       {
@@ -249,7 +260,9 @@ export const asyncRoutes = [{
         component: () => import('@/views/dataQuery/wechatRz.vue'),
         meta: {
           title: '公众号通知记录',
-          icon: 'rizhi'
+          icon: 'rizhi',
+          roles: ['zjb', 'admin', 'ywybjl', 'ywybfjl']
+
         }
       },
       {
@@ -258,7 +271,8 @@ export const asyncRoutes = [{
         component: () => import('@/views/dataQuery/rizhi.vue'),
         meta: {
           title: '系统日志记录',
-          icon: 'rizhi'
+          icon: 'rizhi',
+          roles: ['zjb', 'admin', 'ywybjl', 'ywybfjl']
         }
       },
       {
@@ -267,7 +281,8 @@ export const asyncRoutes = [{
         component: () => import('@/views/dataQuery/tripStatistics.vue'),
         meta: {
           title: '车辆里程统计',
-          icon: 'licheng'
+          icon: 'licheng',
+          roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl', 'xz']
         }
       },
       {
@@ -276,7 +291,8 @@ export const asyncRoutes = [{
         component: () => import('@/views/dataQuery/driveOilCost.vue'),
         meta: {
           title: '车辆油耗统计',
-          icon: 'yfgl'
+          icon: 'yfgl',
+          roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl', 'xz']
         }
       },
       {
@@ -285,7 +301,8 @@ export const asyncRoutes = [{
         component: () => import('@/views/dataQuery/loggingStatus.vue'),
         meta: {
           title: '人员登录情况',
-          icon: 'rizhi'
+          icon: 'rizhi',
+          roles: ['zjb', 'admin', 'ywybjl', 'ywybfjl']
         }
       }
     ]
@@ -305,7 +322,8 @@ export const asyncRoutes = [{
         component: () => import('@/views/yaoji/index'),
         meta: {
           title: '药剂管理',
-          icon: 'yaoji'
+          icon: 'yaoji',
+          roles: ['zjb', 'admin', 'ywybjl', 'ywybfjl', 'syy']
         }
       },
       {
@@ -314,7 +332,8 @@ export const asyncRoutes = [{
         component: () => import('@/views/shiji/index'),
         meta: {
           title: '试剂管理',
-          icon: 'shiji'
+          icon: 'shiji',
+          roles: ['zjb', 'admin', 'ywybjl', 'ywybfjl', 'syy']
         }
       },
       {
@@ -323,7 +342,8 @@ export const asyncRoutes = [{
         component: () => import('@/views/biaoye/index'),
         meta: {
           title: '标液管理',
-          icon: 'biaoye'
+          icon: 'biaoye',
+          roles: ['zjb', 'admin', 'ywybjl', 'ywybfjl', 'syy']
         }
       },
       {
@@ -332,7 +352,8 @@ export const asyncRoutes = [{
         component: () => import('@/views/peizhi/index'),
         meta: {
           title: '配置过程记录',
-          icon: 'guocheng'
+          icon: 'guocheng',
+          roles: ['zjb', 'admin', 'ywybjl', 'ywybfjl', 'syy']
         }
       }
     ]
@@ -342,8 +363,7 @@ export const asyncRoutes = [{
     component: Layout,
     meta: {
       title: '报表',
-      icon: 'baobiao',
-      roles: ['syy', 'admin']
+      icon: 'baobiao'
     },
     children: [{
       path: 'sjBB',
@@ -351,7 +371,8 @@ export const asyncRoutes = [{
       component: () => import('@/views/baobiao/sjBB.vue'),
       meta: {
         title: '试剂统计报表',
-        icon: 'baobiao'
+        icon: 'baobiao',
+        roles: ['zjb', 'admin', 'ywybjl', 'ywybfjl', 'syy']
       }
     }, {
       path: 'byBB',
@@ -359,7 +380,8 @@ export const asyncRoutes = [{
       component: () => import('@/views/baobiao/byBB.vue'),
       meta: {
         title: '标液统计报表',
-        icon: 'baobiao'
+        icon: 'baobiao',
+        roles: ['zjb', 'admin', 'ywybjl', 'ywybfjl', 'syy']
       }
     }, ]
   },
@@ -368,8 +390,7 @@ export const asyncRoutes = [{
     component: Layout,
     meta: {
       title: '试卷管理',
-      icon: 'shijuan',
-      roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl']
+      icon: 'shijuan'
     },
     children: [{
       path: 'shiti',
@@ -377,7 +398,8 @@ export const asyncRoutes = [{
       component: () => import('@/views/testPaper/shiti'),
       meta: {
         title: '试题管理',
-        icon: 'shijuan'
+        icon: 'shijuan',
+        roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl', 'xz']
       }
     }, {
       path: 'index',
@@ -385,7 +407,8 @@ export const asyncRoutes = [{
       component: () => import('@/views/testPaper/index'),
       meta: {
         title: '试卷管理',
-        icon: 'shijuan'
+        icon: 'shijuan',
+        roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl', 'xz']
       }
     }, {
       path: 'yuejuan',
@@ -393,7 +416,8 @@ export const asyncRoutes = [{
       component: () => import('@/views/testPaper/yuejuan'),
       meta: {
         title: '阅卷',
-        icon: 'yuejuan'
+        icon: 'yuejuan',
+        roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl', 'xz']
       }
     }, {
       path: 'cuotiji',
@@ -401,7 +425,8 @@ export const asyncRoutes = [{
       component: () => import('@/views/testPaper/cuotiji'),
       meta: {
         title: '试题答题情况',
-        icon: 'cuotiji'
+        icon: 'cuotiji',
+        roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl', 'xz']
       }
     }, {
       path: 'testPaper',
@@ -409,7 +434,8 @@ export const asyncRoutes = [{
       component: () => import('@/views/testPaper/testPaper'),
       meta: {
         title: '答题试卷列表',
-        icon: 'testList'
+        icon: 'testList',
+        roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl', 'xz']
       }
     }]
   },
@@ -423,21 +449,7 @@ export const asyncRoutes = [{
       meta: {
         title: '视频管理',
         icon: 'video',
-        roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl']
-      }
-    }]
-  },
-  {
-    path: '/test',
-    component: Layout,
-    children: [{
-      path: 'test',
-      name: 'Test',
-      component: () => import('@/views/test'),
-      meta: {
-        title: 'test',
-        icon: 'video',
-        roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl']
+        roles: ['zjb', 'admin', 'rs', 'ywybjl', 'ywybfjl', 'xz']
       }
     }]
   },
