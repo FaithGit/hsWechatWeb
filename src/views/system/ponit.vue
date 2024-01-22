@@ -113,24 +113,28 @@
 
       <el-table-column align="center" label="备案资料">
         <template slot-scope="scope">
-
           <div>
-
             <template v-for="item in scope.row.recordFiles">
               <img src="@/assets/file.png" alt="" srcset="" :title="item.name" style="width:20px" :key="item.fileId"
                 @click="handlePreview(item)">
             </template>
-
           </div>
+        </template>
+      </el-table-column>
 
+      <el-table-column align="center" label="二维码">
+        <template slot-scope="scope">
+          <div>
+              <img :src="scope.row.pointUrl" alt="" srcset="" style="width:80px" @click="erweima(scope.row)">
+          </div>
         </template>
       </el-table-column>
 
 
-      <el-table-column align="center" label="操作" width="300">
+      <el-table-column align="center" label="操作" width="230">
         <template slot-scope="scope">
           <el-button @click="editPoint(scope.row)">编辑</el-button>
-          <el-button @click="erweima(scope.row)">二维码</el-button>
+          <!-- <el-button @click="erweima(scope.row)">二维码</el-button> -->
           <el-button @click="gotoShebei(scope.row)">设备管理</el-button>
           <el-button style="margin-top:5px" @click="gotoyinzi(scope.row)">因子管理</el-button>
           <el-button type="danger" style="margin-top:5px" @click="remove(scope.row)"> 删除</el-button>

@@ -91,9 +91,9 @@ const actions = {
         console.log('res', res)
         commit('SET_userInfo', res.retData)
 
-        addLoginLog({
-          type: 2
-        })
+        // addLoginLog({
+        //   type: 2
+        // })
 
         resolve(res.retData.roleId)
       }).catch(error => {

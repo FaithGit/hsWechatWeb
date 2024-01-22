@@ -79,10 +79,14 @@ export function resetRouter() {
 
 export const asyncRoutes = [{
     path: '/system',
+    name: 'System',
     component: Layout,
+    id:1,
+    hidden:true,
     meta: {
       title: '在线信息管理',
       icon: 'dashboard',
+      roles: ['zjb', 'admin', 'ywybjl', 'ywybfjl', 'gcbzz']
     },
     children: [{
         path: 'company',
