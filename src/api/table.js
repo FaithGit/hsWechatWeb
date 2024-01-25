@@ -1109,3 +1109,67 @@ export function listKhLoginInfo(data) { // 获取所有因子
     data
   })
 }
+export function listRole(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/sysUser/listRole',
+    method: 'post',
+    data
+  })
+}
+export function listGroup(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/group/listGroup',
+    method: 'post',
+    data
+  })
+}
+export function listUserPage(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/sysUser/listUserPage',
+    method: 'post',
+    data
+  })
+}
+export function addUser(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/sysUser/addUser',
+    method: 'post',
+    data
+  })
+}
+export function getUser(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/sysUser/getUser',
+    method: 'post',
+    data
+  })
+}
+
+export function updateUser(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/sysUser/updateUser',
+    method: 'post',
+    data
+  })
+}
+export function addRole(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/sysUser/addRole',
+    method: 'post',
+    data
+  })
+}
+export function addGroup(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/group/addGroup',
+    method: 'post',
+    data
+  })
+}
+export function listPcRoleMenus(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/sys/listPcRoleMenus',
+    method: 'post',
+    data
+  })
+}

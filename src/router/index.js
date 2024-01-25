@@ -77,12 +77,33 @@ export function resetRouter() {
   router.matcher = newRouter.matcher // reset router
 }
 
-export const asyncRoutes = [{
+export const asyncRoutes = [
+
+  {
+    path: '/setting',
+    name: 'Setting',
+    component: Layout,
+    meta: {
+      title: '系统设置',
+      icon: 'setting',
+      roles: ['admin']
+    },
+    children: [{
+      path: 'user',
+      name: 'User',
+      component: () => import('@/views/setting/user'),
+      meta: {
+        title: '用户管理',
+        icon: 'users',
+        roles: ['admin']
+      }
+    }]
+  },
+
+  {
     path: '/system',
     name: 'System',
     component: Layout,
-    id:1,
-    hidden:true,
     meta: {
       title: '在线信息管理',
       icon: 'dashboard',

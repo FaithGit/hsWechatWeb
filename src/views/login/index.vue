@@ -106,11 +106,12 @@
         this.$refs.loginForm.validate(valid => {
           if (valid) {
             this.loading = true
-            addLoginLog({
-              type: 2
-            })
 
             this.$store.dispatch('user/login', this.loginForm).then(() => {
+              addLoginLog({
+                type: 2
+              })
+
               this.$router.push({
                 path: '/'
               })
