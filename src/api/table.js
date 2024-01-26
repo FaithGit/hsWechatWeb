@@ -1187,3 +1187,17 @@ export function listPcMenu(data) { // 获取所有因子
     data
   })
 }
+export function getPcMenu(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/sys/getPcMenu',
+    method: 'post',
+    data
+  })
+}
+export function deletePcMenu(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/sys/deletePcMenu',
+    method: 'post',
+    data
+  })
+}

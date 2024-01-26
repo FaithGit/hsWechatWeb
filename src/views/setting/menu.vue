@@ -8,12 +8,17 @@
           {{ scope.row.meta.title }}
         </template>
       </el-table-column>
-      <el-table-column prop="path" label="路径" />
-      <el-table-column label="权限">
+      <el-table-column prop="path" label="路径" align="center" />
+      <el-table-column label="权限" align="center">
         <template slot-scope="scope">
           <el-tag v-for="item in scope.row.meta.roles " :key="item" style="margin:0 5px" :type="colorTag(item)"
             disable-transitions>{{ item }}
           </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="是否隐藏" align="center">
+        <template slot-scope="scope">
+          {{scope.row.hidden?'显示':'隐藏'}}
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center">
@@ -23,7 +28,8 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog :title="menutitle" :visible.sync="routerVisible" width="30%">
+
+    <el-dialog :title="menutitle" :visible.sync="routerVisible" width="60%">
       <el-form ref="form" :model="form" label-width="80px">
         <el-form-item label="标题">
           <el-input v-model="form.meta.title" />
@@ -47,9 +53,8 @@
           </el-checkbox-group>
         </el-form-item>
         <el-form-item label="父级菜单">
-          <el-select v-model="form.parentId" placeholder="请选择">
-            <el-option v-for="item in parentList" :key="item.id" :label="item.title" :value="item.id" />
-          </el-select>
+          <treeselect v-model="form.parentId" :multiple="false" :options="tableData" :normalizer="normalizer"
+            placeholder="请选择父级菜单" class="seachInput" no-children-text="暂无数据" />
         </el-form-item>
         <el-form-item label="是否隐藏">
           <el-radio-group v-model="form.hidden">
@@ -67,15 +72,26 @@
         <el-button v-else type="primary" @click="editmenu">修 改</el-button>
       </span>
     </el-dialog>
+
+
   </div>
 </template>
 
 <script>
+  import Treeselect from '@riophae/vue-treeselect'
+  import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+
   import {
-    listPcMenu
+    listPcMenu,
+    getPcMenu,
+    listRoleSel,
+    deletePcMenu
   } from '@/api/table'
   export default {
     name: 'Menu',
+    components: {
+      Treeselect
+    },
     data() {
       return {
         seletComList: [],
@@ -97,15 +113,39 @@
           children: []
         },
         roleList: [],
-        tableData: []
+        tableData: [],
+        normalizer(node) {
+          console.log(node)
+          //如果涉及到对子对象属性获取，js会报错
+          if (node.id == '') {
+            return {}
+          }
+          //去掉children=[]的children属性
+          if (node.children && !node.children.length) {
+            delete node.children;
+          }
+          return {
+            id: node.id,
+            label: node.meta.title,
+            children: node.children && node.children.length ? node.children : 0
+          }
+        },
       }
     },
     mounted() {
       this.roleList = []
       this.listPcMenu()
+      this.listRoleSel()
     },
     methods: {
-      colorTag(value) {
+
+      listRoleSel() { //role lists
+        listRoleSel({}).then(res => {
+          console.log("角色列表", res)
+          this.roleList = res.retData
+        })
+      },
+      colorTag(value) { //tag color
         if (value === 'admin') {
           return 'primary'
         } else {
@@ -130,46 +170,21 @@
 
           }
         }
-        findMenuTree({
-          sysId: this.sysId
-        }).then(res => {
-          // console.log(res)
-          this.parentList = res.retData
-        })
       },
-      handleEdit(scope) {
-        this.listRoleVO()
-        findMenuTree({
-          sysId: this.sysId,
-          roleId: getRold()
-        }).then(res => {
-          // console.log(res)
-          this.parentList = res.retData
-          getMenuBarVO({
-              menuId: scope.id
-            })
-            .then(res => {
-              console.log('?????????', res)
-              this.form = res.retData
-            })
-          this.menutitle = '编辑菜单栏'
-          this.routerVisible = true
-          // this.form = scope
-        })
-      },
-      listPcMenu() {
-        listPcMenu({
-
+      handleEdit(scope) { //编辑菜单
+        getPcMenu({
+          menuId: scope.id
         }).then(res => {
           console.log(res)
-          this.tableData = res.retData
+          this.form = res.retData
+          this.menutitle = '编辑菜单栏'
+          this.routerVisible = true
         })
       },
-      listRoleVO() {
-        listRoleVO({
-          sysId: this.sysId
-        }).then(res => {
-          this.roleList = res.retData
+      listPcMenu() { //获得完整菜单
+        listPcMenu({}).then(res => {
+          this.tableData = res.retData
+          console.log('获得完整菜单', this.tableData)
         })
       },
       addMenu() {
@@ -180,7 +195,7 @@
             type: 'success',
             message: res.retMsg
           })
-          this.seach()
+          this.listPcMenu()
         })
       },
       handleDelete(scope) {
@@ -190,7 +205,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          deleteMenuBar({
+          deletePcMenu({
             menuId: scope.id
           }).then(res => {
             console.log(res)
@@ -198,7 +213,7 @@
               type: 'success',
               message: res.retMsg
             })
-            this.seach()
+            this.listPcMenu()
           })
         })
       },
@@ -207,7 +222,7 @@
         updateMenuBarVO(this.form).then(res => {
           console.log(res)
           this.routerVisible = false
-          this.seach()
+          this.listPcMenu()
         })
       }
     }
