@@ -1173,3 +1173,17 @@ export function listPcRoleMenus(data) { // 获取所有因子
     data
   })
 }
+export function listPcUserMenu(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/sys/listPcUserMenu',
+    method: 'post',
+    data
+  })
+}
+export function listPcMenu(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/sys/listPcMenu',
+    method: 'post',
+    data
+  })
+}

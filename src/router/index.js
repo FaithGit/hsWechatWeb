@@ -89,15 +89,26 @@ export const asyncRoutes = [
       roles: ['admin']
     },
     children: [{
-      path: 'user',
-      name: 'User',
-      component: () => import('@/views/setting/user'),
-      meta: {
-        title: '用户管理',
-        icon: 'users',
-        roles: ['admin']
+        path: 'user',
+        name: 'User',
+        component: () => import('@/views/setting/user'),
+        meta: {
+          title: '用户管理',
+          icon: 'users',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'menu',
+        name: 'Menu',
+        component: () => import('@/views/setting/menu'),
+        meta: {
+          title: '菜单管理',
+          icon: 'menu',
+          roles: ['admin']
+        }
       }
-    }]
+    ]
   },
 
   {
