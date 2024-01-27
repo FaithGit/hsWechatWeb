@@ -41,7 +41,7 @@ export const constantRoutes = [{
     hidden: true,
     children: [{
       path: '/redirect/:path*',
-      component: () => import('@/views/redirect/index.vue')
+      component: () => import('@/views/redirect/index')
     }]
   },
   {
@@ -105,6 +105,16 @@ export const asyncRoutes = [
         meta: {
           title: '菜单管理',
           icon: 'menu',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'role',
+        name: 'Role',
+        component: () => import('@/views/setting/role'),
+        meta: {
+          title: '权限管理',
+          icon: 'role',
           roles: ['admin']
         }
       }
@@ -174,7 +184,7 @@ export const asyncRoutes = [
       {
         path: 'workLoad',
         name: 'WorkLoad',
-        component: () => import('@/views/system/workLoad.vue'),
+        component: () => import('@/views/system/workLoad'),
         meta: {
           title: '运维工作量',
           icon: 'workLoad',
@@ -207,7 +217,7 @@ export const asyncRoutes = [
       {
         path: 'userCertificate',
         name: 'UserCertificate',
-        component: () => import('@/views/rs/userCertificate.vue'),
+        component: () => import('@/views/rs/userCertificate'),
         meta: {
           title: '人员证书管理',
           icon: 'zhengshu',
@@ -218,7 +228,7 @@ export const asyncRoutes = [
       {
         path: 'training',
         name: 'Training',
-        component: () => import('@/views/rs/training.vue'),
+        component: () => import('@/views/rs/training'),
         meta: {
           title: '人员培训管理',
           icon: 'peixun',
@@ -229,7 +239,7 @@ export const asyncRoutes = [
       {
         path: 'signIn',
         name: 'SignIn',
-        component: () => import('@/views/rs/signIn.vue'),
+        component: () => import('@/views/rs/signIn'),
         meta: {
           title: '签到记录',
           icon: 'qiandao',
@@ -240,7 +250,7 @@ export const asyncRoutes = [
       {
         path: 'jobChange',
         name: 'JobChange',
-        component: () => import('@/views/rs/jobChange.vue'),
+        component: () => import('@/views/rs/jobChange'),
         meta: {
           title: '人员职位变迁',
           icon: 'zhiwei',
@@ -251,7 +261,7 @@ export const asyncRoutes = [
       {
         path: 'rewardPunish',
         name: 'RewardPunish',
-        component: () => import('@/views/rs/rewardPunish.vue'),
+        component: () => import('@/views/rs/rewardPunish'),
         meta: {
           title: '人员奖惩记录',
           icon: 'jiangcheng',
@@ -273,7 +283,7 @@ export const asyncRoutes = [
     children: [{
         path: 'operateTask',
         name: 'OperateTask',
-        component: () => import('@/views/dataQuery/operateTask.vue'),
+        component: () => import('@/views/dataQuery/operateTask'),
         meta: {
           title: '在线运维记录',
           icon: 'yunwei',
@@ -283,7 +293,7 @@ export const asyncRoutes = [
       {
         path: 'onlineEvent',
         name: 'OnlineEvent',
-        component: () => import('@/views/dataQuery/OnlineEvent.vue'),
+        component: () => import('@/views/dataQuery/OnlineEvent'),
         meta: {
           title: '在线点位异常事件',
           icon: 'errEvent',
@@ -293,7 +303,7 @@ export const asyncRoutes = [
       {
         path: 'wechatRz',
         name: 'WechatRz',
-        component: () => import('@/views/dataQuery/wechatRz.vue'),
+        component: () => import('@/views/dataQuery/wechatRz'),
         meta: {
           title: '公众号通知记录',
           icon: 'rizhi',
@@ -304,7 +314,7 @@ export const asyncRoutes = [
       {
         path: 'rizhi',
         name: 'Rizhi',
-        component: () => import('@/views/dataQuery/rizhi.vue'),
+        component: () => import('@/views/dataQuery/rizhi'),
         meta: {
           title: '系统日志记录',
           icon: 'rizhi',
@@ -314,7 +324,7 @@ export const asyncRoutes = [
       {
         path: 'tripStatistics',
         name: 'TripStatistics',
-        component: () => import('@/views/dataQuery/tripStatistics.vue'),
+        component: () => import('@/views/dataQuery/tripStatistics'),
         meta: {
           title: '车辆里程统计',
           icon: 'licheng',
@@ -324,7 +334,7 @@ export const asyncRoutes = [
       {
         path: 'driveOilCost',
         name: 'DriveOilCost',
-        component: () => import('@/views/dataQuery/driveOilCost.vue'),
+        component: () => import('@/views/dataQuery/driveOilCost'),
         meta: {
           title: '车辆油耗统计',
           icon: 'yfgl',
@@ -334,7 +344,7 @@ export const asyncRoutes = [
       {
         path: 'loggingStatus',
         name: 'LoggingStatus',
-        component: () => import('@/views/dataQuery/loggingStatus.vue'),
+        component: () => import('@/views/dataQuery/loggingStatus'),
         meta: {
           title: '人员登录情况',
           icon: 'rizhi',
@@ -404,7 +414,7 @@ export const asyncRoutes = [
     children: [{
       path: 'sjBB',
       name: 'SjBB',
-      component: () => import('@/views/baobiao/sjBB.vue'),
+      component: () => import('@/views/baobiao/sjBB'),
       meta: {
         title: '试剂统计报表',
         icon: 'baobiao',
@@ -413,7 +423,7 @@ export const asyncRoutes = [
     }, {
       path: 'byBB',
       name: 'ByBB',
-      component: () => import('@/views/baobiao/byBB.vue'),
+      component: () => import('@/views/baobiao/byBB'),
       meta: {
         title: '标液统计报表',
         icon: 'baobiao',

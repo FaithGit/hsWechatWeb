@@ -2,7 +2,11 @@ import {
   asyncRoutes,
   constantRoutes
 } from '@/router'
+import LAYOUT from '@/layout'
 
+import {
+  listPcUserMenu
+} from '@/api/table'
 /**
  * Use meta.role to determine if the current user has permission
  * @param roles
@@ -56,14 +60,54 @@ const actions = {
     commit
   }, roles) {
     return new Promise(resolve => {
-      let accessedRoutes
-      if (roles.includes('fu')) {
-        accessedRoutes = asyncRoutes || []
-      } else {
-        accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
-      }
-      commit('SET_ROUTES', accessedRoutes)
-      resolve(accessedRoutes)
+      listPcUserMenu({}).then(res => {
+        console.log("!!!!!!!!!", res)
+
+
+        function compTree(arr) {
+          arr.forEach(e => {
+            // console.log(e)
+            e.component = () => import('@/views/setting/user')
+            delete e.meta.roles
+          })
+        }
+
+        var _roleList = res.retData
+
+        _roleList.forEach(e => {
+          delete e.meta.roles
+          if (e.component === 'Layout') {
+            e.component = LAYOUT
+          } else {
+            e.component = () => import('@/views/setting/user')
+          }
+
+          compTree(e.children)
+        })
+
+        console.log("new", _roleList)
+        _roleList.push({
+          path: '*',
+          id: '999',
+          redirect: '/404',
+          hidden: true
+        })
+
+        // let accessedRoutes
+
+        // if (roles.includes('fu')) {
+        //   accessedRoutes = asyncRoutes || []
+        // } else {
+        //   accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
+        // }
+        // commit('SET_ROUTES', accessedRoutes)
+        // resolve(accessedRoutes)
+
+
+        commit('SET_ROUTES', _roleList)
+        resolve(_roleList)
+      })
+
     })
   }
 }

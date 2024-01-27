@@ -1,7 +1,7 @@
 <template>
   <div class="app">
     <el-button @click="addRouter">添加</el-button>
-    <el-table :data="tableData" style="width: 100%;margin-top: 10px;" row-key="path" border default-expand-all
+    <el-table :data="tableData" style="width: 100%;margin-top: 10px;" row-key="id" border
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
       <el-table-column label="标题">
         <template slot-scope="scope">
@@ -9,6 +9,12 @@
         </template>
       </el-table-column>
       <el-table-column prop="path" label="路径" align="center" />
+      <el-table-column prop="component" label="组件指向" align="center" />
+      <el-table-column label="排序号" align="center" width="80">
+        <template slot-scope="scope">
+          {{scope.row.orderNum}}
+        </template>
+      </el-table-column>
       <el-table-column label="权限" align="center">
         <template slot-scope="scope">
           <el-tag v-for="item in scope.row.meta.roles " :key="item" style="margin:0 5px" :type="colorTag(item)"
@@ -16,12 +22,13 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="是否隐藏" align="center">
+      <el-table-column label="是否隐藏" align="center" width="80">
         <template slot-scope="scope">
-          {{scope.row.hidden?'显示':'隐藏'}}
+          {{scope.row.hidden?'隐藏':'显示'}}
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center">
+
+      <el-table-column label="操作" align="center" width="160">
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit( scope.row)">编辑</el-button>
           <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
@@ -29,7 +36,7 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog :title="menutitle" :visible.sync="routerVisible" width="60%">
+    <el-dialog :title="menutitle" :visible.sync="routerVisible" width="60%" :close-on-click-modal="false">
       <el-form ref="form" :model="form" label-width="80px">
         <el-form-item label="标题">
           <el-input v-model="form.meta.title" />
@@ -53,7 +60,7 @@
           </el-checkbox-group>
         </el-form-item>
         <el-form-item label="父级菜单">
-          <treeselect v-model="form.parentId" :multiple="false" :options="tableData" :normalizer="normalizer"
+          <treeselect v-model="form.upMenuId" :multiple="false" :options="tableData" :normalizer="normalizer"
             placeholder="请选择父级菜单" class="seachInput" no-children-text="暂无数据" />
         </el-form-item>
         <el-form-item label="是否隐藏">
@@ -85,7 +92,9 @@
     listPcMenu,
     getPcMenu,
     listRoleSel,
-    deletePcMenu
+    deletePcMenu,
+    addPcMenu,
+    updatePcMenu
   } from '@/api/table'
   export default {
     name: 'Menu',
@@ -97,7 +106,6 @@
         seletComList: [],
         parentList: [],
         menutitle: '新增菜单栏',
-        sysId: '',
         type: 'gk',
         routerVisible: false,
         form: {
@@ -149,7 +157,7 @@
         if (value === 'admin') {
           return 'primary'
         } else {
-          return 'success'
+          return 'primary'
         }
       },
       addRouter() {
@@ -157,12 +165,11 @@
         this.routerVisible = true
         this.form = {
           id: '',
-          sysId: this.sysId,
           path: '',
           name: '',
           component: '',
           hidden: false,
-          parentId: '',
+          upMenuId: null,
           meta: {
             title: '',
             icon: '',
@@ -171,16 +178,25 @@
           }
         }
       },
-      handleEdit(scope) { //编辑菜单
+      handleEdit(scope) { //编辑菜单 获取单个菜单
         getPcMenu({
           menuId: scope.id
         }).then(res => {
           console.log(res)
-          this.form = res.retData
+          var temp = res.retData
+          this.form = this.upMenuIdTree(temp)
           this.menutitle = '编辑菜单栏'
           this.routerVisible = true
         })
       },
+      upMenuIdTree(e) { //处理upMenu0的问题
+        if (e.upMenuId === 0 || e.upMenuId === '') {
+          e.upMenuId = null
+        }
+        return e
+      },
+
+
       listPcMenu() { //获得完整菜单
         listPcMenu({}).then(res => {
           this.tableData = res.retData
@@ -189,7 +205,7 @@
       },
       addMenu() {
         this.routerVisible = false
-        saveMenu(this.form).then(res => {
+        addPcMenu(this.form).then(res => {
           console.log(res)
           this.$message({
             type: 'success',
@@ -219,7 +235,8 @@
       },
       editmenu() {
         console.log(this.form)
-        updateMenuBarVO(this.form).then(res => {
+        this.form.children = []
+        updatePcMenu(this.form).then(res => {
           console.log(res)
           this.routerVisible = false
           this.listPcMenu()

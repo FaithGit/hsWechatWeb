@@ -1201,3 +1201,24 @@ export function deletePcMenu(data) { // 获取所有因子
     data
   })
 }
+export function addPcMenu(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/sys/addPcMenu',
+    method: 'post',
+    data
+  })
+}
+export function updatePcMenu(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/sys/updatePcMenu',
+    method: 'post',
+    data
+  })
+}
+export function updatePcRoleMenu(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/sys/updatePcRoleMenu',
+    method: 'post',
+    data
+  })
+}
