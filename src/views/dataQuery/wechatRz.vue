@@ -39,23 +39,9 @@
           </div>
           <div v-else>
 
-            <el-popover placement="top-start" width="460" trigger="hover">
+            <el-popover placement="top-start"  trigger="hover">
               <div>
-                废水实样比对预警规则：
-                <div style="text-indent: 2em;">
-                  距离最后一次采样25天,30天各提醒一次,30天以后每7天提醒一次
-                </div>
-                <div style="text-indent: 2em;">
-                  采样后3.1平台未登记,则7天,10天,14天各提醒一次
-                </div>
-                  <br>
-                <div>
-                  废气,vocs实样比对预警规则：
-                </div>
-                <div style="text-indent: 2em;"> 距离最后一次采样75天提醒一次,75天以后每7天提醒一次</div>
-                <div style="text-indent: 2em;"> 采样后3.1平台未登记,则7天,10天,14天各提醒一次</div>
-
-
+               {{ scope.row.result }}
               </div>
 
               <div slot="reference" style="color:red"> {{ scope.row.statusName }}<i class="el-icon-question"></i></div>
