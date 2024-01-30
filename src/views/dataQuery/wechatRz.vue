@@ -3,11 +3,11 @@
     <!-- 条件栏 -->
     <div class="headClass">
       姓名：
-      <el-input v-model="userName" class="seachInput"  style="width:160px" clearable />
+      <el-input v-model="userName" class="seachInput" style="width:160px" clearable />
       手机号：
-      <el-input v-model="telephone" class="seachInput"  style="width:160px" clearable />
+      <el-input v-model="telephone" class="seachInput" style="width:160px" clearable />
       发送内容：
-      <el-input v-model="content" class="seachInput"  style="width:160px" clearable />
+      <el-input v-model="content" class="seachInput" style="width:160px" clearable />
       状态：
       <el-select v-model="status" clearable class="seachInput" style="width:120px">
         <el-option v-for="item in statuslist" :key="item.label" :label="item.label" :value="item.value" />
@@ -31,8 +31,41 @@
       <el-table-column align="center" label="接收人姓名" prop="userName" width="120" />
       <el-table-column align="center" label="接收人手机号" prop="telephone" width="120" />
       <el-table-column align="center" label="发送数据" prop="data" />
-      <el-table-column align="center" label="发送时间" prop="requestTime"  width="100"/>
-      <el-table-column align="center" label="状态" prop="statusName" width="120" />
+      <el-table-column align="center" label="发送时间" prop="requestTime" width="100" />
+      <el-table-column align="center" label="状态" width="120">
+        <template slot-scope="scope">
+          <div v-if="scope.row.statusName=='发送成功'" style="color:green">
+            {{ scope.row.statusName }}
+          </div>
+          <div v-else>
+
+            <el-popover placement="top-start" width="460" trigger="hover">
+              <div>
+                废水实样比对预警规则：
+                <div style="text-indent: 2em;">
+                  距离最后一次采样25天,30天各提醒一次,30天以后每7天提醒一次
+                </div>
+                <div style="text-indent: 2em;">
+                  采样后3.1平台未登记,则7天,10天,14天各提醒一次
+                </div>
+                  <br>
+                <div>
+                  废气,vocs实样比对预警规则：
+                </div>
+                <div style="text-indent: 2em;"> 距离最后一次采样75天提醒一次,75天以后每7天提醒一次</div>
+                <div style="text-indent: 2em;"> 采样后3.1平台未登记,则7天,10天,14天各提醒一次</div>
+
+
+              </div>
+
+              <div slot="reference" style="color:red"> {{ scope.row.statusName }}<i class="el-icon-question"></i></div>
+            </el-popover>
+
+
+          </div>
+
+        </template>
+      </el-table-column>
 
       <!-- <el-table-column align="center" label="操作" width="280">
         <template slot-scope="scope">
@@ -77,7 +110,7 @@
         userName: "",
         telephone: "",
         content: "",
-        value1:null,
+        value1: null,
         pageIndex: 1,
         pageSize: 10,
         total: 0,
@@ -164,7 +197,7 @@
       },
 
       listWxMessageLog() {
-
+        this.listLoading = true
         console.log(this.value1)
         var startTime = ""
         var endTime = ""
@@ -187,6 +220,7 @@
           console.log(res)
           this.records = res.retData.records
           this.total = res.retData.total
+          this.listLoading = false
         })
       },
       handleSizeChange(val) {

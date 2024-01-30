@@ -10,6 +10,9 @@
       <el-button plain :type="mode==2?'primary':''" @click="toggleMode(2)">详细(点位)</el-button>
       <el-button plain :type="mode==3?'primary':''" @click="toggleMode(3)">详细(设备)</el-button>
 
+      <el-button type="primary" @click="exportWorkload" v-loading="loading" style="margin-left:10px"
+        icon="el-icon-download">导出</el-button>
+
     </div>
 
     <!-- 表格 -->
@@ -94,7 +97,8 @@
     listGroupSel,
     listWorkload,
     updateWorkloadCoefficient,
-    updateInstrumentWorkload
+    updateInstrumentWorkload,
+    exportWorkload
   } from '@/api/table'
   import {
     mapGetters
@@ -127,6 +131,7 @@
         newValue: "",
         addVisible: false,
         editVisible: false,
+        loading: false,
         listLoading: false,
         editPointVisible: false,
         form: {},
@@ -200,6 +205,16 @@
       this.listWorkload()
     },
     methods: {
+      exportWorkload() {
+        this.loading = true
+        exportWorkload({
+
+        }).then(res => {
+          console.log(res)
+          this.loading = false
+          window.open(res.retData)
+        })
+      },
       updata() {
         console.log("提交")
         console.log(this.form)

@@ -1222,3 +1222,10 @@ export function updatePcRoleMenu(data) { // 获取所有因子
     data
   })
 }
+export function exportWorkload(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/instrument/exportWorkload',
+    method: 'post',
+    data
+  })
+}

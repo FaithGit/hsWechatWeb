@@ -63,11 +63,14 @@ const actions = {
       listPcUserMenu({}).then(res => {
         console.log("!!!!!!!!!", res)
 
+        var loadView = (view) => { // 路由懒加载
+          return resolve => require([`@/views/${view}.vue`], resolve)
+        }
 
         function compTree(arr) {
           arr.forEach(e => {
             // console.log(e)
-            e.component = () => import('@/views/setting/user')
+            e.component = loadView(e.component)
             delete e.meta.roles
           })
         }
@@ -79,7 +82,7 @@ const actions = {
           if (e.component === 'Layout') {
             e.component = LAYOUT
           } else {
-            e.component = () => import('@/views/setting/user')
+            e.component = loadView(e.component)
           }
 
           compTree(e.children)

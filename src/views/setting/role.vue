@@ -164,5 +164,14 @@
   .conFelx {
     display: flex;
   }
+  ::v-deep .vue-treeselect--open.vue-treeselect--open-below .vue-treeselect__control {
+    display:none;
+  }
+  ::v-deep .vue-treeselect__label {
+    font-size: 18px;
+  }
+  ::v-deep .vue-treeselect__indent-level-1 .vue-treeselect__option{
+    margin: 10px 0;
+  }
 
 </style>
