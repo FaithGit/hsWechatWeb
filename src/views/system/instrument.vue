@@ -4,23 +4,26 @@
     <div class="headClass">
       企业名称：
       <treeselect v-model="companyId" :multiple="false" :options="comlist" :normalizer="normalizer" placeholder="请选择企业"
-        class="seachInput" style="width:300px" @input="changeCom" />
+        class="seachInput" style="width:200px" @input="changeCom" />
       点位名称：
       <treeselect v-model="pointId" :multiple="false" :options="dianweiList" :normalizer="normalizer2"
-        placeholder="请选择点位名称" class="seachInput" style="width:200px" />
+        placeholder="请选择点位名称" class="seachInput" style="width:150px" />
       设备类型：
       <el-select v-model="pointStatus" placeholder="请选择设备类型" class="seachInput" clearable>
         <el-option v-for="item in shebeilist" :key="item.instrumentType+item.instrumentTypeName"
           :label="item.instrumentTypeName" :value="item.instrumentType" />
       </el-select>
       污染源种类：
-      <el-select v-model="pollutionType" placeholder="请选择污染源种类" clearable class="seachInput" style="width:160px">
+      <el-select v-model="pollutionType" placeholder="请选择污染源种类" clearable class="seachInput" style="width:100px">
         <el-option label="废水" :value="1" />
         <el-option label="废气" :value="2" />
         <el-option label="vocs" :value="3" />
         <el-option label="地表水" :value="4" />
         <el-option label="其他" :value="5" />
-
+      </el-select>
+      是否存在设备：<el-select v-model="existInstrument" placeholder="是否存在" clearable class="seachInput" style="width:110px">
+        <el-option label="不存在" :value="0" />
+        <el-option label="存在" :value="1" />
       </el-select>
       <el-button type="primary" @click="seach">搜索</el-button>
       <el-button type="primary" @click="addShebei">新增设备</el-button>
@@ -203,6 +206,7 @@
         pointStatus: '',
 
         comName: '',
+        existInstrument: '',
         pointName: '',
         status: '',
         pollutionType: '',
@@ -452,8 +456,9 @@
         listInstrumentPage({
           companyId: this.companyId || '',
           pointId: this.pointId || '',
-          instrumentType: this.pointStatus || '',
-          pollutionType: this.pollutionType || '',
+          instrumentType: this.pointStatus,
+          pollutionType: this.pollutionType,
+          existInstrument: this.existInstrument,
           roleId: this.roleId,
           groupId: this.userGroupId,
           pageIndex: this.pageIndex,

@@ -1229,3 +1229,31 @@ export function exportWorkload(data) { // 获取所有因子
     data
   })
 }
+export function listFaultHandleByInstrumentType(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/instrument/listFaultHandleByInstrumentType',
+    method: 'post',
+    data
+  })
+}
+export function addFaultHandle(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/instrument/addFaultHandle',
+    method: 'post',
+    data
+  })
+}
+export function updateFaultHandle(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/instrument/updateFaultHandle',
+    method: 'post',
+    data
+  })
+}
+export function deleteFaultHandle(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/instrument/deleteFaultHandle',
+    method: 'post',
+    data
+  })
+}
