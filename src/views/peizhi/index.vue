@@ -3,7 +3,7 @@
     <!-- 条件栏 -->
     <div>
       试剂名称：
-      <el-input v-model="reagentName" class="seachInput" placeholder="请选择输入关键字" clearable />
+      <el-input v-model="reagentName" class="seachInput" placeholder="请输入关键字" clearable />
       日期选择：
       <el-date-picker v-model="time" type="date" class="seachInput" placeholder="选择日期">
       </el-date-picker>

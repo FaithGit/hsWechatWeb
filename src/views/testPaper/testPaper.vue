@@ -3,9 +3,9 @@
     <!-- 条件栏 -->
     <div>
       试卷名称：
-      <el-input v-model="examName" class="seachInput" placeholder="请选择输入试卷名称" clearable />
+      <el-input v-model="examName" class="seachInput" placeholder="请输入试卷名称" clearable />
       用户名称：
-      <el-input v-model="userName" class="seachInput" placeholder="请选择输入用户名称" clearable />
+      <el-input v-model="userName" class="seachInput" placeholder="请输入用户名称" clearable />
       试卷类型：
       <el-select v-model="examType" placeholder="请选择型" class="seachInput" clearable>
         <el-option v-for="item in examTypeOptions" :key="item.label" :label="item.label" :value="item.value" />
@@ -72,7 +72,7 @@ import {
 } from 'vuex'
 // import moment from 'moment'
 export default {
-  name: 'Yuejuan',
+  name: 'TestPaper',
   data() {
     return {
       pageNo: 1,

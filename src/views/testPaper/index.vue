@@ -3,7 +3,7 @@
     <!-- 条件栏 -->
     <div>
       试卷名称：
-      <el-input v-model="examName" class="seachInput" placeholder="请选择输入关键字" clearable />
+      <el-input v-model="examName" class="seachInput" placeholder="请输入关键字" clearable />
       试卷类型：
       <el-select v-model="examType" placeholder="请选择型" class="seachInput" clearable>
         <el-option v-for="item in examTypeOptions" :key="item.value+'型'" :label="item.label" :value="item.value" />
@@ -17,17 +17,8 @@
     </div>
 
     <!-- 表格 -->
-    <el-table
-      v-loading="listLoading"
-      :data="records"
-      element-loading-text="加载中"
-      border
-      fit
-      stripe
-      highlight-current-row
-      style="margin-top:1.04vw"
-      height="calc(100vh - 84px - 60px - 40px - 32px - 1.04vw - 17px)"
-    >
+    <el-table v-loading="listLoading" :data="records" element-loading-text="加载中" border fit stripe highlight-current-row
+      style="margin-top:1.04vw" height="calc(100vh - 84px - 60px - 40px - 32px - 1.04vw - 17px)">
       <el-table-column align="center" label="#" width="95">
         <template slot-scope="scope">
           {{ scope.$index+1 }}
@@ -52,27 +43,14 @@
     </el-table>
     <!-- 分页 -->
     <div class="buttonPagination">
-      <el-pagination
-        :current-page="pageNo"
-        :page-sizes="[10,20,30,40,50]"
-        :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
+      <el-pagination :current-page="pageNo" :page-sizes="[10,20,30,40,50]" :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
+        @current-change="handleCurrentChange" />
     </div>
 
     <!-- 查看试卷 -->
-    <el-dialog
-      v-if="examVisible"
-      title="查看试卷"
-      :append-to-body="true"
-      :visible="examVisible"
-      width="80%"
-      :close-on-click-modal="false"
-      @close="examVisible=false"
-    >
+    <el-dialog v-if="examVisible" title="查看试卷" :append-to-body="true" :visible="examVisible" width="80%"
+      :close-on-click-modal="false" @close="examVisible=false">
 
       <el-row class="testDetails">
         <el-col :span="2">试卷名称：</el-col>
@@ -104,9 +82,7 @@
 
       <el-table
         :data="examObj.questions.filter(data => !search1 || data.questionContent.toLowerCase().includes(search1.toLowerCase()))"
-        style="width: 100%"
-        max-height="500"
-      >
+        style="width: 100%" max-height="500">
         <el-table-column align="center" label="#" width="60">
           <template slot-scope="scope">
             {{ scope.$index+1 }}
@@ -143,28 +119,13 @@
     </el-dialog>
 
     <!-- 导入题目 -->
-    <el-dialog
-      v-if="timuVisible"
-      title="导入题目"
-      :append-to-body="true"
-      :visible="timuVisible"
-      width="30%"
-      :close-on-click-modal="false"
-      @close="timuVisible=false"
-    >
+    <el-dialog v-if="timuVisible" title="导入题目" :append-to-body="true" :visible="timuVisible" width="30%"
+      :close-on-click-modal="false" @close="timuVisible=false">
 
       <el-form ref="form" label-width="80px">
         <el-form-item label="题目附件">
-          <el-upload
-            class="upload-demo"
-            action="#"
-            :on-remove="upRemove"
-            :limit="1"
-            :file-list="uplist"
-            accept=".xlsx"
-            :auto-upload="false"
-            :on-change="upChangeFile"
-          >
+          <el-upload class="upload-demo" action="#" :on-remove="upRemove" :limit="1" :file-list="uplist" accept=".xlsx"
+            :auto-upload="false" :on-change="upChangeFile">
             <el-button size="small" type="primary">点击上传</el-button>
             <div slot="tip" class="el-upload__tip">限单个xlsx文件</div>
           </el-upload>
@@ -176,15 +137,8 @@
       </div>
     </el-dialog>
     <!-- 随机生成试卷 -->
-    <el-dialog
-      v-if="sjVisible"
-      title="生成试卷"
-      :append-to-body="true"
-      :visible="sjVisible"
-      width="70%"
-      :close-on-click-modal="false"
-      @close="sjVisible=false"
-    >
+    <el-dialog v-if="sjVisible" title="生成试卷" :append-to-body="true" :visible="sjVisible" width="70%"
+      :close-on-click-modal="false" @close="sjVisible=false">
       <div class="textShuomin">
         月考：选择题20题（3），判断题20题（2），限时20分钟 <br>
         试用期转正考：选择题20题（3），判断题20题（2），限时20分钟，考核80分以上通过<br>
@@ -212,15 +166,8 @@
           <el-input-number v-model="form.examAnswerTime" :min="0" placeholder="请输入试卷答题限时时间(分钟)" /> 分钟
         </el-form-item>
         <el-form-item label="对应考试角色" prop="testUserIds">
-          <treeselect
-            v-model="form.testUserIds"
-            :multiple="true"
-            :options="userlist"
-            :normalizer="normalizer2"
-            placeholder="请选择对应考试人员"
-            no-children-text="暂无数据"
-            :value-consists-of="'LEAF_PRIORITY'"
-          />
+          <treeselect v-model="form.testUserIds" :multiple="true" :options="userlist" :normalizer="normalizer2"
+            placeholder="请选择对应考试人员" no-children-text="暂无数据" :value-consists-of="'LEAF_PRIORITY'" />
         </el-form-item>
         <el-row :gutter="20" style="margin-bottom:20px">
           <el-col :span="4" :offset="2" style="text-align:center">
@@ -281,406 +228,406 @@
 </template>
 
 <script>
-import {
-  listExam,
-  exportExcelDemo,
-  getExam,
-  randomGenerateExam,
-  removeExam,
-  listUserTree
-} from '@/api/table'
-import {
-  mapGetters
-} from 'vuex'
+  import {
+    listExam,
+    exportExcelDemo,
+    getExam,
+    randomGenerateExam,
+    removeExam,
+    listUserTree
+  } from '@/api/table'
+  import {
+    mapGetters
+  } from 'vuex'
 
-// import the styles
-import Treeselect from '@riophae/vue-treeselect'
-// import the styles
-import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+  // import the styles
+  import Treeselect from '@riophae/vue-treeselect'
+  // import the styles
+  import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
-import moment from 'moment'
+  import moment from 'moment'
 
-import axios from 'axios'
-import setting from '@/settings'
-import {
-  getToken
-} from '@/utils/auth'
+  import axios from 'axios'
+  import setting from '@/settings'
+  import {
+    getToken
+  } from '@/utils/auth'
 
-export default {
-  name: 'TestPaper',
-  components: {
-    Treeselect
-  },
-  data() {
-    return {
-      pageNo: 1,
-      pageSize: 10,
-      total: 0,
-      records: [],
-      userlist: [],
-      statusoptions: [{
-        value: 1,
-        label: '未开始'
-      }, {
-        value: 2,
-        label: '已开始'
-      }, {
-        value: 3,
-        label: '已过期失效'
-      }],
-      examTypeOptions: [{
-        value: 1,
-        label: '练习'
-      }, {
-        value: 2,
-        label: '月考'
-      }, {
-        value: 3,
-        label: '考核'
-      }],
-      status: '',
-      examType: '',
-      examName: '',
-      search1: '',
-      listLoading: false,
-      loading: false, // 上传题目的loading
-      examVisible: false,
-      shijuanVisible: false,
-      timuVisible: false,
-      examObj: {},
-      uplist: [], // 题目列表
-      form: {
+  export default {
+    name: 'TestPaperMain',
+    components: {
+      Treeselect
+    },
+    data() {
+      return {
+        pageNo: 1,
+        pageSize: 10,
+        total: 0,
+        records: [],
+        userlist: [],
+        statusoptions: [{
+          value: 1,
+          label: '未开始'
+        }, {
+          value: 2,
+          label: '已开始'
+        }, {
+          value: 3,
+          label: '已过期失效'
+        }],
+        examTypeOptions: [{
+          value: 1,
+          label: '练习'
+        }, {
+          value: 2,
+          label: '月考'
+        }, {
+          value: 3,
+          label: '考核'
+        }],
+        status: '',
+        examType: '',
         examName: '',
-        examPublishTime: '',
-        examDeadlineTime: '',
-        examAnswerTime: 60
-      },
-      rules: {
-        examName: [{
-          required: true,
-          message: '请输入试卷名称',
-          trigger: 'blur'
-        }],
-        testUserIds: [{
-          required: true,
-          message: '请选择考试人员',
-          trigger: 'change'
-        }],
-        examPublishTime: [{
-          required: true,
-          message: '请选择试卷发布时间',
-          trigger: 'change'
-        }],
-        examDeadlineTime: [{
-          required: true,
-          message: '请选择试卷截止时间',
-          trigger: 'change'
-        }],
-        examType: [{
-          required: true,
-          message: '请选择试卷类型',
-          trigger: 'change'
-        }],
-        examAnswerTime: [{
-          required: true,
-          message: '请输入试卷答题限时时间(分钟)',
-          trigger: 'change'
-        }]
-      },
-      sjVisible: false,
-      normalizer2(node) {
-        // if (!node.children.length) delete node.children
-        return {
-          id: node.id,
-          label: node.label,
-          children: node.children && node.children.length ? node.children : 0
+        search1: '',
+        listLoading: false,
+        loading: false, // 上传题目的loading
+        examVisible: false,
+        shijuanVisible: false,
+        timuVisible: false,
+        examObj: {},
+        uplist: [], // 题目列表
+        form: {
+          examName: '',
+          examPublishTime: '',
+          examDeadlineTime: '',
+          examAnswerTime: 60
+        },
+        rules: {
+          examName: [{
+            required: true,
+            message: '请输入试卷名称',
+            trigger: 'blur'
+          }],
+          testUserIds: [{
+            required: true,
+            message: '请选择考试人员',
+            trigger: 'change'
+          }],
+          examPublishTime: [{
+            required: true,
+            message: '请选择试卷发布时间',
+            trigger: 'change'
+          }],
+          examDeadlineTime: [{
+            required: true,
+            message: '请选择试卷截止时间',
+            trigger: 'change'
+          }],
+          examType: [{
+            required: true,
+            message: '请选择试卷类型',
+            trigger: 'change'
+          }],
+          examAnswerTime: [{
+            required: true,
+            message: '请输入试卷答题限时时间(分钟)',
+            trigger: 'change'
+          }]
+        },
+        sjVisible: false,
+        normalizer2(node) {
+          // if (!node.children.length) delete node.children
+          return {
+            id: node.id,
+            label: node.label,
+            children: node.children && node.children.length ? node.children : 0
+          }
         }
       }
-    }
-  },
-  computed: {
-    ...mapGetters([
-      'userId'
-    ])
-  },
-  mounted() {
-    this.listUserTree()
-    this.listExam()
-  },
-  methods: {
+    },
+    computed: {
+      ...mapGetters([
+        'userId'
+      ])
+    },
+    mounted() {
+      this.listUserTree()
+      this.listExam()
+    },
+    methods: {
 
-    listUserTree() { // 试卷列表
-      listUserTree({}).then(res => {
-        console.log(res)
-        this.userlist = res.retData
-      })
-    },
-    listExam() { // 试卷列表
-      listExam({
-        pageNo: this.pageNo,
-        pageSize: this.pageSize,
-        status: this.status,
-        examType: this.examType,
-        examName: this.examName
-      }).then(res => {
-        console.log('🚀 ~ listExam ~ res', res)
-        this.records = res.retData.records
-        this.total = res.retData.total
-      })
-    },
-    handleSizeChange(val) {
-      this.pageSize = val
-      this.listExam()
-    },
-    handleCurrentChange(val) {
-      this.pageNo = val
-      this.listExam()
-    },
-    seach() {
-      this.pageNo = 1
-      this.listExam()
-    },
-    download() { // 下载模板
-      exportExcelDemo({}).then(res => {
-        console.log(res)
-        window.open(res.retData, '_self')
-      })
-    },
-    openTimu() {
-      this.timuVisible = true
-      this.uplist = []
-    },
-    getExam(item) { // 查看试卷
-      console.log(item)
-      getExam({
-        examId: item.examId,
-        userId: this.userId
-      }).then(res => {
-        console.log(res)
-        this.examObj = res.retData
-        this.examVisible = true
-      })
-    },
-    upChangeFile(file, fileList) { // 更改图片
-      this.uplist = fileList
-    },
-    upRemove(file, fileList) { // 删除上传题目
-      console.log(file, fileList)
-      this.uplist = fileList
-    },
-
-    openShijuan() { // 新建试卷
-      this.uplist = []
-      this.loading = false
-      this.shijuanVisible = true
-      this.form = {
-        examName: '',
-        examPublishTime: '',
-        examDeadlineTime: '',
-        examAnswerTime: 60
-      }
-    },
-    openSj() { // 新建随机试卷
-      this.loading = false
-      this.sjVisible = true
-      this.form = {
-        examName: '',
-        testUserIds: [],
-        examPublishTime: '',
-        examDeadlineTime: '',
-        examAnswerTime: 60,
-        singleAnswerNum: 0,
-        singleAnswerScores: 0,
-        multipleAnswerNum: 0,
-        multipleAnswerScores: 0,
-        trueFalseQuestionNum: 0,
-        trueFalseQuestionScores: 0,
-        fillInTheBlankNum: 0,
-        fillInTheBlankScores: 0,
-        essayQuestionNum: 0,
-        essayQuestionScores: 0,
-        examType: ''
-      }
-    },
-    upFile() { // 上传题目
-      this.loading = true
-      console.log(this.uplist)
-      if (this.uplist.length === 0) {
-        this.$notify({
-          type: 'warning',
-          message: '没有上传文件'
+      listUserTree() { // 试卷列表
+        listUserTree({}).then(res => {
+          console.log(res)
+          this.userlist = res.retData
         })
+      },
+      listExam() { // 试卷列表
+        listExam({
+          pageNo: this.pageNo,
+          pageSize: this.pageSize,
+          status: this.status,
+          examType: this.examType,
+          examName: this.examName
+        }).then(res => {
+          console.log('🚀 ~ listExam ~ res', res)
+          this.records = res.retData.records
+          this.total = res.retData.total
+        })
+      },
+      handleSizeChange(val) {
+        this.pageSize = val
+        this.listExam()
+      },
+      handleCurrentChange(val) {
+        this.pageNo = val
+        this.listExam()
+      },
+      seach() {
+        this.pageNo = 1
+        this.listExam()
+      },
+      download() { // 下载模板
+        exportExcelDemo({}).then(res => {
+          console.log(res)
+          window.open(res.retData, '_self')
+        })
+      },
+      openTimu() {
+        this.timuVisible = true
+        this.uplist = []
+      },
+      getExam(item) { // 查看试卷
+        console.log(item)
+        getExam({
+          examId: item.examId,
+          userId: this.userId
+        }).then(res => {
+          console.log(res)
+          this.examObj = res.retData
+          this.examVisible = true
+        })
+      },
+      upChangeFile(file, fileList) { // 更改图片
+        this.uplist = fileList
+      },
+      upRemove(file, fileList) { // 删除上传题目
+        console.log(file, fileList)
+        this.uplist = fileList
+      },
+
+      openShijuan() { // 新建试卷
+        this.uplist = []
         this.loading = false
-        return
-      } else {
-        var formData = new FormData()
-        formData.append('file', this.uplist[0].raw)
-
-        // return
-        axios.post(setting.baseUrl + '/exam/importExcel', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'token': getToken()
-          }
-        })
-          .then(res => {
-            console.log(res.data)
-            if (res.data.retCode === 1000) {
-              this.$notify({
-                type: 'success',
-                message: '上传成功'
-              })
-              this.timuVisible = false
-              this.loading = false
-              this.seach()
-            } else {
-              this.$notify({
-                type: 'warning',
-                message: res.data.retMsg
-              })
-            }
-            this.loading = false
-          }).catch((e) => {
-            console.log('🚀 ~ this.$refs.fuform.validate ~ e', e)
-            this.loading = false
+        this.shijuanVisible = true
+        this.form = {
+          examName: '',
+          examPublishTime: '',
+          examDeadlineTime: '',
+          examAnswerTime: 60
+        }
+      },
+      openSj() { // 新建随机试卷
+        this.loading = false
+        this.sjVisible = true
+        this.form = {
+          examName: '',
+          testUserIds: [],
+          examPublishTime: '',
+          examDeadlineTime: '',
+          examAnswerTime: 60,
+          singleAnswerNum: 0,
+          singleAnswerScores: 0,
+          multipleAnswerNum: 0,
+          multipleAnswerScores: 0,
+          trueFalseQuestionNum: 0,
+          trueFalseQuestionScores: 0,
+          fillInTheBlankNum: 0,
+          fillInTheBlankScores: 0,
+          essayQuestionNum: 0,
+          essayQuestionScores: 0,
+          examType: ''
+        }
+      },
+      upFile() { // 上传题目
+        this.loading = true
+        console.log(this.uplist)
+        if (this.uplist.length === 0) {
+          this.$notify({
+            type: 'warning',
+            message: '没有上传文件'
           })
-      }
-    },
-    upTest() { // 上传题目
-      this.$refs.form1.validate((valid) => {
-        if (valid) {
-          this.loading = true
-          console.log(this.uplist)
-          if (this.uplist.length === 0) {
-            this.$notify({
-              type: 'warning',
-              message: '没有上传文件'
-            })
-            this.loading = false
-            return
-          } else {
-            var formData = new FormData()
-            formData.append('file', this.uplist[0].raw)
-            formData.append('examName', this.form.examName)
-            formData.append('examPublishTime', moment(this.form.examPublishTime).format('YYYY-MM-DD HH:mm:ss'))
-            formData.append('examDeadlineTime', moment(this.form.examDeadlineTime).format('YYYY-MM-DD HH:mm:ss'))
-            formData.append('examAnswerTime', this.form.examAnswerTime)
+          this.loading = false
+          return
+        } else {
+          var formData = new FormData()
+          formData.append('file', this.uplist[0].raw)
 
-            // return
-            axios.post(setting.baseUrl + '/exam/importExcelAndGenerateExam', formData, {
+          // return
+          axios.post(setting.baseUrl + '/exam/importExcel', formData, {
               headers: {
                 'Content-Type': 'multipart/form-data',
                 'token': getToken()
               }
             })
-              .then(res => {
-                console.log(res.data)
-                if (res.data.retCode === 1000) {
+            .then(res => {
+              console.log(res.data)
+              if (res.data.retCode === 1000) {
+                this.$notify({
+                  type: 'success',
+                  message: '上传成功'
+                })
+                this.timuVisible = false
+                this.loading = false
+                this.seach()
+              } else {
+                this.$notify({
+                  type: 'warning',
+                  message: res.data.retMsg
+                })
+              }
+              this.loading = false
+            }).catch((e) => {
+              console.log('🚀 ~ this.$refs.fuform.validate ~ e', e)
+              this.loading = false
+            })
+        }
+      },
+      upTest() { // 上传题目
+        this.$refs.form1.validate((valid) => {
+            if (valid) {
+              this.loading = true
+              console.log(this.uplist)
+              if (this.uplist.length === 0) {
+                this.$notify({
+                  type: 'warning',
+                  message: '没有上传文件'
+                })
+                this.loading = false
+                return
+              } else {
+                var formData = new FormData()
+                formData.append('file', this.uplist[0].raw)
+                formData.append('examName', this.form.examName)
+                formData.append('examPublishTime', moment(this.form.examPublishTime).format('YYYY-MM-DD HH:mm:ss'))
+                formData.append('examDeadlineTime', moment(this.form.examDeadlineTime).format('YYYY-MM-DD HH:mm:ss'))
+                formData.append('examAnswerTime', this.form.examAnswerTime)
+
+                // return
+                axios.post(setting.baseUrl + '/exam/importExcelAndGenerateExam', formData, {
+                    headers: {
+                      'Content-Type': 'multipart/form-data',
+                      'token': getToken()
+                    }
+                  })
+                  .then(res => {
+                    console.log(res.data)
+                    if (res.data.retCode === 1000) {
+                      this.$notify({
+                        type: 'success',
+                        message: '上传成功'
+                      })
+                      this.shijuanVisible = false
+                      this.loading = false
+                      this.seach()
+                    } else {
+                      this.$notify({
+                        type: 'warning',
+                        message: res.data.retMsg
+                      })
+                    }
+                    this.loading = false
+                  }).catch((e) => {
+                    console.log('🚀 ~ this.$refs.fuform.validate ~ e', e)
+                    this.loading = false
+                  })
+              }
+            }
+          }
+
+        )
+      },
+      upSuiji() { // 上传题目
+        this.$refs.form1.validate((valid) => {
+            if (valid) {
+              this.loading = true
+              const _obj = {
+                userId: this.userId,
+                examName: this.form.examName,
+                testUserIds: this.form.testUserIds,
+                examType: this.form.examType,
+                examPublishTime: moment(this.form.examPublishTime).format('YYYY-MM-DD HH:mm:ss'),
+                examDeadlineTime: moment(this.form.examDeadlineTime).format('YYYY-MM-DD HH:mm:ss'),
+                examAnswerTime: this.form.examAnswerTime,
+                singleAnswerNum: this.form.singleAnswerNum,
+                singleAnswerScores: this.form.singleAnswerScores,
+                multipleAnswerNum: this.form.multipleAnswerNum,
+                multipleAnswerScores: this.form.multipleAnswerScores,
+                trueFalseQuestionNum: this.form.trueFalseQuestionNum,
+                trueFalseQuestionScores: this.form.trueFalseQuestionScores,
+                fillInTheBlankNum: this.form.fillInTheBlankNum,
+                fillInTheBlankScores: this.form.fillInTheBlankScores,
+                essayQuestionNum: this.form.essayQuestionNum,
+                essayQuestionScores: this.form.essayQuestionScores
+              }
+
+              randomGenerateExam(_obj).then(res => {
+                console.log(res)
+                if (res.retCode === 1000) {
                   this.$notify({
                     type: 'success',
                     message: '上传成功'
                   })
-                  this.shijuanVisible = false
+                  this.sjVisible = false
                   this.loading = false
                   this.seach()
                 } else {
                   this.$notify({
                     type: 'warning',
-                    message: res.data.retMsg
+                    message: res.retMsg
                   })
                 }
                 this.loading = false
-              }).catch((e) => {
-                console.log('🚀 ~ this.$refs.fuform.validate ~ e', e)
+              }).catch(() => {
                 this.loading = false
               })
-          }
-        }
-      }
-
-      )
-    },
-    upSuiji() { // 上传题目
-      this.$refs.form1.validate((valid) => {
-        if (valid) {
-          this.loading = true
-          const _obj = {
-            userId: this.userId,
-            examName: this.form.examName,
-            testUserIds: this.form.testUserIds,
-            examType: this.form.examType,
-            examPublishTime: moment(this.form.examPublishTime).format('YYYY-MM-DD HH:mm:ss'),
-            examDeadlineTime: moment(this.form.examDeadlineTime).format('YYYY-MM-DD HH:mm:ss'),
-            examAnswerTime: this.form.examAnswerTime,
-            singleAnswerNum: this.form.singleAnswerNum,
-            singleAnswerScores: this.form.singleAnswerScores,
-            multipleAnswerNum: this.form.multipleAnswerNum,
-            multipleAnswerScores: this.form.multipleAnswerScores,
-            trueFalseQuestionNum: this.form.trueFalseQuestionNum,
-            trueFalseQuestionScores: this.form.trueFalseQuestionScores,
-            fillInTheBlankNum: this.form.fillInTheBlankNum,
-            fillInTheBlankScores: this.form.fillInTheBlankScores,
-            essayQuestionNum: this.form.essayQuestionNum,
-            essayQuestionScores: this.form.essayQuestionScores
-          }
-
-          randomGenerateExam(_obj).then(res => {
-            console.log(res)
-            if (res.retCode === 1000) {
-              this.$notify({
-                type: 'success',
-                message: '上传成功'
-              })
-              this.sjVisible = false
-              this.loading = false
-              this.seach()
-            } else {
-              this.$notify({
-                type: 'warning',
-                message: res.retMsg
-              })
             }
-            this.loading = false
-          }).catch(() => {
-            this.loading = false
-          })
-        }
-      }
+          }
 
-      )
-    },
-    computOptions(options) { // 计算题目的选项
-      console.log(options)
-      let str = ''
-      options.forEach((e, i) => {
-        if (i === options.length - 1) {
-          str += e.value
-        } else {
-          str += e.value + '|'
-        }
-      })
-      return str
-    },
-    remove(item) {
-      console.log(item)
-      this.$confirm('此操作将永久删除该试卷, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        removeExam({
-          examId: item.examId
-        }).then(res => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          })
-          this.listExam()
+        )
+      },
+      computOptions(options) { // 计算题目的选项
+        console.log(options)
+        let str = ''
+        options.forEach((e, i) => {
+          if (i === options.length - 1) {
+            str += e.value
+          } else {
+            str += e.value + '|'
+          }
         })
-      })
+        return str
+      },
+      remove(item) {
+        console.log(item)
+        this.$confirm('此操作将永久删除该试卷, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          removeExam({
+            examId: item.examId
+          }).then(res => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+            this.listExam()
+          })
+        })
+      }
     }
   }
-}
 
 </script>
 

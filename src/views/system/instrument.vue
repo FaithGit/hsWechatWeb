@@ -21,7 +21,7 @@
         <el-option label="地表水" :value="4" />
         <el-option label="其他" :value="5" />
       </el-select>
-      是否存在设备：<el-select v-model="existInstrument" placeholder="是否存在" clearable class="seachInput" style="width:110px">
+      点位是否存在设备：<el-select v-model="existInstrument" placeholder="是否存在" clearable class="seachInput" style="width:110px">
         <el-option label="不存在" :value="0" />
         <el-option label="存在" :value="1" />
       </el-select>

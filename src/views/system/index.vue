@@ -3,7 +3,7 @@
     <!-- 条件栏 -->
     <div class="headClass">
       企业名称：
-      <el-input v-model="comName" class="seachInput" placeholder="请选择输入关键字" clearable />
+      <el-input v-model="comName" class="seachInput" placeholder="请输入关键字" clearable />
       区域：
       <treeselect v-model="areaCode" :multiple="false" :options="allAreacode" :normalizer="normalizer"
         placeholder="请选择区域" class="seachInput" no-children-text="暂无数据" />

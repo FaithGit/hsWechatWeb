@@ -62,7 +62,7 @@
 
         <div style="text-align:center;margin-top:80px">
           <el-button @click="visible=false">取 消</el-button>
-          <el-button v-if="visibleTitle=='新增角色'" type="primary" @click="sumbitUser">提 交</el-button>
+          <el-button v-if="visibleTitle=='新增组'" type="primary" @click="sumbitUser">提 交</el-button>
           <!-- <el-button v-if="visibleTitle=='编辑用户'" type="primary" @click="editSubmit">更 改</el-button> -->
         </div>
       </el-form>
@@ -148,7 +148,7 @@
             trigger: 'blur'
           }],
           licensePlate: [{
-            required: true,
+            required: false,
             message: '请输入车牌号',
             trigger: 'blur'
           }],
@@ -292,7 +292,7 @@
       addUser(e) {
         this.visible = true
         this.form = {}
-        this.visibleTitle = '新增角色'
+        this.visibleTitle = '新增组'
       },
       sumbitUser() {
         this.$refs.form1.validate((valid) => {

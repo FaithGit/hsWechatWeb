@@ -25,7 +25,7 @@
     </div>
     <div class="threeCard">
       <div class="echartbox">
-        <div class="indexTitle">运维点位数量</div>
+        <div class="indexTitle">在线点位运维次数</div>
         <echarts1 />
       </div>
       <div class="echartbox">

@@ -9,6 +9,12 @@
       证书名称：
       <treeselect v-model="certificateId" :multiple="false" :options="zhengshuList" :normalizer="normalizer"
         placeholder="请选择证书" class="seachInput" no-children-text="暂无数据" />
+      证书状态：
+      <el-select v-model="expireStatus" class="seachInput" clearable>
+        <el-option label="正常" :value="0"></el-option>
+        <el-option label="即将到期" :value="1"></el-option>
+        <el-option label="已到期" :value="2"></el-option>
+      </el-select>
       <el-button type="primary" @click="seach">搜索</el-button>
       <el-button type="primary" @click="addCom">新增用户证书</el-button>
       <el-button type="primary" @click="zsClick">证书管理</el-button>
@@ -154,6 +160,7 @@
         records: [],
         allAreacode: [],
         certificateName: '',
+        expireStatus: '',
         visibleTitle: '',
         comName: '',
         areaCode: null,
@@ -267,6 +274,7 @@
         listUserCertificatePage({
           certificateId: this.certificateId || '',
           userId: this.userIdShow || '',
+          expireStatus: this.expireStatus,
           pageIndex: this.pageIndex,
           pageSize: this.pageSize
         }).then(res => {

@@ -3,9 +3,9 @@
     <!-- 条件栏 -->
     <div class="headClass">
       点位名称：
-      <el-input v-model="pointName" class="seachInput" placeholder="请选择输入点位名称" clearable />
+      <el-input v-model="pointName" class="seachInput" placeholder="请输入点位名称" clearable />
       运维人员：
-      <el-input v-model="username" class="seachInput" placeholder="请选择输入运维人员" clearable />
+      <el-input v-model="username" class="seachInput" placeholder="请输入运维人员" clearable />
       运维组：
       <treeselect
         v-model="groupId"

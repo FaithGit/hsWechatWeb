@@ -16,9 +16,9 @@
         故障处理 <el-button type="primary" style="margin-left:20px" @click="addTree">添加</el-button>
       </div>
       <div class="chooseBox" style="padding-top:20px">
-        <el-tree :data="treeList" node-key="id" default-expand-all :expand-on-click-node="false" :show-checkbox="false">
+        <el-tree :data="treeList" node-key="id" default-expand-all :expand-on-click-node="false" :show-checkbox="false" draggable>
           <span class="custom-tree-node" slot-scope="{ node, data }">
-            <span>{{ node.data.content }}</span>
+            <el-input v-model="node.data.content" placeholder="请输入内容"></el-input>
             <span>
               <el-button type="text" size="mini" @click="() => edit(data)">
                 编辑
@@ -243,6 +243,8 @@
     margin-top: 15px;
     overflow: auto;
   }
+
+   
 
   .chooseItem {
     height: 40px;

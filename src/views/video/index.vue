@@ -3,7 +3,7 @@
     <!-- 条件栏 -->
     <div>
       视频名称：
-      <el-input v-model="videoName" class="seachInput" placeholder="请选择输入关键字" clearable />
+      <el-input v-model="videoName" class="seachInput" placeholder="请输入关键字" clearable />
       <!-- 状态：
       <el-select v-model="status" placeholder="请选择状态" class="seachInput" clearable>
         <el-option v-for="item in statusoptions" :key="item.value+'状态'" :label="item.label" :value="item.value" />

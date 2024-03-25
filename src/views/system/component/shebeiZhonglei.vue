@@ -26,6 +26,19 @@
         </template>
       </el-table-column>
 
+      <el-table-column align="center" label="作业指导手册">
+        <template slot-scope="scope">
+          <div>
+            <template v-for="item in scope.row.manualFileList">
+              <img src="@/assets/pdf.png" alt="" srcset="" :title="item.name" style="width:20px;margin-right:10px"
+                :key="item.fileId" @click="handlePreview(item)">
+            </template>
+
+          </div>
+
+        </template>
+      </el-table-column>
+
       <el-table-column align="center" label="操作">
         <template slot-scope="scope">
           <el-button @click="editPoint(scope.row)">编辑</el-button>
@@ -66,25 +79,47 @@
           <el-input v-model="form.workload" placeholder="请输入工作量" />
         </el-form-item>
 
+        <el-form-item label="作业指导手册">
+          (仅限上传pdf文件，点击列表查看附件)
+          <el-upload action="#" :on-change="handleChangeID" :on-remove="handleRemoveID" :on-preview="handlePreview"
+            :auto-upload="false" :file-list="zhiweiList" accept=".pdf">
+            <el-button size="small" type="primary">点击上传</el-button>
+          </el-upload>
+        </el-form-item>
+
 
 
 
 
         <div style="text-align:center;margin-top:80px">
           <el-button @click="editVisible=false">取 消</el-button>
-          <el-button type="primary" @click="editSubmit">更 新</el-button>
+          <el-button type="primary" @click="editSubmit" v-loading="loading">更 新</el-button>
         </div>
       </el-form>
     </el-dialog>
+    <el-dialog v-if="pdfVisible" title="预览pdf" :append-to-body="true" :visible.sync="pdfVisible" width="70%"
+      :close-on-click-modal="true" @close="pdfVisible=false">
+      <div style="height:70vh;overflow: auto;">
+        <pdf v-for="item in pageTotal" :src="pdfUrl" :key="item" :page="item">
+        </pdf>
+      </div>
 
+
+      <img src="@/assets/dwfile.png" class="dwfile" alt="" srcset="" @click="dwFile">
+    </el-dialog>
   </div>
 </template>
 
 <script>
+  import pdf from 'vue-pdf'
   import Treeselect from '@riophae/vue-treeselect'
   // import the styles
   import '@riophae/vue-treeselect/dist/vue-treeselect.css'
-
+  import axios from 'axios'
+  import setting from '@/settings'
+  import {
+    getToken
+  } from '@/utils/auth'
   import {
     listInstrumentPage,
     updateInstrument,
@@ -96,7 +131,7 @@
     getInstrumentById,
     listInstrumentType,
     getInstrumentType,
-    updateInstrumentType
+    updateInstrumentType,
   } from '@/api/table'
   import {
     mapGetters
@@ -105,7 +140,8 @@
   export default {
     name: 'Shebei',
     components: {
-      Treeselect
+      Treeselect,
+      pdf
     },
     data() {
       return {
@@ -118,6 +154,10 @@
         records: [],
         comlist: [],
         groupList: [],
+        zhiweiList: [], // 全部药剂列表
+        pdfUrl: "",
+        realUrl:"",
+        pageTotal: 0,
         pointStatus: '',
         comName: '',
         pointName: '',
@@ -126,6 +166,8 @@
         addVisible: false,
         editVisible: false,
         listLoading: false,
+        pdfVisible: false,
+        loading: false,
         form: {},
         allyjList: [], // 全部药剂列表
         yaojiChoose: [], // 全部药剂列表
@@ -188,7 +230,42 @@
       this.listInstrumentType()
     },
     methods: {
+      handleChangeID(file, fileList) { // 身份附件上传
+        var formData = new FormData()
+        this.loading = true
+        formData.append('file', file.raw)
+        formData.append('type', 'manual')
+        axios.post(setting.baseUrl + '/sysSup/fileConvert', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              'token': getToken()
+            }
+          })
+          .then(res => {
+            console.log(res.data)
+            this.loading = false
+            this.zhiweiList.push(res.data.retData)
+          })
+      },
+      handleRemoveID(file, fileList) { // 身份附件删除
+        console.log(file, fileList)
+        this.zhiweiList = fileList
+      },
 
+      handlePreview(file) { // 预览
+        console.log(file)
+        this.realUrl=file.url
+        this.pdfUrl = pdf.createLoadingTask(file.url)
+        this.pdfUrl.promise.then(pdf => {
+          this.pageTotal = pdf.numPages
+          this.pdfVisible = true
+        }).catch(error => {})
+
+        // window.open(file.url)
+      },
+      dwFile() {
+        window.open(this.realUrl)
+      },
       listInstrumentType() {
         listInstrumentType({}).then(res => {
           console.log(res)
@@ -223,20 +300,21 @@
 
       editPoint(e) {
         console.log(e)
-
+        this.zhiweiList = []
         getInstrumentType({
           instrumentType: e.type
         }).then(res => {
           console.log(res)
           this.editVisible = true
           this.form = res.retData
+          this.zhiweiList = this.form.manualFileList
         })
-
         console.log('🚀 ~ editPoint ~   this.form:', this.form)
       },
       editSubmit() {
         this.$refs.form1.validate((valid) => {
           if (valid) {
+            this.form.manualFileList = this.zhiweiList
             updateInstrumentType(this.form).then(res => {
               console.log(res)
               this.$notify({
@@ -284,6 +362,15 @@
   .headClass {
     display: flex;
     align-items: center;
+  }
+
+  .dwfile {
+    position: absolute;
+    right: -3vw;
+    bottom: 0vw;
+    z-index: 9999;
+    width: 50px;
+    cursor: pointer;
   }
 
 </style>

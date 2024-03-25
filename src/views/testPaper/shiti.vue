@@ -3,7 +3,7 @@
     <!-- 条件栏 -->
     <div>
       试题内容：
-      <el-input v-model="content" class="seachInput" placeholder="请选择输入试题内容" clearable />
+      <el-input v-model="content" class="seachInput" placeholder="请输入试题内容" clearable />
       试题类型：
       <el-select v-model="timuType" placeholder="请选择试题类型" class="seachInput" clearable>
         <el-option v-for="item in timuTypeList" :key="item.value+'状态'" :label="item.label" :value="item.value" />
@@ -222,8 +222,7 @@
   } from '@/utils/auth'
 
   export default {
-    name: 'TestPaper',
-
+    name: 'Shiti',
     data() {
       return {
         pageNo: 1,

@@ -4,13 +4,13 @@
     <div class="headClass">
 
       用户名：
-      <el-input v-model="userName" class="seachInput" placeholder="请选择输入关键字" clearable />
+      <el-input v-model="userName" class="seachInput" placeholder="请输入关键字" clearable />
       角色名：
       <treeselect v-model="roleId" :multiple="false" :options="roleList" :normalizer="normalizer3" placeholder="请选择角色"
-        class="seachInput" no-children-text="暂无数据" />
+        class="seachInput" no-children-text="暂无数据" @open="openRole"  />
       组名：
       <treeselect v-model="groupId" :multiple="false" :options="groupList" :normalizer="normalizer4" placeholder="请选择组"
-        class="seachInput" no-children-text="暂无数据" />
+        class="seachInput" no-children-text="暂无数据" @open="openGroup" />
 
       <el-button type="primary" @click="seach" icon="el-icon-search">搜索</el-button>
       <el-button type="primary" @click="addUser" icon="el-icon-plus">新增用户</el-button>
@@ -62,11 +62,11 @@
         </el-form-item>
         <el-form-item label="角色名" prop="roleId">
           <treeselect v-model="form.roleId" :multiple="false" :options="roleList" :normalizer="normalizer3"
-            placeholder="请选择角色" class="seachInput" no-children-text="暂无数据" @input="parentroleIdChange" />
+            placeholder="请选择角色" class="seachInput" no-children-text="暂无数据" @input="parentroleIdChange" @open="openRole"  />
         </el-form-item>
-        <el-form-item label="组名" prop="groupId">
+        <el-form-item label="组名">
           <treeselect v-model="form.groupId" :multiple="false" :options="groupList" :normalizer="normalizer4"
-            placeholder="请选择组" class="seachInput" no-children-text="暂无数据" @input="parentgroupIdChange" />
+            placeholder="请选择组" class="seachInput" no-children-text="暂无数据" @open="openGroup" />
         </el-form-item>
 
         <div style="text-align:center;margin-top:80px">
@@ -227,6 +227,14 @@
       this.listUserPage()
     },
     methods: {
+      openGroup() {
+        console.log("更新组")
+        this.listGroup()
+      },
+      openRole() {
+        console.log("更新role")
+        this.listRole()
+      },
       roleClick() {
         this.roleVisible = true
       },
@@ -323,15 +331,23 @@
       },
       addUser(e) {
         this.visible = true
-        this.form = {}
+        this.form = {
+          groupId: null
+        }
         this.visibleTitle = '新增用户'
+
       },
       sumbitUser() {
         this.$refs.form1.validate((valid) => {
           if (valid) {
 
 
-            addUser(this.form).then(res => {
+            addUser({
+              roleId: this.form.roleId,
+              telephone: this.form.telephone,
+              userName: this.form.userName,
+              groupId: this.form.groupId || '',
+            }).then(res => {
               console.log(res)
               this.$notify({
                 type: 'success',
@@ -344,9 +360,16 @@
         })
       },
       editSubmit() {
+        console.log(this.form)
         this.$refs.form1.validate((valid) => {
           if (valid) {
-            updateUser(this.form).then(res => {
+            updateUser({
+              roleId: this.form.roleId,
+              telephone: this.form.telephone,
+              userName: this.form.userName,
+              userId: this.form.userId,
+              groupId: this.form.groupId || '',
+            }).then(res => {
               console.log(res)
               this.$notify({
                 type: 'success',

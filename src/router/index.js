@@ -57,7 +57,26 @@ export const constantRoutes = [{
         icon: 'dashboard1'
       }
     }]
-  }
+  },
+
+  {
+    path: '/gps',
+    name: 'Gps',
+    component: Layout,
+    meta: {
+      title: '途狐gps',
+      icon: 'setting',
+    },
+    children: [{
+      path: 'user',
+      name: 'User',
+      component: () => import('@/views/gps/map.vue'),
+      meta: {
+        title: '地图',
+        icon: 'map',
+      }
+    }, ]
+  },
 
 ]
 

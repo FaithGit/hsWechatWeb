@@ -6,7 +6,7 @@
       <treeselect v-model="companyId" :multiple="false" :options="comlist" :normalizer="normalizer" placeholder="请选择企业"
         class="seachInput" style="width:300px" />
       点位名称：
-      <el-input v-model="pointName" class="seachInput" placeholder="请选择输入点位名称" clearable />
+      <el-input v-model="pointName" class="seachInput" placeholder="请输入点位名称" clearable />
 
       站点状态：
       <el-select v-model="pointStatus" placeholder="请选择站点状态" class="seachInput" clearable>
@@ -54,7 +54,7 @@
       <el-table-column align="center" label="企业名称" prop="comName" />
       <!-- <el-table-column align="center" label="点位名称" prop="pointName" /> -->
       <el-table-column align="center" label="点位名称" prop="pointName" width="60" />
-      <el-table-column align="center" label="站点状态" prop="pointStatusName" width="60" />
+      <el-table-column align="center" label="点位状态" prop="pointStatusName" width="60" />
       <el-table-column align="center" label="运维组" width="100">
         <template slot-scope="scope">
           {{ computedNull(scope.row.groupName) }}

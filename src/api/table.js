@@ -1257,3 +1257,31 @@ export function deleteFaultHandle(data) { // 获取所有因子
     data
   })
 }
+export function listPharmaceuticalProvideVO(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/manHour/listPharmaceuticalProvideVO',
+    method: 'post',
+    data
+  })
+}
+export function updatePharmaceuticalProvide(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/manHour/updatePharmaceuticalProvide',
+    method: 'post',
+    data
+  })
+}
+export function gpsDepartmentSel(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/gps/gpsDepartmentSel',
+    method: 'post',
+    data
+  })
+}
+export function listLicensePlateSel(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/gps/listLicensePlateSel',
+    method: 'post',
+    data
+  })
+}

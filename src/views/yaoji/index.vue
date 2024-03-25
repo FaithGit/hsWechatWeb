@@ -3,7 +3,7 @@
     <!-- 条件栏 -->
     <div>
       药剂名称：
-      <el-input v-model="pharmaceuticalName" class="seachInput" placeholder="请选择输入关键字" clearable />
+      <el-input v-model="pharmaceuticalName" class="seachInput" placeholder="请输入药剂名称" clearable />
       药剂名称：
       <el-select v-model="status" class="seachInput" placeholder="请选择状态" clearable>
         <el-option label="在用" value="1" />

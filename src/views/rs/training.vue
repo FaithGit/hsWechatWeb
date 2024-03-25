@@ -7,7 +7,7 @@
         :normalizer="normalizer2" placeholder="请选择用户" class="seachInput" no-children-text="暂无数据" />
 
       培训主题：
-      <el-input v-model="trainingTheme" class="seachInput" placeholder="请选择输入关键字" clearable />
+      <el-input v-model="trainingTheme" class="seachInput" placeholder="请输入关键字" clearable />
       <el-button type="primary" @click="seach">搜索</el-button>
       <el-button type="primary" @click="addCom">新增培训</el-button>
     </div>

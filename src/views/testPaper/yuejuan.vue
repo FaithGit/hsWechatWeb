@@ -3,9 +3,9 @@
     <!-- 条件栏 -->
     <div>
       试卷名称：
-      <el-input v-model="examName" class="seachInput" placeholder="请选择输入试卷名称" clearable />
+      <el-input v-model="examName" class="seachInput" placeholder="请输入试卷名称" clearable />
       试题内容：
-      <el-input v-model="questionContent" class="seachInput" placeholder="请选择输入试题内容" clearable />
+      <el-input v-model="questionContent" class="seachInput" placeholder="请输入试题内容" clearable />
       试题类型：
       <el-select v-model="status" placeholder="请选择试题类型" class="seachInput" clearable>
         <el-option label="未批阅" :value="0" />

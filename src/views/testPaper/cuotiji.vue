@@ -3,7 +3,7 @@
     <!-- 条件栏 -->
     <div>
       试题内容：
-      <el-input v-model="content" class="seachInput" placeholder="请选择输入试题内容" clearable />
+      <el-input v-model="content" class="seachInput" placeholder="请输入试题内容" clearable />
       时间范围：
       <el-date-picker
         v-model="time"
@@ -57,7 +57,7 @@ import {
 } from 'vuex'
 import moment from 'moment'
 export default {
-  name: 'Yuejuan',
+  name: 'Cuotiji',
   data() {
     return {
       pageNo: 1,

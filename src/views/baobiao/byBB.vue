@@ -20,8 +20,8 @@
 
     <el-tabs v-model="activeName" @tab-click="handleClick" style="margin-top:10px">
       <el-tab-pane label="标液报表" name="first"></el-tab-pane>
-      <el-tab-pane label="药剂使用报表" name="second"></el-tab-pane>
-      <el-tab-pane label="试剂配置明细" name="third"></el-tab-pane>
+      <el-tab-pane label="母液使用报表" name="second"></el-tab-pane>
+      <el-tab-pane label="标液配置明细" name="third"></el-tab-pane>
     </el-tabs>
 
     <!-- 表格 -->
@@ -45,6 +45,11 @@
       <el-table-column align="center" label="浓度单位">
         <template slot-scope="scope">
           {{ computedNull(scope.row.unit) }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="总体积">
+        <template slot-scope="scope">
+          {{ computedNull(scope.row.totalVolume) }}
         </template>
       </el-table-column>
     </el-table>

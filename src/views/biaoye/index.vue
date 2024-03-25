@@ -3,7 +3,7 @@
     <!-- 条件栏 -->
     <div>
       标液名称：
-      <el-input v-model="byname" class="seachInput" placeholder="请选择输入关键字" clearable />
+      <el-input v-model="byname" class="seachInput" placeholder="请输入关键字" clearable />
       <el-button type="primary" @click="seach">搜索</el-button>
       <el-button type="primary" @click="addYaoji">新增标液</el-button>
     </div>

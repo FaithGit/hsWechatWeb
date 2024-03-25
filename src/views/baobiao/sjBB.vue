@@ -38,14 +38,24 @@
           {{ computedNull(scope.row.reagentName) }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="配置数量">
+      <el-table-column align="center" label="配置数量(瓶次)">
         <template slot-scope="scope">
           {{ computedNull(scope.row.num) }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="工时">
+        <template slot-scope="scope">
+          {{ computedNull(scope.row.workingHour) }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="浓度单位">
         <template slot-scope="scope">
           {{ computedNull(scope.row.concentration) }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="主要药剂名称">
+        <template slot-scope="scope">
+          {{ computedNull(scope.row.concentrationName) }}
         </template>
       </el-table-column>
     </el-table>
@@ -275,6 +285,19 @@
           endTime: endTime,
         }).then(res => {
           console.log(res)
+          let temp = res.retData
+          let pc = 0
+          let gs = 0
+          temp.forEach(e => {
+            pc += e.num
+            gs += e.workingHour
+          })
+          temp.push({
+            concentration: "-",
+            num: pc,
+            reagentName: "总计",
+            workingHour: gs.toFixed(4),
+          })
           this.records = res.retData
         })
       },

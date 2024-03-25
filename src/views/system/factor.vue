@@ -3,9 +3,9 @@
     <!-- 条件栏 -->
     <div class="headClass">
       因子名称：
-      <el-input v-model="factorName" class="seachInput" placeholder="请选择输入因子名称" clearable />
+      <el-input v-model="factorName" class="seachInput" placeholder="请输入因子名称" clearable />
       因子编码：
-      <el-input v-model="factorCode" class="seachInput" placeholder="请选择输入因子编码" clearable />
+      <el-input v-model="factorCode" class="seachInput" placeholder="请输入因子编码" clearable />
       因子类型：
       <el-select v-model="factorType" class="seachInput" clearable>
         <el-option :value="1" label="水" />

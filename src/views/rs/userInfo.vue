@@ -3,14 +3,14 @@
     <!-- 条件栏 -->
     <div class="headClass">
       用户姓名：
-      <el-input v-model="userName" class="seachInput" placeholder="请选择输入关键字" clearable />
+      <el-input v-model="userName" class="seachInput" placeholder="请输入关键字" clearable />
       部门：
       <el-select v-model="departmentId" class="seachInput" clearable>
         <el-option v-for="item in departmentList" :key="item.departmentId" :label="item.departmentName"
           :value="item.departmentId" />
       </el-select>
       <el-button type="primary" @click="seach">搜索</el-button>
-      <el-button type="primary" @click="addPeople">新增用户</el-button>
+      <!-- <el-button type="primary" @click="addPeople">新增用户</el-button> -->
     </div>
 
     <!-- 表格 -->

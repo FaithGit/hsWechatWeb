@@ -84,7 +84,6 @@ const actions = {
           } else {
             e.component = loadView(e.component)
           }
-
           compTree(e.children)
         })
 

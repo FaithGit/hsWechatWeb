@@ -3,7 +3,7 @@
     <!-- 条件栏 -->
     <div class="headClass">
       车牌号：
-      <el-input v-model="licensePlate" class="seachInput" placeholder="请选择输入点位名称" clearable />
+      <el-input v-model="licensePlate" class="seachInput" placeholder="请输入点位名称" clearable />
       日期：
       <el-date-picker v-model="time" type="month" placeholder="选择月" />
       <el-button type="primary" style="margin-left:10px" @click="seach">搜索</el-button>

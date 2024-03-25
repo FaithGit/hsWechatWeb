@@ -77,7 +77,7 @@ export default {
       this.option = {
         color: ['#89f5b0', '#FCDA5B'],
         legend: {
-          data: ['配置', '使用'],
+          data: ['配置数量', '使用数量'],
           top: '8%'
         },
         tooltip: {
@@ -119,7 +119,7 @@ export default {
         }
         ],
         series: [{
-          name: '配置',
+          name: '配置数量',
           type: 'line',
           data: peizhi,
           symbolSize: 1,
@@ -148,7 +148,7 @@ export default {
           }
         },
         {
-          name: '使用',
+          name: '使用数量',
           type: 'line',
           data: shiyong,
           symbolSize: 1,
