@@ -1285,3 +1285,72 @@ export function listLicensePlateSel(data) { // 获取所有因子
     data
   })
 }
+export function listHisComparisonPage(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/comparison/listHisComparisonPage',
+    method: 'post',
+    data
+  })
+}
+
+export function listLatestComparisonByPointPage(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/comparison/listLatestComparisonByPointPage',
+    method: 'post',
+    data
+  })
+}
+
+
+export function getWorkloadPdf(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/instrument/getWorkloadPdf',
+    method: 'post',
+    data
+  })
+}
+export function uploadWorkloadPdf(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/instrument/uploadWorkloadPdf',
+    method: 'post',
+    data
+  })
+}
+export function pointMapList(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/online/pointMapList',
+    method: 'post',
+    data
+  })
+}
+export function preAddCompany(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/company/preAddCompany',
+    method: 'post',
+    data
+  })
+}
+
+export function pointInfoList(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/online/pointInfoList',
+    method: 'post',
+    data
+  })
+}
+
+export function listGpsDriveLogPage(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/gps/listGpsDriveLogPage',
+    method: 'post',
+    data
+  })
+}
+export function listLoginIndoRoleSel(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/sysSup/listLoginIndoRoleSel',
+    method: 'post',
+    data
+  })
+}
+

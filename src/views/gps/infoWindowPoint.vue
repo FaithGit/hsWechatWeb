@@ -1,56 +1,41 @@
 <template>
   <div class="info">
-    <div class="cheliangHead" v-if="pointObj">
-      <img src="http://47.96.147.99:9000/haisheng/static/img/cheliangHeadImg.png" class="cheliangHeadImg" />
-      <div class="licensePlate">
-        {{pointObj.licensePlate}}
-      </div>
-      <el-button class="xiangqing">详情</el-button>
-      <div :class="['driveStatusName',`driveStatus${pointObj.driveStatus}`]">
-        {{pointObj.driveStatusName}}
-      </div>
-      <div class="buttomInfo">
-        <div class="buttomInfoBox">
-          <img src="http://47.96.147.99:9000/haisheng/static/img/cheliangTelphone.png" class="cheliangTelphone" />
-          {{pointObj.telephone!= null?pointObj.telephone:'未绑定'}}
-        </div>
-        <div class="buttomInfoBox">
-          <img src="http://47.96.147.99:9000/haisheng/static/img/cheliangAcc.png" class="cheliangTelphone" />
-          {{pointObj.accStatusName}}
-        </div>
-        <div class="buttomInfoBox">
-          <img src="http://47.96.147.99:9000/haisheng/static/img/cheliangPower.png" class="cheliangTelphone" />
-          {{pointObj.electricQuantity}}%
+    <div class="cheliangHead" v-if="newObj">
+      <img src="http://47.96.147.99:9000/haisheng/static/img/pointCom.png" class="cheliangHeadImg" />
+      <div class="licensePlateCom">
+        {{newObj.comName}}-{{newObj.pointName}}-{{newObj.pointStatusName ||'-'}}
+        <div class="buttomInfo2">
+          <div class="buttomInfoBox">
+            紧急联系人：{{newObj.emergencyContact}}
+            {{newObj.emergencyMobile!= null?newObj.emergencyMobile:'未绑定'}}
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="carinfoBox" v-if="pointObj">
+    <div class="carinfoBox" v-if="newObj">
       <div class="infoBox" style="margin-top: 0.63vw;">
         <img src="http://47.96.147.99:9000/haisheng/static/img/cheliangStatus.png" class="cheliangSpeed" />
-        {{pointObj.name}}
+        {{newObj.groupName}} {{newObj.groupPeople}}
       </div>
       <div class="infoBox">
-        <img src="http://47.96.147.99:9000/haisheng/static/img/cheliangSpeed.png" class="cheliangSpeed" />
-        {{pointObj.speed}} km/h
-        <div class="rilic">
-          日里程 {{pointObj.mileage}}公里
-        </div>
+        <img src="http://47.96.147.99:9000/haisheng/static/img/cheliangStatus.png" class="cheliangSpeed" />
+        IP地址 {{newObj.dciIp||'-'}}
       </div>
       <div class="infoBox">
-        <img src="http://47.96.147.99:9000/haisheng/static/img/cheliangTime.png" class="cheliangSpeed" />
-        {{pointObj.gpsTime}}
+        <img src="http://47.96.147.99:9000/haisheng/static/img/cheliangStatus.png" class="cheliangSpeed" />
+        数采仪编码：{{newObj.dciMn||'-'}}
       </div>
-      <div class="infoBox">
-        <img src="http://47.96.147.99:9000/haisheng/static/img/cheliangTime.png" class="cheliangSpeed" />
-        {{pointObj.address}}
-      </div>
+
     </div>
 
   </div>
 </template>
 
 <script>
+  import {
+    pointInfoList
+  } from "@/api/table"
   export default {
     props: {
       pointObj: {
@@ -60,17 +45,23 @@
         }
       },
     },
-    // watch: {
-    //   pointObj: {
-    //     handler: function (val, oldVal) {
-    //       console.log(val, oldVal)
-    //     },
-    //     deep: true
-    //   },
-    // },
+    watch: {
+      pointObj: {
+        handler: function (val, oldVal) {
+          console.log(val)
+          pointInfoList({
+            pointId: val.pointId
+          }).then(res => {
+            console.log(res.retData[0])
+            this.newObj = res.retData[0]
+          })
+        },
+        deep: true
+      },
+    },
     data() {
       return {
-
+        newObj: {}
       }
     },
     mounted() {
@@ -90,7 +81,7 @@
   .info {
     position: absolute;
     width: 19.53vw;
-    height: 10.42vw;
+    height: 9.42vw;
     z-index: 1001;
     background: white;
     border-radius: 0.83vw;
@@ -222,6 +213,17 @@
     color: #1782FC;
     padding: 0 0.49vw;
     margin-left: 0.99vw;
+  }
+
+  .licensePlateCom {
+    font-size: 0.74vw;
+    font-family: Microsoft YaHei UI;
+    font-weight: bolder;
+    color: #333333;
+    position: absolute;
+    left: 4.17vw;
+    top: 0;
+    width: 13.67vw;
   }
 
 </style>

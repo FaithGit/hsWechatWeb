@@ -154,7 +154,7 @@ export default {
         console.log('listVehicle', res.retData)
         var T = window.T
         const icon = new T.Icon({ // 创建图片对象
-          iconUrl: 'http://47.96.147.99:9000/haisheng/static/img/car1.png',
+          iconUrl: 'http://47.96.147.99:9000/haisheng/static/img/car11.png',
           iconSize: new T.Point(30 * 0.6, 50 * 0.6),
           iconAnchor: new T.Point(30 * 0.6 / 2, 50 * 0.6)
         })

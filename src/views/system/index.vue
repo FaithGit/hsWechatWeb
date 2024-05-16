@@ -2,24 +2,36 @@
   <div class="testPaper">
     <!-- 条件栏 -->
     <div class="headClass">
-      企业名称：
-      <el-input v-model="comName" class="seachInput" placeholder="请输入关键字" clearable />
-      区域：
+      企业名称:
+      <el-input v-model="comName" class="seachInput" placeholder="请输入关键字" clearable style="width:140px" />
+      区域:
       <treeselect v-model="areaCode" :multiple="false" :options="allAreacode" :normalizer="normalizer"
         placeholder="请选择区域" class="seachInput" no-children-text="暂无数据" />
 
-      污染源种类：
-      <el-select v-model="pollutionType" placeholder="请选择污染源种类" clearable class="seachInput">
+      污染源种类:
+      <el-select v-model="pollutionType" placeholder="请选择" clearable class="seachInput" style="width:100px">
         <el-option label="废水" :value="1" />
         <el-option label="废气" :value="2" />
         <el-option label="vocs" :value="3" />
         <el-option label="地表水" :value="4" />
         <el-option label="其他" :value="5" />
-
       </el-select>
-      因子名称：
+      因子名称:
       <treeselect v-model="factorId" :multiple="false" :options="factorList" :normalizer="normalizer3"
-        placeholder="请选择因子" class="seachInput" />
+        placeholder="请选择因子" class="seachInput" style="width:140px" />
+
+      在线污染源监控:
+      <el-radio-group v-model="onlinePollutionSources" style="margin-left:5px;margin-right:10px">
+        <el-radio @click.native.prevent="clickitem(1)" :label="1"> <i class="el-icon-check"></i></el-radio>
+        <el-radio @click.native.prevent="clickitem(0)" :label="0"> <i class="el-icon-close"></i></el-radio>
+      </el-radio-group>
+      工况监控:
+      <el-radio-group v-model="workingCondition" style="margin-left:5px;margin-right:10px">
+        <el-radio @click.native.prevent="clickitem2(1)" :label="1"> <i class="el-icon-check"></i></el-radio>
+        <el-radio @click.native.prevent="clickitem2(0)" :label="0"> <i class="el-icon-close"></i></el-radio>
+      </el-radio-group>
+
+
 
       <el-button type="primary" @click="seach">搜索</el-button>
       <el-button type="primary" @click="addCom">新增企业</el-button>
@@ -28,8 +40,7 @@
     <!-- 表格 -->
     <el-table v-loading="listLoading" :data="tableData" element-loading-text="加载中" border style="margin-top:1.04vw"
       :span-method="arraySpanMethod" :row-class-name="tableRowClassName"
-      height="calc(100vh - 84px - 60px - 40px - 32px - 1.04vw - 17px)"
-      >
+      height="calc(100vh - 84px - 60px - 40px - 32px - 1.04vw - 17px)">
       <el-table-column align="center" label="#" width="95">
         <template slot-scope="scope">
           {{ (scope.row.index+1)+(pageIndex-1)*pageSize }}
@@ -39,6 +50,16 @@
       <el-table-column align="center" label="所属区域">
         <template slot-scope="scope">
           {{ computedNull(scope.row.areaName) }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="在线污染源监控">
+        <template slot-scope="scope">
+          <i :class="[ scope.row.onlinePollutionSources==1?'el-icon-check':'el-icon-close']"></i>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="工况监控">
+        <template slot-scope="scope">
+          <i :class="[ scope.row.workingCondition==1?'el-icon-check':'el-icon-close']"></i>
         </template>
       </el-table-column>
       <el-table-column align="center" label="点位名称">
@@ -99,13 +120,28 @@
 
     <el-dialog v-if="addVisible" title="新增企业" :append-to-body="true" :visible="addVisible" width="40%"
       :close-on-click-modal="false" @close="addVisible=false">
-      <el-form ref="form1" :model="form" label-width="140px" :rules="rules">
+      <el-form ref="form1" :model="form" label-width="150px" :rules="rules">
         <el-form-item label="企业名称" prop="comName">
           <el-input v-model="form.comName" placeholder="请输入企业名称" />
         </el-form-item>
         <el-form-item label="企业简称" prop="comShortName">
           <el-input v-model="form.comShortName" placeholder="请输入企业简称" />
         </el-form-item>
+
+        <el-form-item label="在线污染源监控" prop="onlinePollutionSources">
+          <el-radio-group v-model="form.onlinePollutionSources" style="margin-left:5px;margin-right:10px">
+            <el-radio :label="1"> <i class="el-icon-check"></i></el-radio>
+            <el-radio :label="0"> <i class="el-icon-close"></i></el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="工况监控" prop="workingCondition">
+          <el-radio-group v-model="form.workingCondition" style="margin-left:5px;margin-right:10px">
+            <el-radio :label="1"> <i class="el-icon-check"></i></el-radio>
+            <el-radio :label="0"> <i class="el-icon-close"></i></el-radio>
+          </el-radio-group>
+        </el-form-item>
+
+
         <el-form-item label="社会信用代码" prop="socialCreditCode">
           <el-input v-model="form.socialCreditCode" placeholder="请输入社会信用代码" />
         </el-form-item>
@@ -135,13 +171,26 @@
     <el-dialog v-if="editVisible" title="编辑企业" :append-to-body="true" :visible="editVisible" width="40%"
       :close-on-click-modal="false" @close="editVisible=false">
 
-      <el-form ref="form1" :model="form" label-width="140px" :rules="rules">
+      <el-form ref="form1" :model="form" label-width="150px" :rules="rules">
         <el-form-item label="企业名称" prop="comName">
           <el-input v-model="form.comName" placeholder="请输入企业名称" />
         </el-form-item>
         <el-form-item label="企业简称" prop="comShortName">
           <el-input v-model="form.comShortName" placeholder="请输入企业简称" />
         </el-form-item>
+        <el-form-item label="在线污染源监控" prop="onlinePollutionSources">
+          <el-radio-group v-model="form.onlinePollutionSources" style="margin-left:5px;margin-right:10px">
+            <el-radio :label="1"> <i class="el-icon-check"></i></el-radio>
+            <el-radio :label="0"> <i class="el-icon-close"></i></el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="工况监控" prop="workingCondition">
+          <el-radio-group v-model="form.workingCondition" style="margin-left:5px;margin-right:10px">
+            <el-radio :label="1"> <i class="el-icon-check"></i></el-radio>
+            <el-radio :label="0"> <i class="el-icon-close"></i></el-radio>
+          </el-radio-group>
+        </el-form-item>
+
         <el-form-item label="社会信用代码" prop="socialCreditCode">
           <el-input v-model="form.socialCreditCode" placeholder="请输入社会信用代码" />
         </el-form-item>
@@ -185,7 +234,8 @@
     updateCompany,
     deleteCompany,
     getCompanyById,
-    listFactorSel
+    listFactorSel,
+    preAddCompany
   } from '@/api/table'
   import {
     mapGetters
@@ -206,6 +256,8 @@
         tableData: [],
         allAreacode: [],
         comName: '',
+        onlinePollutionSources: 1,
+        workingCondition: '',
         areaCode: null,
         status: '',
         addVisible: false,
@@ -227,6 +279,16 @@
             required: true,
             message: '请输入企业简称',
             trigger: 'blur'
+          }],
+          onlinePollutionSources: [{
+            required: true,
+            message: '请选择在线污染源监控',
+            trigger: 'change'
+          }],
+          workingCondition: [{
+            required: true,
+            message: '请选择工况监控',
+            trigger: 'change'
           }],
           contactMobile: [{
             required: true,
@@ -292,6 +354,12 @@
       this.listCompanyPage()
     },
     methods: {
+      clickitem(e) {
+        e === this.onlinePollutionSources ? this.onlinePollutionSources = '' : this.onlinePollutionSources = e
+      },
+      clickitem2(e) {
+        e === this.workingCondition ? this.workingCondition = '' : this.workingCondition = e
+      },
       listFactorSel() { // 所有因子列表
         listFactorSel({}).then(res => {
           this.factorList = res.retData
@@ -321,9 +389,11 @@
       listCompanyPage() {
         listCompanyPage({
           comName: this.comName,
-          areaCode: this.areaCode || '',
-          pollutionType: this.pollutionType || '',
-          factorCode: this.factorId || '',
+          areaCode: this.areaCode,
+          pollutionType: this.pollutionType,
+          onlinePollutionSources: this.onlinePollutionSources,
+          workingCondition: this.workingCondition,
+          factorCode: this.factorId,
           pageIndex: this.pageIndex,
           pageSize: this.pageSize,
           roleId: this.roleId,
@@ -350,6 +420,8 @@
                 p.pointFactors.forEach((y, yidx) => {
                   getDate.push({
                     comName: this.computedNull(v.comName),
+                    onlinePollutionSources: this.computedNull(v.onlinePollutionSources),
+                    workingCondition: this.computedNull(v.workingCondition),
                     index: index,
                     areaName: this.computedNull(v.areaName),
                     companyId: this.computedNull(v.companyId),
@@ -371,6 +443,8 @@
                 getDate.push({
                   index: index,
                   comName: this.computedNull(v.comName),
+                  onlinePollutionSources: this.computedNull(v.onlinePollutionSources),
+                  workingCondition: this.computedNull(v.workingCondition),
                   areaName: this.computedNull(v.areaName),
                   companyId: this.computedNull(v.companyId),
                   pointName: this.computedNull(p.pointName),
@@ -388,6 +462,8 @@
             getDate.push({
               index: index,
               comName: this.computedNull(v.comName),
+              onlinePollutionSources: this.computedNull(v.onlinePollutionSources),
+              workingCondition: this.computedNull(v.workingCondition),
               areaName: this.computedNull(v.areaName),
               companyId: this.computedNull(v.companyId)
             })
@@ -421,12 +497,13 @@
         rowIndex,
         columnIndex
       }) {
-        if (columnIndex === 0 || columnIndex === 1 || columnIndex === 2 || columnIndex === 10) {
+        if (columnIndex === 0 || columnIndex === 1 || columnIndex === 2 || columnIndex === 3 || columnIndex === 4 ||
+          columnIndex === 12) {
           if (row.comIndex) { // 如果有值,说明需要合并
             return [row.comIndex, 1]
           } else return [0, 0]
         }
-        if (columnIndex === 3 || columnIndex === 4 || columnIndex === 5 || columnIndex === 6 || columnIndex === 7) {
+        if (columnIndex === 5 || columnIndex === 6 || columnIndex === 7 || columnIndex === 8 || columnIndex === 9) {
           if (row.pointIndex) { // 如果有值,说明需要合并
             return [row.pointIndex, 1]
           } else return [0, 0]
@@ -487,21 +564,58 @@
       addCom(e) {
         this.addVisible = true
         this.form = {
-          areaCode: null
+          areaCode: null,
+          lat: "",
+          lng: "",
+          onlinePollutionSources:1,
+          workingCondition:0
+
         }
       },
       sumbitCom() {
+
+
         this.$refs.form1.validate((valid) => {
           if (valid) {
-            addCompany(this.form).then(res => {
-              console.log(res)
-              this.$notify({
-                type: 'success',
-                message: res.retMsg
+
+
+            if (this.form.workingCondition == 1) {
+              preAddCompany({
+                socialCreditCode: this.form.socialCreditCode
+              }).then(res => {
+                console.log(res.retData)
+
+                this.$confirm('已经存在信用代码相同且包含工况监控的企业，请确认是否同一企业?', '提示', {
+                  confirmButtonText: '新增',
+                  cancelButtonText: '取消',
+                  type: 'warning'
+                }).then(() => {
+                  addCompany(this.form).then(res => {
+                    console.log(res)
+                    this.$notify({
+                      type: 'success',
+                      message: res.retMsg
+                    })
+                    this.addVisible = false
+                    this.listCompanyPage()
+                  })
+                })
+
               })
-              this.addVisible = false
-              this.listCompanyPage()
-            })
+
+            } else {
+              addCompany(this.form).then(res => {
+                console.log(res)
+                this.$notify({
+                  type: 'success',
+                  message: res.retMsg
+                })
+                this.addVisible = false
+                this.listCompanyPage()
+              })
+            }
+
+
           }
         })
       },
@@ -590,6 +704,14 @@
 
   .pointName:hover {
     color: #9100ff !important;
+  }
+
+  .headClass ::v-deep .el-radio__label {
+    padding-left: 5px;
+  }
+
+  .headClass ::v-deep .el-radio {
+    margin-right: 10px;
   }
 
 </style>

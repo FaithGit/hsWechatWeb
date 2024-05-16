@@ -1,28 +1,30 @@
 <template>
   <div class="dashboard-container">
     <div class="topHead">
-      污染源种类：
-      <el-select v-model="pollutionType" placeholder="请选择污染源种类" clearable>
-        <el-option v-for="item in pollutionTypeArr" :key="item.value" :label="item.label" :value="item.value">
-        </el-option>
-      </el-select>
+
+
       部门：
-      <el-select v-model="departmentId" placeholder="请选择部门" clearable>
+      <el-select v-model="departmentId" placeholder="请选择部门" clearable style="width:150px">
         <el-option v-for="item in bumenArr" :key="item.value" :label="item.label" :value="item.value">
         </el-option>
       </el-select>
       图例：
-      <el-select v-model="modeIndex" placeholder="请选择图例" clearable>
+      <el-select v-model="modeIndex" placeholder="请选择图例" clearable style="width:130px">
         <el-option label="单车辆" :value="1"></el-option>
         <el-option label="单点位" :value="2"></el-option>
       </el-select>
-      车牌号：
-      <el-select v-model="licensePlate" placeholder="请选择车牌号" clearable>
+      <span v-if="modeIndex!=2"> 车牌号：</span>
+      <el-select v-if="modeIndex!=2" v-model="licensePlate" placeholder="请选择车牌号" clearable>
         <el-option v-for="item in plateSelList" :key="item.value" :label="item.label" :value="item.value">
         </el-option>
       </el-select>
+      <span v-if="modeIndex!=1"> 污染源种类：</span>
+      <el-select v-if="modeIndex!=1" v-model="pollutionType" placeholder="请选择" clearable style="width:100px">
+        <el-option v-for="item in pollutionTypeArr" :key="item.value" :label="item.label" :value="item.value">
+        </el-option>
+      </el-select>
 
-      <el-button type="primary" style="margin-left:10px">搜索</el-button>
+      <el-button type="primary" style="margin-left:10px" @click="idMode">搜索</el-button>
 
     </div>
 
@@ -31,8 +33,11 @@
     <div style="display:none;">
       <infoWindow ref="infowindows" :pointObj="pointObj" @closeInfo="closeInfo" />
     </div>
+    <div style="display:none;">
+      <infoWindowPoint ref="infoWindowPoint" :pointObj="pointObj" @closeInfo="closeInfo" />
+    </div>
 
-    <div class="tuli">
+    <div class="tuli" v-if="modeIndex!=2">
       <div class="tuliItem">
         <div class="flag1"></div> 离线
       </div>
@@ -52,10 +57,12 @@
 <script>
   import AMapLoader from '@amap/amap-jsapi-loader'
   import infoWindow from './infoWindow.vue'
+  import infoWindowPoint from './infoWindowPoint.vue'
   import {
     gpsDepartmentSel,
     listVehicle,
-    listLicensePlateSel
+    listLicensePlateSel,
+    pointMapList
   } from '@/api/table'
 
 
@@ -63,7 +70,8 @@
   export default {
     name: 'Map',
     components: {
-      infoWindow
+      infoWindow,
+      infoWindowPoint
     },
     data() {
       return {
@@ -110,13 +118,23 @@
         })
 
         this.map.on('complete', () => {
-          this.listVehicle()
+          this.idMode()
         })
-
-
       })
     },
     methods: {
+      idMode() {
+        if (this.modeIndex == "") {
+          console.log("全部")
+          this.pointAll()
+        } else if (this.modeIndex == 1) {
+          console.log("单车辆")
+          this.listVehicle()
+        } else if (this.modeIndex == 2) {
+          console.log("单点位")
+          this.pointMapList()
+        }
+      },
       closeInfo() {
         this.map.clearInfoWindow()
       },
@@ -128,7 +146,6 @@
         })
       },
       listVehicle() { //单车辆列表
-
         if (this.map) {
           this.map.clearInfoWindow()
           this.map.remove(this.markers)
@@ -174,8 +191,8 @@
               var markerIcon = new AMap.Icon({
                 // size: new AMap.Size(30 * 0.6, 50 * 0.6), // 图标尺寸
                 image: this.markList[j].departmentId == 1 ?
-                  'http://47.96.147.99:9000/haisheng/static/img/car1.png' :
-                  'http://47.96.147.99:9000/haisheng/static/img/car2.png', // Icon的图像
+                  'http://47.96.147.99:9000/haisheng/static/img/car11.png' :
+                  'http://47.96.147.99:9000/haisheng/static/img/car22.png', // Icon的图像
                 imageSize: new AMap.Size(30 * 0.6, 50 * 0.6)
               })
 
@@ -194,7 +211,7 @@
               marker.setLabel({
                 direction: 'bottom',
                 offset: new AMap.Pixel(0, 0), //设置文本标注偏移量
-                content: `<div class='mapInfo'>${ this.markList[j].licensePlate}</div>`, //设置文本标注内容
+                content: `<div class='mapInfo' style=" border-color:${ this.markList[j].driveStatus==1?'#878c92': this.markList[j].driveStatus==2?'#105bc9': this.markList[j].driveStatus==3?'#f1a010':'#40c040'}">${ this.markList[j].licensePlate}</div>`, //设置文本标注内容
               });
               this.markers.push(marker)
             }
@@ -208,7 +225,223 @@
 
 
       },
-      listLicensePlateSel() {
+      pointMapList() { //单点位列表
+        if (this.map) {
+          this.map.clearInfoWindow()
+          this.map.remove(this.markers)
+        }
+
+        this.markers = []
+        var that = this
+        AMapLoader.load({
+          'key': '30e1690c958f1abdf298a620474abea2', // 申请好的Web端开发者Key，首次调用 load 时必填
+          'version': '2.0' // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
+        }).then(AMap => {
+
+          pointMapList({
+            departmentId: this.departmentId,
+            pollutionType: this.pollutionType
+          }).then(res => {
+            console.log('res', res)
+            this.markList = res.retData
+
+            var infoWindow = new AMap.InfoWindow({
+              anchor: 'right',
+              closeWhenClickMap: true,
+              isCustom: true,
+              offset: new AMap.Pixel(35, 0)
+            })
+
+            function markerClick(e) {
+              // console.log(e)
+              console.log(e.target.getExtData().pointObj)
+              that.pointObj = JSON.parse(JSON.stringify(e.target.getExtData().pointObj))
+
+              console.log("that.pointObj", that.pointObj)
+
+              infoWindow.setContent(e.target.content)
+              infoWindow.open(that.map, e.target.getPosition())
+
+              that.map.panTo([e.lnglat.lng, e.lnglat.lat])
+            }
+
+            for (var j = 0; j < this.markList.length; j++) {
+
+              var markerIcon = new AMap.Icon({
+                // size: new AMap.Size(30 * 0.6, 50 * 0.6), // 图标尺寸
+                image: "http://47.96.147.99:9000/haisheng/static/img/comPoint1.png", // Icon的图像
+                imageSize: new AMap.Size(24 * 0.6, 30 * 0.6)
+              })
+
+              var marker = new AMap.Marker({
+                icon: markerIcon,
+                position: [this.markList[j].lng, this.markList[j].lat],
+                title: this.markList[j].licensePlate,
+                anchor: 'center',
+                extData: {
+                  'pointObj': this.markList[j]
+                }
+              })
+              marker.content = this.$refs.infoWindowPoint.$el
+              // marker.comId = this.markList[j].comId
+              marker.on('click', markerClick)
+              marker.setLabel({
+                direction: 'bottom',
+                offset: new AMap.Pixel(0, 0), //设置文本标注偏移量
+                content: `<div class='mapInfo'>${ this.markList[j].comShortName}</div>`, //设置文本标注内容
+              });
+              this.markers.push(marker)
+            }
+            this.map.add(this.markers)
+            // that.map.setFitView() // 视口自适应
+
+          })
+
+        })
+
+
+
+      },
+
+      pointAll() {
+        if (this.map) {
+          this.map.clearInfoWindow()
+          this.map.remove(this.markers)
+        }
+
+        this.markers = []
+        var that = this
+        AMapLoader.load({
+          'key': '30e1690c958f1abdf298a620474abea2', // 申请好的Web端开发者Key，首次调用 load 时必填
+          'version': '2.0' // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
+        }).then(AMap => {
+
+          listVehicle({
+            departmentId: this.departmentId,
+            pointId: "",
+            licensePlate: this.licensePlate
+          }).then(res => {
+            console.log('res', res)
+            this.markList = res.retData
+
+            var infoWindow = new AMap.InfoWindow({
+              anchor: 'right',
+              closeWhenClickMap: true,
+              isCustom: true,
+              offset: new AMap.Pixel(35, 0)
+            })
+
+            function markerClick(e) {
+              // console.log(e)
+              // console.log(e.target.getExtData().pointObj)
+              that.pointObj = JSON.parse(JSON.stringify(e.target.getExtData().pointObj))
+
+              console.log("that.pointObj", that.pointObj)
+
+              infoWindow.setContent(e.target.content)
+              infoWindow.open(that.map, e.target.getPosition())
+
+              that.map.panTo([e.lnglat.lng, e.lnglat.lat])
+            }
+
+            for (var j = 0; j < this.markList.length; j++) {
+
+              var markerIcon = new AMap.Icon({
+                // size: new AMap.Size(30 * 0.6, 50 * 0.6), // 图标尺寸
+                image: this.markList[j].departmentId == 1 ?
+                  'http://47.96.147.99:9000/haisheng/static/img/car11.png' :
+                  'http://47.96.147.99:9000/haisheng/static/img/car22.png', // Icon的图像
+                imageSize: new AMap.Size(30 * 0.6, 50 * 0.6)
+              })
+
+              var marker = new AMap.Marker({
+                icon: markerIcon,
+                position: [this.markList[j].lng, this.markList[j].lat],
+                title: this.markList[j].licensePlate,
+                anchor: 'center',
+                extData: {
+                  'pointObj': this.markList[j]
+                }
+              })
+              marker.content = this.$refs.infowindows.$el
+              // marker.comId = this.markList[j].comId
+              marker.on('click', markerClick)
+              marker.setLabel({
+                direction: 'bottom',
+                offset: new AMap.Pixel(0, 0), //设置文本标注偏移量
+                content: `<div class='mapInfo' style=" border-color:${ this.markList[j].driveStatus==1?'#878c92': this.markList[j].driveStatus==2?'#105bc9': this.markList[j].driveStatus==3?'#f1a010':'#40c040'}">${ this.markList[j].licensePlate}</div>`, //设置文本标注内容
+              });
+              this.markers.push(marker)
+            }
+            this.map.add(this.markers)
+            // that.map.setFitView() // 视口自适应
+
+
+            pointMapList({
+              departmentId: this.departmentId,
+              pollutionType: this.pollutionType
+            }).then(res => {
+              console.log('res', res)
+              this.markList = res.retData
+
+              var infoWindow = new AMap.InfoWindow({
+                anchor: 'right',
+                closeWhenClickMap: true,
+                isCustom: true,
+                offset: new AMap.Pixel(35, 0)
+              })
+
+              function markerClick(e) {
+                // console.log(e)
+                console.log(e.target.getExtData().pointObj)
+                that.pointObj = JSON.parse(JSON.stringify(e.target.getExtData().pointObj))
+
+                console.log("that.pointObj", that.pointObj)
+
+                infoWindow.setContent(e.target.content)
+                infoWindow.open(that.map, e.target.getPosition())
+
+                that.map.panTo([e.lnglat.lng, e.lnglat.lat])
+              }
+
+              for (var j = 0; j < this.markList.length; j++) {
+
+                var markerIcon = new AMap.Icon({
+                  // size: new AMap.Size(30 * 0.6, 50 * 0.6), // 图标尺寸
+                  image: "http://47.96.147.99:9000/haisheng/static/img/comPoint1.png", // Icon的图像
+                  imageSize: new AMap.Size(24 * 0.6, 30 * 0.6)
+                })
+
+                var marker = new AMap.Marker({
+                  icon: markerIcon,
+                  position: [this.markList[j].lng, this.markList[j].lat],
+                  title: this.markList[j].licensePlate,
+                  anchor: 'center',
+                  extData: {
+                    'pointObj': this.markList[j]
+                  }
+                })
+                marker.content = this.$refs.infoWindowPoint.$el
+                // marker.comId = this.markList[j].comId
+                marker.on('click', markerClick)
+                marker.setLabel({
+                  direction: 'bottom',
+                  offset: new AMap.Pixel(0, 0), //设置文本标注偏移量
+                  content: `<div class='mapInfo'>${ this.markList[j].comShortName}</div>`, //设置文本标注内容
+                });
+                this.markers.push(marker)
+              }
+              this.map.add(this.markers)
+              // that.map.setFitView() // 视口自适应
+
+            })
+
+          })
+
+        })
+
+      },
+      listLicensePlateSel() { //所有车牌号
         listLicensePlateSel({}).then(res => {
           console.log("车牌号", res)
           this.plateSelList = res.retData

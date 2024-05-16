@@ -125,10 +125,25 @@
       <el-table-column align="center" label="二维码">
         <template slot-scope="scope">
           <div>
-              <img :src="scope.row.pointUrl" alt="" srcset="" style="width:80px" @click="erweima(scope.row)">
+            <img :src="scope.row.pointUrl" alt="" srcset="" style="width:80px" @click="erweima(scope.row)">
           </div>
         </template>
       </el-table-column>
+
+      <el-table-column align="center" label="相关性系数" width="220">
+        <template slot-scope="scope">
+          <div
+            v-if="computedNull(scope.row.correlationCoefficientB)=='-'||computedNull(scope.row.correlationCoefficientK)=='-'" style="text-algin:center">
+            -
+          </div>
+          <div v-else>COD=TOC* {{ computedNull(scope.row.correlationCoefficientK) }} +
+            {{ computedNull(scope.row.correlationCoefficientB) }}
+
+
+          </div>
+        </template>
+      </el-table-column>
+
 
 
       <el-table-column align="center" label="操作" width="230">
@@ -256,6 +271,29 @@
 
         <el-form-item label="工作量系数" prop="workloadCoefficient" class="formWidth4">
           <el-input v-model="form.workloadCoefficient" placeholder="请输入工作量系数" />
+        </el-form-item>
+        <el-form-item class="formWidth4">
+          <div Slot="label">
+            <div class="fuLabel">
+              相关性系数-K
+              <el-popover placement="top-start" width="200" trigger="hover" content="相关性系数使用计算说明: COD = TOC * K + B"> <i
+                  class="el-icon-question" slot="reference"></i>
+              </el-popover>
+            </div>
+          </div>
+          <el-input v-model="form.correlationCoefficientK" placeholder="相关性系数-K" />
+        </el-form-item>
+        <el-form-item class="formWidth4">
+          <div Slot="label">
+            <div class="fuLabel">
+              相关性系数-B
+              <el-popover placement="top-start" width="200" trigger="hover" content="相关性系数使用计算说明: COD = TOC * K + B"> <i
+                  class="el-icon-question" slot="reference"></i>
+              </el-popover>
+            </div>
+          </div>
+
+          <el-input v-model="form.correlationCoefficientB" placeholder="相关性系数-B" />
         </el-form-item>
 
         <el-form-item label="备案资料" prop="educationFiles">
@@ -431,6 +469,7 @@
             transform: value =>
               this.$options.filters.formValidateFun(value, 'number')
           }],
+
           lat: [{
             required: true,
             type: 'number',
@@ -702,6 +741,27 @@
         }
       },
       sumbitPoint() {
+
+        if (this.form.correlationCoefficientK) {
+          console.log("correlationCoefficientK 不为空判断", isNaN(Number(this.form.correlationCoefficientK, 10)))
+          if (isNaN(Number(this.form.correlationCoefficientK, 10))) {
+            this.$notify({
+              type: "info",
+              message: '相关性系数-K 必须纯数字'
+            })
+            return
+          }
+        }
+        if (this.form.correlationCoefficientB) {
+          console.log("correlationCoefficientB 不为空判断", isNaN(Number(this.form.correlationCoefficientB, 10)))
+          if (isNaN(Number(this.form.correlationCoefficientB, 10))) {
+            this.$notify({
+              type: "info",
+              message: '相关性系数-B 必须纯数字'
+            })
+            return
+          }
+        }
         this.$refs.form1.validate((valid) => {
           if (valid) {
             this.form.recordFiles = this.IDList
@@ -719,6 +779,26 @@
         })
       },
       editSubmit() {
+        if (this.form.correlationCoefficientK) {
+          console.log("correlationCoefficientK 不为空判断", isNaN(Number(this.form.correlationCoefficientK, 10)))
+          if (isNaN(Number(this.form.correlationCoefficientK, 10))) {
+            this.$notify({
+              type: "info",
+              message: '相关性系数-K 必须纯数字'
+            })
+            return
+          }
+        }
+        if (this.form.correlationCoefficientB) {
+          console.log("correlationCoefficientB 不为空判断", isNaN(Number(this.form.correlationCoefficientB, 10)))
+          if (isNaN(Number(this.form.correlationCoefficientB, 10))) {
+            this.$notify({
+              type: "info",
+              message: '相关性系数-B 必须纯数字'
+            })
+            return
+          }
+        }
         this.$refs.form1.validate((valid) => {
           if (valid) {
             this.form.recordFiles = this.IDList
@@ -846,6 +926,14 @@
     background: red;
     border-radius: 50%;
     display: inline-block;
+  }
+
+  .fuLabel {
+    font-size: 14px;
+    color: #606266;
+    line-height: 40px;
+    padding: 0 0 10px;
+    font-weight: 700;
   }
 
 </style>

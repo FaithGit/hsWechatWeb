@@ -67,6 +67,11 @@
           {{ computedNull(scope.row.entryTime) }}
         </template>
       </el-table-column>
+      <el-table-column align="center" label="状态">
+        <template slot-scope="scope">
+          {{ scope.row.status==1?"在职":"离职" }}
+        </template>
+      </el-table-column>
 
       <el-table-column align="center" label="操作" width="540">
         <template slot-scope="scope">
@@ -136,6 +141,14 @@
         <el-form-item label="入职时间" prop="entryTime">
           <!-- <el-input v-model="form.entryTime" placeholder="请输入入职时间" /> -->
           <el-date-picker v-model="form.entryTime" type="date" placeholder="请选择入职日期" />
+        </el-form-item>
+        <el-form-item label="状态" prop="entryTime">
+          <el-radio-group v-model="form.status">
+            <el-radio :label="1">在职</el-radio>
+            <el-radio :label="2">离职</el-radio>
+
+          </el-radio-group>
+
         </el-form-item>
 
         <el-form-item label="人员照片" prop="educationFiles">
@@ -435,7 +448,8 @@
             idnum: retData.idnum,
             telephone: retData.telephone,
             userId: retData.userId,
-            userName: retData.userName
+            userName: retData.userName,
+            status: retData.status,
           }
           this.xueliList = retData.educationFiles
           this.IDList = retData.idnumFiles
@@ -567,6 +581,7 @@
               emergencyMobile: this.form.emergencyMobile,
               entryTime: moment(this.form.entryTime).format('YYYY-MM-DD'),
               idnum: this.form.idnum,
+              status: this.form.status,
               roleId: this.form.roleId,
               telephone: this.form.telephone,
               userName: this.form.userName,

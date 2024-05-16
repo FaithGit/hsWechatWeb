@@ -6,7 +6,9 @@
       <el-date-picker v-model="value1" type="daterange" range-separator="至" start-placeholder="开始日期"
         end-placeholder="结束日期" :clearable="false" :picker-options="pickerOptions">
       </el-date-picker>
-
+      <span style="margin-left:10px">角色：</span>
+      <treeselect v-model="roleIds" :multiple="true" :options="roleList" :normalizer="normalizer" placeholder="请选择"
+        class="seachInput"  style="width:300px" no-children-text="暂无数据" />
       <el-button type="primary" @click="seach" style="margin-left:10px">搜索</el-button>
     </div>
 
@@ -16,8 +18,13 @@
 </template>
 
 <script>
+  import Treeselect from '@riophae/vue-treeselect'
+  // import the styles
+  import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+
   import {
-    listKhLoginInfo
+    listKhLoginInfo,
+    listLoginIndoRoleSel
   } from '@/api/table'
   import {
     mapGetters
@@ -26,10 +33,14 @@
   import moment from 'moment'
   export default {
     name: 'LoggingStatus',
+    components: {
+      Treeselect
+    },
     data() {
       return {
         value1: null,
         listData2: [],
+        roleIds: [],
         pickerOptions: {
           shortcuts: [{
             text: '最近一周',
@@ -57,6 +68,15 @@
             }
           }]
         },
+        roleList: [],
+        normalizer(node) {
+          // if (!node.children.length) delete node.children
+          return {
+            id: node.roleId,
+            label: node.roleName,
+            children: node.children && node.children.length ? node.children : 0
+          }
+        },
       }
     },
     computed: {
@@ -67,10 +87,18 @@
     mounted() {
       this.value1 = [moment().subtract(1, 'months'), moment()]
       this.listKhLoginInfo()
+      this.listLoginIndoRoleSel()
     },
     methods: {
 
+      listLoginIndoRoleSel() {
+        listLoginIndoRoleSel({
 
+        }).then(res => {
+          console.log(res)
+          this.roleList=res.retData
+        })
+      },
       listKhLoginInfo() {
 
         console.log(this.value1)
@@ -85,6 +113,7 @@
         listKhLoginInfo({
           startTime: startTime,
           endTime: endTime,
+          roleIds: this.roleIds
 
         }).then(res => {
           console.log(res)

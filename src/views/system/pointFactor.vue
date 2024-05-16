@@ -35,6 +35,11 @@
           {{ computedNull(scope.row.factorName) }}
         </template>
       </el-table-column>
+      <el-table-column align="center" label="单位">
+        <template slot-scope="scope">
+          {{ computedNull(scope.row.unit) }}
+        </template>
+      </el-table-column>
       <el-table-column align="center" label="因子编码">
         <template slot-scope="scope">
           {{ computedNull(scope.row.factorCode) }}
@@ -119,6 +124,9 @@
             placeholder="请选择因子" @input="changeFactorCode" />
         </el-form-item>
 
+        <el-form-item label="单位">
+          {{computedNull(form.unit)}}
+        </el-form-item>
         <el-form-item label="浓度报警下限值" prop="alarmLowerLimit">
           <el-input-number v-model="form.alarmLowerLimit" placeholder="报警下限值" />
         </el-form-item>
@@ -165,6 +173,9 @@
         </el-form-item>
         <el-form-item label="因子名称">
           {{ form.factorName }}
+        </el-form-item>
+        <el-form-item label="单位">
+          {{computedNull(form.unit)}}
         </el-form-item>
         <el-form-item label="浓度报警下限值" prop="alarmLowerLimit">
           <el-input-number v-model="form.alarmLowerLimit" placeholder="报警下限值" />
@@ -401,6 +412,7 @@
             this.form.isZeroOut = res.retData.defaultZeroOut
             this.form.isCorrected = res.retData.defaultCorrected
             this.form.earlyWarningCoefficient = res.retData.defaultCoefficient
+            this.form.unit = res.retData.concentrationUnit
           })
         }
         this.$refs['form1'].validateField('factorCode')

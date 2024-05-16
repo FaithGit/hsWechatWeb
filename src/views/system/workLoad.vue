@@ -12,6 +12,9 @@
 
       <el-button type="primary" @click="exportWorkload" v-loading="loading" style="margin-left:10px"
         icon="el-icon-download">导出</el-button>
+      <el-button type="primary" @click="openGzl" style="margin-left:10px">查看工作量记分规则</el-button>
+      <el-button type="primary" @click="openXiugai" style="margin-left:10px">上传记分规则</el-button>
+
 
     </div>
 
@@ -77,6 +80,36 @@
       </el-form>
     </el-dialog>
 
+
+    <el-dialog v-if="pdfVisible" title="预览pdf" :append-to-body="true" :visible.sync="pdfVisible" width="70%"
+      :close-on-click-modal="true" @close="pdfVisible=false">
+      <div style="height:70vh;overflow: auto;">
+        <pdf v-for="item in pageTotal" :src="pdfUrl" :key="item" :page="item">
+        </pdf>
+      </div>
+      <img src="@/assets/dwfile.png" class="dwfile" alt="" srcset="" @click="dwFile">
+    </el-dialog>
+
+    <!-- 导入题目 -->
+    <el-dialog v-if="jifenVisible" title="导入计分规则" :append-to-body="true" :visible="jifenVisible" width="30%"
+      :close-on-click-modal="false" @close="jifenVisible=false">
+
+      <el-form ref="form" label-width="80px">
+        <el-form-item label="文件">
+          <el-upload class="upload-demo" action="#" :on-remove="upRemove" :limit="1" :file-list="uplist" accept=".pdf"
+            :auto-upload="false" :on-change="upChangeFile">
+            <el-button size="small" type="primary">点击上传</el-button>
+            <div slot="tip" class="el-upload__tip">限单个pdf文件</div>
+          </el-upload>
+        </el-form-item>
+      </el-form>
+      <div style="text-align:center">
+        <el-button @click="jifenVisible=false">取消</el-button>
+        <el-button type="primary" :loading="loading2" @click="upFile">确认</el-button>
+      </div>
+    </el-dialog>
+
+
   </div>
 </template>
 
@@ -98,19 +131,35 @@
     listWorkload,
     updateWorkloadCoefficient,
     updateInstrumentWorkload,
-    exportWorkload
+    getWorkloadPdf,
+    uploadWorkloadPdf
   } from '@/api/table'
   import {
     mapGetters
   } from 'vuex'
+
+  import pdf from 'vue-pdf'
+  import axios from 'axios'
+  import setting from '@/settings'
+  import {
+    getToken
+  } from '@/utils/auth'
+
   // import moment from 'moment'
   export default {
     name: 'WorkLoad',
     components: {
-      Treeselect
+      Treeselect,
+      pdf
     },
     data() {
       return {
+        jifenVisible: false,
+        loading2: false,
+        pdfVisible: false,
+        pageTotal: 0,
+        realUrl: "",
+        pdfUrl: "",
         mode: 1, //1 简约  2详情
         pageIndex: 1,
         pageSize: 10,
@@ -124,6 +173,7 @@
         pointStatus: '',
         editTitle: '',
         newRecords: [],
+        uplist: [],
         comName: '',
         pointName: '',
         status: '',
@@ -205,6 +255,82 @@
       this.listWorkload()
     },
     methods: {
+      upChangeFile(file, fileList) { // 更改图片
+        this.uplist = fileList
+      },
+      upRemove(file, fileList) { // 删除上传题目
+        console.log(file, fileList)
+        this.uplist = fileList
+      },
+      upFile() { // look youfei
+        console.log(this.uplist)
+        if (this.uplist.length === 0) {
+          this.$notify({
+            type: 'warning',
+            message: '附件不能为空'
+          })
+          return
+        }
+        this.loading2 = true
+        var formData = new FormData()
+        formData.append('file', this.uplist[0].raw)
+        formData.append('type', "")
+
+        axios.post(setting.baseUrl + '/sysSup/fileConvert', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              'token': getToken()
+            }
+          })
+          .then(res => {
+            console.log(res)
+            if (res.data.retCode === 1000) {
+
+              uploadWorkloadPdf(res.data.retData).then(res => {
+                console.log(res)
+                this.loading2 = false
+                this.$notify({
+                  type: "Success",
+                  message: "操作成功"
+                })
+                this.jifenVisible = false
+              })
+
+            } else {
+              this.loading2 = false
+              this.$notify({
+                type: 'warning',
+                message: res.data.retMsg
+              })
+            }
+          }).catch((e) => {
+            console.log(e)
+            this.loading2 = false
+          })
+      },
+
+      openXiugai() { //打开修改文件
+        this.jifenVisible = true
+        this.uplist=[]
+      },
+      openPdfEdit() {
+        uploadWorkloadPdf()
+      },
+      openGzl() {
+        getWorkloadPdf({}).then(res => {
+          console.log(res)
+          this.realUrl = res.retData
+          this.pdfUrl = pdf.createLoadingTask(this.realUrl)
+          this.pdfUrl.promise.then(pdf => {
+            this.pageTotal = pdf.numPages
+            this.pdfVisible = true
+          }).catch(error => {})
+        })
+      },
+      dwFile() {
+        console.log(this.realUrl)
+        window.open(this.realUrl.url)
+      },
       exportWorkload() {
         this.loading = true
         exportWorkload({
@@ -624,6 +750,15 @@
 
   .editFont {
     color: blueviolet;
+    cursor: pointer;
+  }
+
+  .dwfile {
+    position: absolute;
+    right: -3vw;
+    bottom: 0vw;
+    z-index: 9999;
+    width: 50px;
     cursor: pointer;
   }
 

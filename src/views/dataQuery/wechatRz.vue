@@ -13,7 +13,7 @@
         <el-option v-for="item in statuslist" :key="item.label" :label="item.label" :value="item.value" />
       </el-select>
       时间范围：
-      <el-date-picker v-model="value1" type="datetimerange" range-separator="至" start-placeholder="开始日期"
+      <el-date-picker v-model="value1" type="datetimerange" range-separator="至" start-placeholder="开始日期" :picker-options="pickerOptions"
         end-placeholder="结束日期">
       </el-date-picker>
 
@@ -39,9 +39,9 @@
           </div>
           <div v-else>
 
-            <el-popover placement="top-start"  trigger="hover">
+            <el-popover placement="top-start" trigger="hover">
               <div>
-               {{ scope.row.result }}
+                {{ scope.row.result }}
               </div>
 
               <div slot="reference" style="color:red"> {{ scope.row.statusName }}<i class="el-icon-question"></i></div>
@@ -162,6 +162,41 @@
             label: node.userName,
             children: node.children && node.children.length ? node.children : 0
           }
+        },
+        pickerOptions: {
+          shortcuts: [{
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
+          }, {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          }, {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
+            }
+          }, {
+            text: '最近半年',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 180)
+              picker.$emit('pick', [start, end])
+            }
+          }]
         }
 
       }
@@ -172,6 +207,7 @@
       ])
     },
     mounted() {
+      this.value1 = [moment().subtract(1, "week"), moment()]
       this.listWxMessageLog()
     },
     methods: {

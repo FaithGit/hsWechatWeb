@@ -283,7 +283,25 @@
           endTime: endTime,
         }).then(res => {
           console.log(res)
+
+          let temp = res.retData
+          let pzsl = 0
+          let _totalVolume = 0
+
+          temp.forEach(e => {
+            pzsl += e.num
+            _totalVolume+=e.totalVolume
+          })
+          temp.push({
+
+            num: pzsl,
+            standardSolutionName: "总计",
+            unit:"瓶",
+            totalVolume: _totalVolume.toFixed(0),
+          })
           this.records = res.retData
+
+
         })
       },
       getStandardLiquidStatement() { //药剂使用报表
