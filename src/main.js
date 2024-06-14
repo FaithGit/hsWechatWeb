@@ -25,6 +25,21 @@ Vue.filter('formValidateFun', (value, type) => {
   return value
 })
 
+
+import Viewer from 'v-viewer'
+import 'viewerjs/dist/viewer.css'
+Vue.use(Viewer)
+Viewer.setDefaults({
+  // 需要配置的属性 注意属性并没有引号
+  title: false
+  // toolbar: false
+})
+
+
+
+
+
+
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api

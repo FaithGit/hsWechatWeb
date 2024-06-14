@@ -47,16 +47,16 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="备案资料">
+      <el-table-column align="center" label="附件">
         <template slot-scope="scope">
 
           <div>
-
-            <template v-for="item in scope.row.files">
-              <img src="@/assets/file.png" alt="" srcset="" :title="item.name" style="width:20px" :key="item.fileId"
-                @click="handlePreview(item)">
-            </template>
-
+            <viewer>
+              <template v-for="item in scope.row.files">
+                <img :src="item.url" alt="" srcset="" :title="item.name" style="width:100px;height:100px"
+                  :key="item.fileId">
+              </template>
+            </viewer>
           </div>
 
         </template>
@@ -96,9 +96,9 @@
         </el-form-item>
 
         <el-form-item label="证书附件">
-          (点击列表查看附件)
-          <el-upload action="#" :on-change="handleChangeID" :on-remove="handleRemoveID" :on-preview="handlePreview"
-            :auto-upload="false" :file-list="zhiweiList">
+          (点击列表查看附件-限值图片格式)
+          <el-upload action="#" accept=".jpg,.jpeg,.png" :on-change="handleChangeID" :on-remove="handleRemoveID"
+            :on-preview="handlePreview" :auto-upload="false" :file-list="zhiweiList">
             <el-button size="small" type="primary">点击上传</el-button>
           </el-upload>
         </el-form-item>

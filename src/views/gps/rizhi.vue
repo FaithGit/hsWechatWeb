@@ -9,16 +9,26 @@
         </el-option>
       </el-select>
       状态：
-      <el-select v-model="type" placeholder="请选择车牌号" clearable class="seachInput" style="width:120px">
+      <el-select v-model="type" placeholder="请选择状态" clearable class="seachInput" style="width:120px">
         <el-option label="离线" :value="1 "></el-option>
         <el-option label="停车" :value="2"> </el-option>
         <el-option label="怠行" :value="3"> </el-option>
         <el-option label="行驶" :value="4"> </el-option>
       </el-select>
+      部门：
+      <el-select v-model="departmentId" placeholder="请选择部门" clearable class="seachInput" style="width:120px">
+        <el-option v-for="item in bumenList" :key="item.value" :label="item.label" :value="item.value">
+        </el-option>
+      </el-select>
+
+      持续时间(分)：
+      <el-input-number v-model="duration" style="width:160px;margin-right:10px"></el-input-number>
+
       时间范围：
       <el-date-picker v-model="time" type="datetimerange" :picker-options="pickerOptions" range-separator="至"
         start-placeholder="开始日期" end-placeholder="结束日期" align="right" style="margin-right:10px" />
       <el-button type="primary" @click="seach">搜索</el-button>
+      <el-button type="primary" @click="daochu">导出</el-button>
     </div>
 
     <!-- 表格 -->
@@ -34,17 +44,22 @@
           {{ computedNull(scope.row.licensePlate) }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="组名">
+      <el-table-column align="center" label="部门" width="120px">
+        <template slot-scope="scope">
+          {{ computedNull(scope.row.departmentName) }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="组名" width="120px">
         <template slot-scope="scope">
           {{ computedNull(scope.row.groupName) }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="组长">
+      <el-table-column align="center" label="组长" width="100px">
         <template slot-scope="scope">
           {{ computedNull(scope.row.groupLeader) }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="状态">
+      <el-table-column align="center" label="状态"  width="100px">
         <template slot-scope="scope">
           {{ computedNull(scope.row.typeName) }}
         </template>
@@ -59,7 +74,7 @@
           {{ computedNull(scope.row.endTime) }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="持续时间">
+      <el-table-column align="center" label="持续时间" width="120px">
         <template slot-scope="scope">
           {{ computedNull(scope.row.duration) }}
         </template>
@@ -85,7 +100,9 @@
 <script>
   import {
     listGpsDriveLogPage,
-    listLicensePlateSel
+    listLicensePlateSel,
+    exportGpsDriveLog,
+    gpsDepartmentSel
   } from '@/api/table'
 
   // import the styles
@@ -110,8 +127,11 @@
         total: 0,
         records: [],
         type: "",
+        duration: "",
         time: [new Date() - 1000 * 60 * 60 * 24 * 7, new Date()],
         plateSelList: [],
+        bumenList: [],
+        departmentId: "",
         licensePlate: "",
         listLoading: false,
         pickerOptions: {
@@ -156,7 +176,7 @@
             label: node.label,
             children: node.children && node.children.length ? node.children : 0
           }
-        }
+        },
       }
     },
     computed: {
@@ -166,9 +186,48 @@
     },
     mounted() {
       this.listLicensePlateSel()
+      this.gpsDepartmentSel()
       this.seach()
     },
     methods: {
+
+      gpsDepartmentSel() {
+        gpsDepartmentSel({
+
+        }).then(res => {
+          this.bumenList = res.retData
+          this.bumenList.shift()
+          console.log("部门", this.bumenList)
+        })
+      },
+      daochu() {
+        var startTime = ''
+        var endTime = ''
+        if (this.time == null) {
+          startTime = ''
+          endTime = ''
+        } else if (this.time.length == 0) {
+          startTime = ''
+          endTime = ''
+        } else {
+          startTime = moment(this.time[0]).format('YYYY-MM-DD HH:mm:ss')
+          endTime = moment(this.time[1]).format('YYYY-MM-DD HH:mm:ss')
+        }
+
+
+        exportGpsDriveLog({
+          licensePlate: this.licensePlate,
+          type: this.type,
+          startTime: startTime,
+          endTime: endTime,
+          pageIndex: this.pageIndex,
+          pageSize: this.pageSize
+        }).then(res => {
+          console.log(res)
+          window.open(res.retData)
+        })
+      },
+
       listLicensePlateSel() { //所有车牌号
         listLicensePlateSel({}).then(res => {
           console.log("车牌号", res)
@@ -192,7 +251,9 @@
 
         listGpsDriveLogPage({
           licensePlate: this.licensePlate,
+          departmentId: this.departmentId,
           type: this.type,
+          duration: this.duration,
           startTime: startTime,
           endTime: endTime,
           pageIndex: this.pageIndex,

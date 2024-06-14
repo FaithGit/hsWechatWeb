@@ -10,7 +10,11 @@
         style="min:width:500px;max-width:60vw" />
       <el-button type="primary" @click="seach" style="margin-left:10px">搜索</el-button>
     </div>
-    <div style="margin-top:10px">
+    <div style="margin-top:10px;display:flex;align-items: center">
+      配置人：
+      <treeselect v-model="preparationPeople" :multiple="false" :options="userList" :normalizer="normalizer3"
+        placeholder="请选择配置人" class="seachInput" />
+
       时间范围：
       <el-date-picker v-model="time" type="daterange" range-separator="至" start-placeholder="开始日期"
         end-placeholder="结束日期">
@@ -142,7 +146,8 @@
     listStandardSolutionStatementDetail,
     exportStandardSolutionStatement,
     exportStandardLiquidStatement,
-    exportStandardSolutionStatementDetail
+    exportStandardSolutionStatementDetail,
+    listUserSelChoose
   } from '@/api/table'
   import {
     mapGetters
@@ -166,10 +171,12 @@
         digTitle: '新增因子',
         total: 0,
         departmentId: null,
+        preparationPeople: null,
         records: [],
         bumenList: [],
         groupIds: [],
         zuList: [],
+        userList: [],
         time: null,
         normalizer(node) {
           return {
@@ -185,6 +192,13 @@
             children: node.children && node.children.length ? node.children : 0
           }
         },
+        normalizer3(node) {
+          return {
+            id: node.userId,
+            label: node.userName,
+            children: node.children && node.children.length ? node.children : 0
+          }
+        },
       }
     },
     computed: {
@@ -196,8 +210,18 @@
       this.listReagentDepartment()
       this.listGroupByDepartment()
       this.getStandardSolutionStatement()
+      this.listUserSelChoose()
     },
     methods: {
+      listUserSelChoose() {
+        listUserSelChoose({
+          roleId: "syy"
+        }).then(res => {
+          console.log(res)
+          this.userList = res.retData
+          this.userList.shift()
+        })
+      },
       handleClick() { //avtiveClick
         console.log(this.activeName)
         if (this.activeName == 'first') {
@@ -211,14 +235,15 @@
       daochu() {
         var startTime = ''
         var endTime = ''
-
+        if (this.time !== null) {
+          startTime = moment(this.time[0]).format("YYYY/MM/DD")
+          endTime = moment(this.time[1]).format("YYYY/MM/DD 23:59:59")
+        }
         if (this.activeName == 'first') {
-          if (this.time !== null) {
-            startTime = moment(this.time[0]).format("YYYY/MM/DD")
-            endTime = moment(this.time[1]).format("YYYY/MM/DD")
-          }
+
           exportStandardSolutionStatement({
             groupIds: this.groupIds,
+            preparationPeople: this.preparationPeople,
             startTime: startTime,
             endTime: endTime,
           }).then(res => {
@@ -228,6 +253,7 @@
           })
         } else if (this.activeName == 'second') {
           exportStandardLiquidStatement({
+            preparationPeople: this.preparationPeople,
             groupIds: this.groupIds,
             startTime: startTime,
             endTime: endTime,
@@ -237,6 +263,7 @@
           })
         } else {
           exportStandardSolutionStatementDetail({
+            preparationPeople: this.preparationPeople,
             groupIds: this.groupIds,
             startTime: startTime,
             endTime: endTime,
@@ -275,12 +302,13 @@
         var endTime = ''
         if (this.time !== null) {
           startTime = moment(this.time[0]).format("YYYY/MM/DD")
-          endTime = moment(this.time[1]).format("YYYY/MM/DD")
+          endTime = moment(this.time[1]).format("YYYY/MM/DD 23:59:59")
         }
         getStandardSolutionStatement({
           groupIds: this.groupIds,
           startTime: startTime,
           endTime: endTime,
+          preparationPeople: this.preparationPeople
         }).then(res => {
           console.log(res)
 
@@ -290,13 +318,13 @@
 
           temp.forEach(e => {
             pzsl += e.num
-            _totalVolume+=e.totalVolume
+            _totalVolume += e.totalVolume
           })
           temp.push({
 
             num: pzsl,
             standardSolutionName: "总计",
-            unit:"瓶",
+            unit: "瓶",
             totalVolume: _totalVolume.toFixed(0),
           })
           this.records = res.retData
@@ -309,12 +337,13 @@
         var endTime = ''
         if (this.time !== null) {
           startTime = moment(this.time[0]).format("YYYY/MM/DD")
-          endTime = moment(this.time[1]).format("YYYY/MM/DD")
+          endTime = moment(this.time[1]).format("YYYY/MM/DD 23:59:59")
         }
         getStandardLiquidStatement({
           groupIds: this.groupIds,
           startTime: startTime,
           endTime: endTime,
+          preparationPeople: this.preparationPeople
         }).then(res => {
           console.log(res)
           this.records = res.retData
@@ -325,12 +354,13 @@
         var endTime = ''
         if (this.time !== null) {
           startTime = moment(this.time[0]).format("YYYY/MM/DD")
-          endTime = moment(this.time[1]).format("YYYY/MM/DD")
+          endTime = moment(this.time[1]).format("YYYY/MM/DD 23:59:59")
         }
         listStandardSolutionStatementDetail({
           groupIds: this.groupIds,
           startTime: startTime,
           endTime: endTime,
+          preparationPeople: this.preparationPeople,
           pageIndex: this.pageIndex,
           pageSize: this.pageSize
         }).then(res => {

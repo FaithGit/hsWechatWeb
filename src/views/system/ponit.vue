@@ -133,7 +133,8 @@
       <el-table-column align="center" label="相关性系数" width="220">
         <template slot-scope="scope">
           <div
-            v-if="computedNull(scope.row.correlationCoefficientB)=='-'||computedNull(scope.row.correlationCoefficientK)=='-'" style="text-algin:center">
+            v-if="computedNull(scope.row.correlationCoefficientB)=='-'||computedNull(scope.row.correlationCoefficientK)=='-'"
+            style="text-algin:center">
             -
           </div>
           <div v-else>COD=TOC* {{ computedNull(scope.row.correlationCoefficientK) }} +
@@ -243,7 +244,12 @@
         <el-form-item label="数采仪编码mn号" prop="dciMn" class="formWidth2">
           <el-input v-model="form.dciMn" placeholder="请输入数采仪编码mn号  " />
         </el-form-item>
-
+        <el-form-item label="视频Ip" prop="dciMn" class="formWidth2">
+          <el-input v-model="form.spIp" placeholder="请输入视频Ip" />
+        </el-form-item>
+        <el-form-item label="门禁Ip" prop="dciMn" class="formWidth2">
+          <el-input v-model="form.mjIp" placeholder="请输入门禁Ip" />
+        </el-form-item>
         <el-form-item label="秘钥" class="formWidth4">
           <el-input v-model="form.secretKey" placeholder="请输入秘钥" />
         </el-form-item>

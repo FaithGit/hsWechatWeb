@@ -1346,9 +1346,45 @@ export function listGpsDriveLogPage(data) { // 获取所有因子
     data
   })
 }
+export function exportGpsDriveLog(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/gps/exportGpsDriveLog',
+    method: 'post',
+    data
+  })
+}
 export function listLoginIndoRoleSel(data) { // 获取所有因子
   return request({
     url: setting.baseUrl + '/sysSup/listLoginIndoRoleSel',
+    method: 'post',
+    data
+  })
+}
+export function listOperateGroupSel(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/group/listOperateGroupSel',
+    method: 'post',
+    data
+  })
+}
+
+export function listAreaMap(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/sysSup/listAreaMap',
+    method: 'post',
+    data
+  })
+}
+export function listOnlineData(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/online/listOnlineData',
+    method: 'post',
+    data
+  })
+}
+export function listUserSelChoose(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/sysUser/listUserSelChoose',
     method: 'post',
     data
   })

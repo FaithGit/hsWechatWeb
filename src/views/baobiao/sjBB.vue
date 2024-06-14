@@ -10,7 +10,10 @@
         style="min:width:500px;max-width:60vw" />
       <el-button type="primary" @click="seach" style="margin-left:10px">搜索</el-button>
     </div>
-    <div style="margin-top:10px">
+    <div style="margin-top:10px;display:flex;align-items: center">
+      配置人：
+      <treeselect v-model="preparationPeople" :multiple="false" :options="userList" :normalizer="normalizer3"
+        placeholder="请选择配置人" class="seachInput" />
       时间范围：
       <el-date-picker v-model="time" type="daterange" range-separator="至" start-placeholder="开始日期"
         end-placeholder="结束日期">
@@ -145,7 +148,8 @@
     reagentStatementDetail,
     exportReagentStatement,
     exportPharmaceuticalStatement,
-    exportReagentStatementDetail
+    exportReagentStatementDetail,
+    listUserSelChoose
   } from '@/api/table'
   import {
     mapGetters
@@ -174,6 +178,8 @@
         groupIds: [],
         zuList: [],
         time: null,
+        userList: [],
+        preparationPeople: null,
         normalizer(node) {
           return {
             id: node.id,
@@ -188,6 +194,13 @@
             children: node.children && node.children.length ? node.children : 0
           }
         },
+        normalizer3(node) {
+          return {
+            id: node.userId,
+            label: node.userName,
+            children: node.children && node.children.length ? node.children : 0
+          }
+        }
       }
     },
     computed: {
@@ -199,8 +212,18 @@
       this.listReagentDepartment()
       this.listGroupByDepartment()
       this.getReagentStatement()
+      this.listUserSelChoose()
     },
     methods: {
+      listUserSelChoose() {
+        listUserSelChoose({
+          roleId: "syy"
+        }).then(res => {
+          console.log(res)
+          this.userList = res.retData
+          this.userList.shift()
+        })
+      },
       handleClick() { //avtiveClick
         console.log(this.activeName)
         if (this.activeName == 'first') {
@@ -214,14 +237,15 @@
       daochu() {
         var startTime = ''
         var endTime = ''
-
+        if (this.time !== null) {
+          startTime = moment(this.time[0]).format("YYYY/MM/DD")
+          endTime = moment(this.time[1]).format("YYYY/MM/DD 23:59:59")
+        }
         if (this.activeName == 'first') {
-          if (this.time !== null) {
-            startTime = moment(this.time[0]).format("YYYY/MM/DD")
-            endTime = moment(this.time[1]).format("YYYY/MM/DD")
-          }
+
           exportReagentStatement({
             groupIds: this.groupIds,
+            preparationPeople: this.preparationPeople,
             startTime: startTime,
             endTime: endTime,
           }).then(res => {
@@ -232,6 +256,7 @@
         } else if (this.activeName == 'second') {
           exportPharmaceuticalStatement({
             groupIds: this.groupIds,
+            preparationPeople: this.preparationPeople,
             startTime: startTime,
             endTime: endTime,
           }).then(res => {
@@ -241,6 +266,7 @@
         } else {
           exportReagentStatementDetail({
             groupIds: this.groupIds,
+            preparationPeople: this.preparationPeople,
             startTime: startTime,
             endTime: endTime,
           }).then(res => {
@@ -277,10 +303,11 @@
         var endTime = ''
         if (this.time !== null) {
           startTime = moment(this.time[0]).format("YYYY/MM/DD")
-          endTime = moment(this.time[1]).format("YYYY/MM/DD")
+          endTime = moment(this.time[1]).format("YYYY/MM/DD 23:59:59")
         }
         getReagentStatement({
           groupIds: this.groupIds,
+          preparationPeople: this.preparationPeople,
           startTime: startTime,
           endTime: endTime,
         }).then(res => {
@@ -306,10 +333,11 @@
         var endTime = ''
         if (this.time !== null) {
           startTime = moment(this.time[0]).format("YYYY/MM/DD")
-          endTime = moment(this.time[1]).format("YYYY/MM/DD")
+          endTime = moment(this.time[1]).format("YYYY/MM/DD 23:59:59")
         }
         getPharmaceuticalStatement({
           groupIds: this.groupIds,
+          preparationPeople: this.preparationPeople,
           startTime: startTime,
           endTime: endTime,
         }).then(res => {
@@ -322,10 +350,11 @@
         var endTime = ''
         if (this.time !== null) {
           startTime = moment(this.time[0]).format("YYYY/MM/DD")
-          endTime = moment(this.time[1]).format("YYYY/MM/DD")
+          endTime = moment(this.time[1]).format("YYYY/MM/DD 23:59:59")
         }
         reagentStatementDetail({
           groupIds: this.groupIds,
+          preparationPeople: this.preparationPeople,
           startTime: startTime,
           endTime: endTime,
           pageIndex: this.pageIndex,
