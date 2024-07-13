@@ -1398,3 +1398,25 @@ export function exportUserInfo(data) { // 获取所有因子
   })
 }
 
+export function updateActualQuantity(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/reagent/updateActualQuantity',
+    method: 'post',
+    data
+  })
+}
+export function listStandardSolutionProcess(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/standardSolution/listStandardSolutionProcess',
+    method: 'post',
+    data
+  })
+}
+export function updateRealSamplingQuantity(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/standardSolution/updateRealSamplingQuantity',
+    method: 'post',
+    data
+  })
+}
+
