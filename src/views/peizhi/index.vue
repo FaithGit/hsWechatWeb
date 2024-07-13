@@ -78,6 +78,7 @@
           <el-table-column align="center" label="试剂编号" prop="number" />
           <el-table-column align="center" label="配置日期" prop="preparationTime" />
           <el-table-column align="center" label="单位" prop="unit" />
+          <el-table-column align="center" label="母液名称" prop="motherLiquorName" />
           <el-table-column align="center" label="理论使用量" prop="samplingQuantity" />
           <el-table-column align="center" label="标液称重过程量">
             <template slot-scope="scope">
@@ -135,6 +136,9 @@
 
         <el-form-item label="标液名称">
           <el-input v-model="form.standardSolutionName" disabled />
+        </el-form-item>
+        <el-form-item label="母液名称">
+          <el-input v-model="form.motherLiquorName" disabled />
         </el-form-item>
         <el-form-item label="原称重过程量">
           <el-input v-model="form.old" disabled />
@@ -220,6 +224,7 @@
         console.log(row)
         this.form = {
           standardSolutionName: row.standardSolutionName,
+          motherLiquorName: row.motherLiquorName,
           old: row.realSamplingQuantity,
           applyId: row.applyId,
           standardSolutionId: row.standardSolutionId,
@@ -413,6 +418,7 @@
                 updateStatus: '',
                 standardSolutionId: '',
                 realSamplingQuantity: '-',
+                motherLiquorName: '-',
                 index: (this.pageIndex2 - 1) * 10 + index + 1
               })
               comIndex.push(1)
@@ -431,6 +437,7 @@
                   updateStatus: i.updateStatus,
                   standardSolutionId: i.standardSolutionId,
                   realSamplingQuantity: this.computedNull(i.realSamplingQuantity),
+                  motherLiquorName: this.computedNull(i.motherLiquorName),
                   index: (this.pageIndex2 - 1) * 10 + index + 1
                 })
 
