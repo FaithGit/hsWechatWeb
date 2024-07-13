@@ -1390,3 +1390,11 @@ export function listUserSelChoose(data) { // 获取所有因子
   })
 }
 
+export function exportUserInfo(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/personalRecords/exportUserInfo',
+    method: 'post',
+    data
+  })
+}
+

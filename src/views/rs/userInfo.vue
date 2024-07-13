@@ -10,6 +10,7 @@
           :value="item.departmentId" />
       </el-select>
       <el-button type="primary" @click="seach">搜索</el-button>
+      <el-button type="primary" @click="daochu" style="margin-left:10px" icon="el-icon-download">导出</el-button>
       <!-- <el-button type="primary" @click="addPeople">新增用户</el-button> -->
     </div>
 
@@ -183,7 +184,8 @@
     addUserInfo,
     getUserInfoDetail,
     updateUserInfo,
-    removeUser
+    removeUser,
+    exportUserInfo
   } from '@/api/table'
   import {
     mapGetters
@@ -286,6 +288,17 @@
       this.listUserInfoPage()
     },
     methods: {
+      daochu() {
+        exportUserInfo({
+          userName: this.userName,
+          departmentId: this.departmentId,
+        }).then(res => {
+          console.log(res)
+          window.open(res.retData, "_self")
+
+        })
+      },
+
       computedNull(val) {
         if (val === undefined || val === null || val === '' || val === ' ') {
           return '-'

@@ -250,6 +250,18 @@
         <el-form-item label="门禁Ip" prop="dciMn" class="formWidth2">
           <el-input v-model="form.mjIp" placeholder="请输入门禁Ip" />
         </el-form-item>
+        <el-form-item label="门禁账号" class="formWidth4">
+          <el-input v-model="form.mjAccount" placeholder="请输入门禁账号" />
+        </el-form-item>
+        <el-form-item label="门禁密码" class="formWidth4">
+          <el-input v-model="form.mjPassword" placeholder="请输入门禁密码" />
+        </el-form-item>
+        <el-form-item label="视频账号" class="formWidth4">
+          <el-input v-model="form.spAccount" placeholder="请输入视频账号" />
+        </el-form-item>
+        <el-form-item label="视频密码" class="formWidth4">
+          <el-input v-model="form.spPassword" placeholder="请输入视频密码" />
+        </el-form-item>
         <el-form-item label="秘钥" class="formWidth4">
           <el-input v-model="form.secretKey" placeholder="请输入秘钥" />
         </el-form-item>
