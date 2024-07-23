@@ -25,7 +25,7 @@
           </el-table-column>
           <el-table-column align="center" label="试剂名称" prop="reagentName" />
           <el-table-column align="center" label="试剂编号" prop="number" />
-          <el-table-column align="center" label="配置日期" prop="preparationTime" />
+          <el-table-column align="center" label="配制日期" prop="preparationTime" />
           <el-table-column align="center" label="药剂名称" prop="pharmaceuticalName" />
           <el-table-column align="center" label="单位" prop="unit" />
           <el-table-column align="center" label="理论使用量" prop="theoryQuantityWeighed" />
@@ -55,7 +55,7 @@
 
 
       </el-tab-pane>
-      <el-tab-pane label="标液配置过程" name="2">
+      <el-tab-pane label="标液配制过程" name="2">
         <div>
           标液名称：
           <el-input v-model="standardSolutionName" class="seachInput" placeholder="请输入关键字" clearable />
@@ -76,7 +76,7 @@
           </el-table-column>
           <el-table-column align="center" label="标液名称" prop="standardSolutionName" />
           <el-table-column align="center" label="试剂编号" prop="number" />
-          <el-table-column align="center" label="配置日期" prop="preparationTime" />
+          <el-table-column align="center" label="配制日期" prop="preparationTime" />
           <el-table-column align="center" label="单位" prop="unit" />
           <el-table-column align="center" label="母液名称" prop="motherLiquorName" />
           <el-table-column align="center" label="理论使用量" prop="samplingQuantity" />

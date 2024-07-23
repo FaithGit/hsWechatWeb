@@ -216,11 +216,17 @@
           </el-popover>
         </el-form-item>
 
+        <el-form-item label="点位企业联系人" prop="comContact" class="formWidth4">
+          <el-input v-model="form.comContact" placeholder="请输入点位企业联系人" />
+        </el-form-item>
+        <el-form-item label="点位企业联系方式" prop="comContactMobile" class="formWidth4">
+          <el-input v-model="form.comContactMobile" placeholder="请输入点位企业联系方式" />
+        </el-form-item>
         <el-form-item label="紧急联系人" prop="emergencyContact" class="formWidth4">
           <el-input v-model="form.emergencyContact" placeholder="请输入紧急联系人" />
         </el-form-item>
         <el-form-item label="紧急联系人电话" prop="emergencyMobile" class="formWidth4">
-          <el-input v-model="form.emergencyMobile" placeholder="紧急联系人电话" />
+          <el-input v-model="form.emergencyMobile" placeholder="请输入紧急联系人电话" />
         </el-form-item>
 
         <el-form-item label="经度" prop="lng" class="formWidth4">
@@ -353,7 +359,9 @@
     exportPoint,
     getPointById,
     getPointQRCode,
-    listDictionarySel
+    listDictionarySel,
+    getCompanyById
+
   } from '@/api/table'
   import {
     mapGetters
@@ -418,6 +426,11 @@
             validator: moblie,
             trigger: 'blur'
           }],
+          comContactMobile: [{
+            required: true,
+            validator: moblie,
+            trigger: 'blur'
+          }],
           dciMn: [{
             required: false,
             message: '请输入数采仪编码 mn号',
@@ -471,6 +484,11 @@
           emergencyContact: [{
             required: true,
             message: '请输入紧急联系人',
+            trigger: 'blur'
+          }],
+          comContact: [{
+            required: true,
+            message: '请输入点位企业联系人',
             trigger: 'blur'
           }],
           lng: [{
@@ -556,6 +574,9 @@
       this.getAreaCodeTree()
       this.listDictionarySel()
 
+
+      console.log("走这里了吗")
+
       if (this.roleId === 'ywybzz' || this.roleId === 'ywybfzz' || this.roleId === 'ywybzy') {
         this.computedRoleBoolean = true
       } else {
@@ -617,6 +638,15 @@
       riskPersonDeptChangeValue() {
         // form是表单名 riskPersonDept是prop名
         this.$refs['form1'].validateField('companyId')
+
+        getCompanyById({
+          companyId: this.form.companyId
+        }).then(res => {
+          console.log('res.retData.contact', res.retData.contact)
+          console.log('res.retData.contact', res.retData.contactMobile)
+          this.$set(this.form, 'comContact', res.retData.contact)
+          this.$set(this.form, 'comContactMobile', res.retData.contactMobile)
+        })
       },
       daochu() {
         exportPoint({
@@ -746,7 +776,7 @@
         console.log('🚀 ~ editPoint ~   this.form:', this.form)
       },
       addPoint1(e) {
-        this.addVisible = true
+
         this.futitle = '新增点位'
         this.form = {
           companyId: null,
@@ -756,7 +786,15 @@
         this.IDList = []
         if (this.companyId) {
           this.form.companyId = this.companyId
+
+          getCompanyById({
+            companyId: this.companyId
+          }).then(res => {
+            this.$set(this.form, 'comContact', res.retData.contact)
+            this.$set(this.form, 'comContactMobile', res.retData.contactMobile)
+          })
         }
+        this.addVisible = true
       },
       sumbitPoint() {
 
