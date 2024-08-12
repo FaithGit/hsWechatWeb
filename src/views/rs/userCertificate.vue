@@ -5,10 +5,18 @@
 
       用户名称：
       <treeselect v-model="userIdShow" :multiple="false" :options="userlist" :normalizer="normalizer2"
-        placeholder="请选择用户" class="seachInput" no-children-text="暂无数据" />
+        placeholder="请选择用户" class="seachInput" no-children-text="暂无数据">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+          {{ node.label }}
+        </label>
+      </treeselect>
       证书名称：
       <treeselect v-model="certificateId" :multiple="false" :options="zhengshuList" :normalizer="normalizer"
-        placeholder="请选择证书" class="seachInput" no-children-text="暂无数据" />
+        placeholder="请选择证书" class="seachInput" no-children-text="暂无数据">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+          {{ node.label }}
+        </label>
+      </treeselect>
       证书状态：
       <el-select v-model="expireStatus" class="seachInput" clearable>
         <el-option label="正常" :value="0"></el-option>
@@ -81,11 +89,21 @@
       <el-form ref="form1" :model="form" label-width="140px" :rules="rules">
         <el-form-item label="用户名称" prop="userId">
           <treeselect v-model="form.userId" :multiple="false" :options="userlist" :normalizer="normalizer2"
-            placeholder="请选择用户" no-children-text="暂无数据" />
+            placeholder="请选择用户" no-children-text="暂无数据">
+            <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName"
+              :title="node.label">
+              {{ node.label }}
+            </label>
+          </treeselect>
         </el-form-item>
         <el-form-item label="证书名称" prop="certificateId">
           <treeselect v-model="form.certificateId" :multiple="false" :options="zhengshuList" :normalizer="normalizer"
-            placeholder="请选择证书" no-children-text="暂无数据" />
+            placeholder="请选择证书" no-children-text="暂无数据">
+            <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName"
+              :title="node.label">
+              {{ node.label }}
+            </label>
+          </treeselect>
         </el-form-item>
         <el-form-item label="证书编号">
           <el-input v-model="form.userCertificateCode" placeholder="请填写证书编号" />

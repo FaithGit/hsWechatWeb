@@ -3,12 +3,20 @@
     <el-row v-loading="loading">
       <el-col :span="8" style="height:80vh;overflow: auto;">
         <treeselect v-model="roleId" :multiple="false" :options="roleList" :normalizer="normalizer" :clearable="false"
-          :maxHeight="999999" :alwaysOpen='true' no-children-text="暂无数据" @select="changeRole" />
+          :maxHeight="999999" :alwaysOpen='true' no-children-text="暂无数据" @select="changeRole">
+          <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+            {{ node.label }}
+          </label>
+        </treeselect>
       </el-col>
       <el-col :span="16" style="height:80vh;overflow: auto;">
         <treeselect v-model="roleIds" :multiple="true" :options="tableData" :normalizer="normalizer2"
           :maxHeight="999999" :valueConsistsOf="'ALL_WITH_INDETERMINATE'" :alwaysOpen='true' no-children-text="暂无数据"
-          :defaultExpandLevel='2' />
+          :defaultExpandLevel='2'>
+          <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+            {{ node.label }}
+          </label>
+        </treeselect>
       </el-col>
     </el-row>
     <div style="margin-top:20px;text-align:center">
@@ -164,13 +172,16 @@
   .conFelx {
     display: flex;
   }
+
   ::v-deep .vue-treeselect--open.vue-treeselect--open-below .vue-treeselect__control {
-    display:none;
+    display: none;
   }
+
   ::v-deep .vue-treeselect__label {
     font-size: 18px;
   }
-  ::v-deep .vue-treeselect__indent-level-1 .vue-treeselect__option{
+
+  ::v-deep .vue-treeselect__indent-level-1 .vue-treeselect__option {
     margin: 10px 0;
   }
 

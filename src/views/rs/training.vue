@@ -4,7 +4,11 @@
     <div class="headClass">
       用户名称：
       <treeselect v-model="userIdSeach" :multiple="false" :disable-branch-nodes="true" :options="userlist"
-        :normalizer="normalizer2" placeholder="请选择用户" class="seachInput" no-children-text="暂无数据" />
+        :normalizer="normalizer2" placeholder="请选择用户" class="seachInput" no-children-text="暂无数据">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+          {{ node.label }}
+        </label>
+      </treeselect>
 
       培训主题：
       <el-input v-model="trainingTheme" class="seachInput" placeholder="请输入关键字" clearable />
@@ -74,12 +78,22 @@
 
         <el-form-item label="受训人" prop="trainees">
           <treeselect v-model="form.trainees" :multiple="true" :options="userlist" :normalizer="normalizer2"
-            placeholder="请选择受训人" no-children-text="暂无数据" :value-consists-of="'LEAF_PRIORITY'" />
+            placeholder="请选择受训人" no-children-text="暂无数据" :value-consists-of="'LEAF_PRIORITY'">
+            <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName"
+              :title="node.label">
+              {{ node.label }}
+            </label>
+          </treeselect>
         </el-form-item>
 
         <el-form-item label="关联签到">
           <treeselect :disabled="sgFalg" v-model="form.signInId" :multiple="false" :options="qiandaoList"
-            :normalizer="normalizer3" placeholder="请选择关联签到" no-children-text="暂无数据" @select="changeQD" />
+            :normalizer="normalizer3" placeholder="请选择关联签到" no-children-text="暂无数据" @select="changeQD">
+            <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName"
+              :title="node.label">
+              {{ node.label }}
+            </label>
+          </treeselect>
         </el-form-item>
 
         <el-form-item label="备注">

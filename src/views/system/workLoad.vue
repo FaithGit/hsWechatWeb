@@ -4,7 +4,11 @@
     <div class="headClass">
       运维组：
       <treeselect v-model="groupId" :multiple="false" :options="groupList" :normalizer="normalizer2"
-        placeholder="请选择运维组" :clearable="true" class="seachInput" />
+        placeholder="请选择运维组" :clearable="true" class="seachInput">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+          {{ node.label }}
+        </label>
+      </treeselect>
       <el-button type="primary" @click="seach">搜索</el-button>
       <el-button plain :type="mode==1?'primary':''" @click="toggleMode(1)">简略</el-button>
       <el-button plain :type="mode==2?'primary':''" @click="toggleMode(2)">详细(点位)</el-button>
@@ -311,7 +315,7 @@
 
       openXiugai() { //打开修改文件
         this.jifenVisible = true
-        this.uplist=[]
+        this.uplist = []
       },
       openPdfEdit() {
         uploadWorkloadPdf()

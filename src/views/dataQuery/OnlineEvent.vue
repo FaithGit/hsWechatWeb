@@ -4,15 +4,27 @@
     <div class="headClass">
       企业名称：
       <treeselect v-model="companyId" :multiple="false" :options="comlist" :normalizer="normalizer" placeholder="请选择企业"
-        class="seachInput" style="width:300px" @input="changeCom" :clearable="true" />
+        class="seachInput" style="width:300px" @input="changeCom" :clearable="true">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+          {{ node.label }}
+        </label>
+      </treeselect>
       点位名称：
       <treeselect v-model="pointId" :multiple="false" :options="dianweiList" :normalizer="normalizer2"
-        placeholder="请选择点位" class="seachInput" style="width:200px" :clearable="true" />
+        placeholder="请选择点位" class="seachInput" style="width:200px" :clearable="true">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+          {{ node.label }}
+        </label>
+      </treeselect>
 
       点位因子：
 
       <treeselect v-model="factorCode" :multiple="false" :options="factorList" :normalizer="normalizer3"
-        placeholder="请选择点位因子" class="seachInput" style="width:220px" :clearable="true" />
+        placeholder="请选择点位因子" class="seachInput" style="width:220px" :clearable="true">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+          {{ node.label }}
+        </label>
+      </treeselect>
 
       异常类型：
       <el-select v-model="eventCode" placeholder="请选择" clearable class="seachInput">
@@ -26,9 +38,7 @@
 
     <!-- 表格 -->
     <el-table v-loading="listLoading" :data="records" element-loading-text="加载中" border fit highlight-current-row stripe
-      style="margin-top:1.04vw"
-      height="calc(100vh - 84px - 60px - 40px - 32px - 1.04vw - 17px)"
-      >
+      style="margin-top:1.04vw" height="calc(100vh - 84px - 60px - 40px - 32px - 1.04vw - 17px)">
       <el-table-column align="center" label="序号" width="95">
         <template slot-scope="scope">
           {{ scope.$index+1 }}

@@ -7,10 +7,18 @@
       <el-input v-model="userName" class="seachInput" placeholder="请输入关键字" clearable />
       角色名：
       <treeselect v-model="roleId" :multiple="false" :options="roleList" :normalizer="normalizer3" placeholder="请选择角色"
-        class="seachInput" no-children-text="暂无数据" @open="openRole"  />
+        class="seachInput" no-children-text="暂无数据" @open="openRole">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+          {{ node.label }}
+        </label>
+      </treeselect>
       组名：
       <treeselect v-model="groupId" :multiple="false" :options="groupList" :normalizer="normalizer4" placeholder="请选择组"
-        class="seachInput" no-children-text="暂无数据" @open="openGroup" />
+        class="seachInput" no-children-text="暂无数据" @open="openGroup">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+          {{ node.label }}
+        </label>
+      </treeselect>
 
       <el-button type="primary" @click="seach" icon="el-icon-search">搜索</el-button>
       <el-button type="primary" @click="addUser" icon="el-icon-plus">新增用户</el-button>
@@ -62,11 +70,21 @@
         </el-form-item>
         <el-form-item label="角色名" prop="roleId">
           <treeselect v-model="form.roleId" :multiple="false" :options="roleList" :normalizer="normalizer3"
-            placeholder="请选择角色" class="seachInput" no-children-text="暂无数据" @input="parentroleIdChange" @open="openRole"  />
+            placeholder="请选择角色" class="seachInput" no-children-text="暂无数据" @input="parentroleIdChange" @open="openRole">
+            <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName"
+              :title="node.label">
+              {{ node.label }}
+            </label>
+          </treeselect>
         </el-form-item>
         <el-form-item label="组名">
           <treeselect v-model="form.groupId" :multiple="false" :options="groupList" :normalizer="normalizer4"
-            placeholder="请选择组" class="seachInput" no-children-text="暂无数据" @open="openGroup" />
+            placeholder="请选择组" class="seachInput" no-children-text="暂无数据" @open="openGroup">
+            <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName"
+              :title="node.label">
+              {{ node.label }}
+            </label>
+          </treeselect>
         </el-form-item>
 
         <div style="text-align:center;margin-top:80px">

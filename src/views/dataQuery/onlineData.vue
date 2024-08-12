@@ -4,10 +4,18 @@
     <div class="headClass">
       企业名称：
       <treeselect v-model="companyId" :multiple="false" :options="comlist" :normalizer="normalizer" placeholder="请选择企业"
-        class="seachInput" style="width:360px" @input="changeCom" />
+        class="seachInput" style="width:360px" @input="changeCom">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+          {{ node.label }}
+        </label>
+      </treeselect>
       点位名称：
       <treeselect v-model="pointId" :multiple="false" :options="dianweiList" :normalizer="normalizer2"
-        placeholder="请选择点位名称" class="seachInput" style="width:150px" @input="changePoint" />
+        placeholder="请选择点位名称" class="seachInput" style="width:150px" @input="changePoint">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+          {{ node.label }}
+        </label>
+      </treeselect>
       <!-- 运维组：
       <el-select v-model="pointStatus" placeholder="运维组" class="seachInput" clearable>
         <el-option v-for="item in groupList" :key="item.groupId" :label="item.groupName" :value="item.groupId" />
@@ -215,8 +223,8 @@
         }).then(res => {
           console.log(res)
           this.dianweiList = res.retData
-          this.pointId=res.retData[0].pointId
-          this.dciMn=res.retData[0].dciMn
+          this.pointId = res.retData[0].pointId
+          this.dciMn = res.retData[0].dciMn
         })
       },
       listShortPointSel2() { // 点位id

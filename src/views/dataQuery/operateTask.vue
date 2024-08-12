@@ -7,40 +7,22 @@
       运维人员：
       <el-input v-model="username" class="seachInput" placeholder="请输入运维人员" clearable />
       运维组：
-      <treeselect
-        v-model="groupId"
-        :multiple="false"
-        :options="groupList"
-        :normalizer="normalizer2"
-        placeholder="请选择运维组"
-        class="seachInput"
-      />
+      <treeselect v-model="groupId" :multiple="false" :options="groupList" :normalizer="normalizer2"
+        placeholder="请选择运维组" class="seachInput">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+          {{ node.label }}
+        </label>
+      </treeselect>
       时间范围：
-      <el-date-picker
-        v-model="time"
-        type="datetimerange"
-        :picker-options="pickerOptions"
-        range-separator="至"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-        align="right"
-      />
+      <el-date-picker v-model="time" type="datetimerange" :picker-options="pickerOptions" range-separator="至"
+        start-placeholder="开始日期" end-placeholder="结束日期" align="right" />
 
       <el-button type="primary" style="margin-left:10px" @click="seach">搜索</el-button>
     </div>
 
     <!-- 表格 -->
-    <el-table
-      v-loading="listLoading"
-      :data="records"
-      element-loading-text="加载中"
-      border
-      fit
-      highlight-current-row
-      stripe
-      style="margin-top:1.04vw"
-      height="calc(100vh - 84px - 60px - 40px - 32px - 1.04vw - 17px)"
-    >
+    <el-table v-loading="listLoading" :data="records" element-loading-text="加载中" border fit highlight-current-row stripe
+      style="margin-top:1.04vw" height="calc(100vh - 84px - 60px - 40px - 32px - 1.04vw - 17px)">
       <el-table-column align="center" label="#" width="95">
         <template slot-scope="scope">
           {{ scope.$index+1 }}
@@ -80,38 +62,17 @@
     </el-table>
     <!-- 分页 -->
     <div class="buttonPagination">
-      <el-pagination
-        :current-page="pageIndex"
-        :page-sizes="[10,20,30,40,50]"
-        :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
+      <el-pagination :current-page="pageIndex" :page-sizes="[10,20,30,40,50]" :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
+        @current-change="handleCurrentChange" />
     </div>
 
-    <el-dialog
-      v-if="chuVisible"
-      :title="pointNameDig"
-      :append-to-body="true"
-      :visible="chuVisible"
-      width="60%"
-      :close-on-click-modal="false"
-      @close="chuVisible=false"
-    >
+    <el-dialog v-if="chuVisible" :title="pointNameDig" :append-to-body="true" :visible="chuVisible" width="60%"
+      :close-on-click-modal="false" @close="chuVisible=false">
 
       <!-- 表格 -->
-      <el-table
-        :data="tableData"
-        element-loading-text="加载中"
-        border
-        fit
-        highlight-current-row
-        stripe
-        height="30.46vw"
-        style="margin-top:1.04vw"
-      >
+      <el-table :data="tableData" element-loading-text="加载中" border fit highlight-current-row stripe height="30.46vw"
+        style="margin-top:1.04vw">
 
         <el-table-column align="center" label="序号" width="95">
           <template slot-scope="scope">
@@ -138,15 +99,8 @@
       </el-table>
     </el-dialog>
 
-    <el-dialog
-      v-if="innerVisible"
-      title="运维详情"
-      :append-to-body="true"
-      :visible="innerVisible"
-      width="40%"
-      :close-on-click-modal="false"
-      @close="innerVisible=false"
-    >
+    <el-dialog v-if="innerVisible" title="运维详情" :append-to-body="true" :visible="innerVisible" width="40%"
+      :close-on-click-modal="false" @close="innerVisible=false">
       <ywStepAll :real-show-arr="realShowArr1" :instrumentName="instrumentName" />
     </el-dialog>
 
@@ -154,110 +108,110 @@
 </template>
 
 <script>
-import Treeselect from '@riophae/vue-treeselect'
-import ywStepAll from './component/ywStepAll.vue'
-// import the styles
-import '@riophae/vue-treeselect/dist/vue-treeselect.css'
-import {
-  listGroupSel,
-  listOperateTaskPageOnPC,
-  listOperate,
-  listStepTrees
-} from '@/api/table'
-import moment from 'moment'
+  import Treeselect from '@riophae/vue-treeselect'
+  import ywStepAll from './component/ywStepAll.vue'
+  // import the styles
+  import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+  import {
+    listGroupSel,
+    listOperateTaskPageOnPC,
+    listOperate,
+    listStepTrees
+  } from '@/api/table'
+  import moment from 'moment'
 
-import {
-  mapGetters
-} from 'vuex'
-export default {
-  name: 'YunweiList',
-  components: {
-    Treeselect,
-    ywStepAll
-  },
-  data() {
-    return {
-      factorCode: '',
-      pointName: '',
-      pointNameDig: '',
-      username: '',
-      pageIndex: 1,
-      groupId: null,
-      pageSize: 10,
-      listLoading: false,
-      addVisible: false,
-      chuVisible: false,
-      innerVisible: false,
-      total: 0,
-      instrumentName: '',
-      
-      records: [],
-      tableData: [],
-      groupList: [],
-      realShowArr1: [],
-      time: [],
-
-      normalizer2(node) {
-        return {
-          id: node.groupId,
-          label: node.groupName,
-          children: node.children && node.children.length ? node.children : 0
-        }
-      },
-      pickerOptions: {
-        shortcuts: [{
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近半年',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 180)
-            picker.$emit('pick', [start, end])
-          }
-        }]
-      }
-    }
-  },
-  computed: {
-    ...mapGetters([
-      'userId'
-    ])
-  },
-  mounted() {
-    listGroupSel({}).then(res => {
-      console.log(res)
-      this.groupList = res.retData
-    })
-    this.seach()
-  },
-  methods: {
-    listStepTrees(e) {
-      this.instrumentName=e.instrumentName
-      console.log(e)
-      listStepTrees({
-        operateId: e.operateId
-      }).then(res => {
-        console.log(res.retData, 'res.retData')
-        this.initArr(res.retData)
-      })
+  import {
+    mapGetters
+  } from 'vuex'
+  export default {
+    name: 'YunweiList',
+    components: {
+      Treeselect,
+      ywStepAll
     },
-    initArr(retData) {
-      /* eslint-disable */
+    data() {
+      return {
+        factorCode: '',
+        pointName: '',
+        pointNameDig: '',
+        username: '',
+        pageIndex: 1,
+        groupId: null,
+        pageSize: 10,
+        listLoading: false,
+        addVisible: false,
+        chuVisible: false,
+        innerVisible: false,
+        total: 0,
+        instrumentName: '',
+
+        records: [],
+        tableData: [],
+        groupList: [],
+        realShowArr1: [],
+        time: [],
+
+        normalizer2(node) {
+          return {
+            id: node.groupId,
+            label: node.groupName,
+            children: node.children && node.children.length ? node.children : 0
+          }
+        },
+        pickerOptions: {
+          shortcuts: [{
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          }, {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
+            }
+          }, {
+            text: '最近半年',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 180)
+              picker.$emit('pick', [start, end])
+            }
+          }]
+        }
+      }
+    },
+    computed: {
+      ...mapGetters([
+        'userId'
+      ])
+    },
+    mounted() {
+      listGroupSel({}).then(res => {
+        console.log(res)
+        this.groupList = res.retData
+      })
+      this.seach()
+    },
+    methods: {
+      listStepTrees(e) {
+        this.instrumentName = e.instrumentName
+        console.log(e)
+        listStepTrees({
+          operateId: e.operateId
+        }).then(res => {
+          console.log(res.retData, 'res.retData')
+          this.initArr(res.retData)
+        })
+      },
+      initArr(retData) {
+        /* eslint-disable */
         console.log('原始数组', retData)
         console.log('原始数组长度', retData.length)
         let realShowArr = []

@@ -8,7 +8,11 @@
       </el-date-picker>
       <span style="margin-left:10px">角色：</span>
       <treeselect v-model="roleIds" :multiple="true" :options="roleList" :normalizer="normalizer" placeholder="请选择"
-        class="seachInput"  style="width:300px" no-children-text="暂无数据" />
+        class="seachInput" style="width:300px" no-children-text="暂无数据">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+          {{ node.label }}
+        </label>
+      </treeselect>
       <el-button type="primary" @click="seach" style="margin-left:10px">搜索</el-button>
     </div>
 
@@ -96,7 +100,7 @@
 
         }).then(res => {
           console.log(res)
-          this.roleList=res.retData
+          this.roleList = res.retData
         })
       },
       listKhLoginInfo() {

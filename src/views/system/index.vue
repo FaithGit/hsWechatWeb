@@ -6,7 +6,11 @@
       <el-input v-model="comName" class="seachInput" placeholder="请输入关键字" clearable style="width:140px" />
       区域:
       <treeselect v-model="areaCode" :multiple="false" :options="allAreacode" :normalizer="normalizer"
-        placeholder="请选择区域" class="seachInput" no-children-text="暂无数据" />
+        placeholder="请选择区域" class="seachInput" no-children-text="暂无数据">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+          {{ node.label }}
+        </label>
+      </treeselect>
 
       污染源种类:
       <el-select v-model="pollutionType" placeholder="请选择" clearable class="seachInput" style="width:100px">
@@ -18,7 +22,11 @@
       </el-select>
       因子名称:
       <treeselect v-model="factorId" :multiple="false" :options="factorList" :normalizer="normalizer3"
-        placeholder="请选择因子" class="seachInput" style="width:140px" />
+        placeholder="请选择因子" class="seachInput" style="width:140px">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+          {{ node.label }}
+        </label>
+      </treeselect>
 
       在线污染源监控:
       <el-radio-group v-model="onlinePollutionSources" style="margin-left:5px;margin-right:10px">
@@ -147,7 +155,12 @@
         </el-form-item>
         <el-form-item label="区域" prop="areaCode">
           <treeselect v-model="form.areaCode" :multiple="false" :options="allAreacode" :normalizer="normalizer"
-            placeholder="请选择区域" class="seachInput" style="margin:0" @input="riskPersonDeptChangeValue" />
+            placeholder="请选择区域" class="seachInput" style="margin:0" @input="riskPersonDeptChangeValue">
+            <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName"
+              :title="node.label">
+              {{ node.label }}
+            </label>
+          </treeselect>
         </el-form-item>
         <el-form-item label="经度" prop="lng">
           <el-input v-model="form.lng" placeholder="请输入经度" />
@@ -196,7 +209,12 @@
         </el-form-item>
         <el-form-item label="区域" prop="areaCode">
           <treeselect v-model="form.areaCode" :multiple="false" :options="allAreacode" :normalizer="normalizer"
-            placeholder="请选择区域" class="seachInput" style="margin:0" @input="riskPersonDeptChangeValue" />
+            placeholder="请选择区域" class="seachInput" style="margin:0" @input="riskPersonDeptChangeValue">
+            <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName"
+              :title="node.label">
+              {{ node.label }}
+            </label>
+          </treeselect>
         </el-form-item>
         <el-form-item label="经度" prop="lng">
           <el-input v-model="form.lng" placeholder="请输入经度" />
@@ -567,8 +585,8 @@
           areaCode: null,
           lat: "",
           lng: "",
-          onlinePollutionSources:1,
-          workingCondition:0
+          onlinePollutionSources: 1,
+          workingCondition: 0
 
         }
       },

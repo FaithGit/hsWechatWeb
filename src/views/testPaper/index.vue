@@ -167,7 +167,12 @@
         </el-form-item>
         <el-form-item label="对应考试角色" prop="testUserIds">
           <treeselect v-model="form.testUserIds" :multiple="true" :options="userlist" :normalizer="normalizer2"
-            placeholder="请选择对应考试人员" no-children-text="暂无数据" :value-consists-of="'LEAF_PRIORITY'" />
+            placeholder="请选择对应考试人员" no-children-text="暂无数据" :value-consists-of="'LEAF_PRIORITY'">
+            <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName"
+              :title="node.label">
+              {{ node.label }}
+            </label>
+          </treeselect>
         </el-form-item>
         <el-row :gutter="20" style="margin-bottom:20px">
           <el-col :span="4" :offset="2" style="text-align:center">

@@ -4,16 +4,28 @@
     <div class="headClass">
       部门：
       <treeselect v-model="departmentId" :multiple="false" :options="bumenList" :normalizer="normalizer"
-        placeholder="请选择部门" class="seachInput" @input="changeDepartId" />
+        placeholder="请选择部门" class="seachInput" @input="changeDepartId">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+          {{ node.label }}
+        </label>
+      </treeselect>
       组：
       <treeselect v-model="groupIds" :multiple="true" :options="zuList" :normalizer="normalizer2" placeholder="请选择组"
-        style="min:width:500px;max-width:60vw" />
+        style="min:width:500px;max-width:60vw">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+          {{ node.label }}
+        </label>
+      </treeselect>
       <el-button type="primary" @click="seach" style="margin-left:10px">搜索</el-button>
     </div>
     <div style="margin-top:10px;display:flex;align-items: center">
       配置人：
       <treeselect v-model="preparationPeople" :multiple="false" :options="userList" :normalizer="normalizer3"
-        placeholder="请选择配置人" class="seachInput" />
+        placeholder="请选择配置人" class="seachInput">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+          {{ node.label }}
+        </label>
+      </treeselect>
 
       时间范围：
       <el-date-picker v-model="time" type="daterange" range-separator="至" start-placeholder="开始日期"

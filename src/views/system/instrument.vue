@@ -4,10 +4,18 @@
     <div class="headClass">
       企业名称：
       <treeselect v-model="companyId" :multiple="false" :options="comlist" :normalizer="normalizer" placeholder="请选择企业"
-        class="seachInput" style="width:200px" @input="changeCom" />
+        class="seachInput" style="width:200px" @input="changeCom">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+          {{ node.label }}
+        </label>
+      </treeselect>
       点位名称：
       <treeselect v-model="pointId" :multiple="false" :options="dianweiList" :normalizer="normalizer2"
-        placeholder="请选择点位名称" class="seachInput" style="width:150px" />
+        placeholder="请选择点位名称" class="seachInput" style="width:150px">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+          {{ node.label }}
+        </label>
+      </treeselect>
       设备类型：
       <el-select v-model="pointStatus" placeholder="请选择设备类型" class="seachInput" clearable>
         <el-option v-for="item in shebeilist" :key="item.instrumentType+item.instrumentTypeName"
@@ -76,11 +84,21 @@
       <el-form ref="form1" :model="form" label-width="140px" :rules="rules">
         <el-form-item label="企业名称" prop="companyId">
           <treeselect v-model="form.companyId" :multiple="false" :options="comlist" :normalizer="normalizer"
-            placeholder="请选择企业" :clearable="false" @input="changeCom2" />
+            placeholder="请选择企业" :clearable="false" @input="changeCom2">
+            <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName"
+              :title="node.label">
+              {{ node.label }}
+            </label>
+          </treeselect>
         </el-form-item>
         <el-form-item label="点位名称" prop="pointId">
           <treeselect v-model="form.pointId" :multiple="false" :options="dianweiList2" :normalizer="normalizer2"
-            placeholder="请选择点位名称" @input="riskPersonDeptChangeValue" />
+            placeholder="请选择点位名称" @input="riskPersonDeptChangeValue">
+            <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName"
+              :title="node.label">
+              {{ node.label }}
+            </label>
+          </treeselect>
         </el-form-item>
         <el-form-item label="设备类型" prop="instrumentType">
           <el-select v-model="form.instrumentType" placeholder="请选择设备类型" @change="toggleInstrumentType">
@@ -96,7 +114,8 @@
         </el-form-item>
 
         <el-form-item label="开始时间年份" prop="startYear">
-          <el-input v-model="form.startYear" placeholder="请输入开始时间年份" />
+          <el-date-picker prop="startYear" v-model="form.startYear" type="year" placeholder="请输入开始时间年份">
+          </el-date-picker>
         </el-form-item>
 
         <el-form-item label="设备厂家型号" prop="instrumentFactoryModel">
@@ -135,7 +154,9 @@
         </el-form-item>
 
         <el-form-item label="开始时间年份" prop="startYear">
-          <el-input v-model="form.startYear" placeholder="请输入开始时间年份" />
+          <el-date-picker prop="startYear" v-model="form.startYear" type="year" placeholder="请输入开始时间年份">
+          </el-date-picker>
+
         </el-form-item>
 
         <el-form-item label="设备厂家型号" prop="instrumentFactoryModel">
@@ -265,7 +286,7 @@
           startYear: [{
             required: true,
             message: '请输入开始时间年份',
-            trigger: 'blur'
+            trigger: 'change'
           }],
           instrumentName: [{
             required: true,

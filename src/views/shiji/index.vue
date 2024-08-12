@@ -73,7 +73,12 @@
         </el-form-item>
         <el-form-item label="选择药剂">
           <treeselect v-model="yaojiChoose" :multiple="true" :options="allyjList" :normalizer="normalizer"
-            placeholder="请选择药剂" @input="ShijiChoonseInput" />
+            placeholder="请选择药剂" @input="ShijiChoonseInput">
+            <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName"
+              :title="node.label">
+              {{ node.label }}
+            </label>
+          </treeselect>
         </el-form-item>
         <div style="padding-left:140px">
           <div v-for="item in form.reagentPharmaceuticalList" :key="item.pharmaceuticalId" class="card">
@@ -146,7 +151,12 @@
         </el-form-item>
         <el-form-item label="药剂名称">
           <treeselect v-model="pharmaceuticalId" :multiple="false" :options="allyjList" :normalizer="normalizer"
-            placeholder="请选择药剂" />
+            placeholder="请选择药剂">
+            <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName"
+              :title="node.label">
+              {{ node.label }}
+            </label>
+          </treeselect>
         </el-form-item>
         <el-form-item label="所需药剂数量">
           <el-input v-model="pharmaceuticalNum" placeholder="请输入所需药剂数量" />

@@ -4,7 +4,11 @@
     <div class="headClass">
       企业名称：
       <treeselect v-model="companyId" :multiple="false" :options="comlist" :normalizer="normalizer" placeholder="请选择企业"
-        class="seachInput" style="width:300px" />
+        class="seachInput" style="width:300px">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+          {{ node.label }}
+        </label>
+      </treeselect>
       点位名称：
       <el-input v-model="pointName" class="seachInput" placeholder="请输入点位名称" clearable />
 
@@ -28,12 +32,20 @@
     <div class="headClass" style="margin-top:10px">
       区域：
       <treeselect v-model="areaCode" :multiple="false" :options="allAreacode" :normalizer="normalizer4"
-        placeholder="请选择区域" class="seachInput" no-children-text="暂无数据" />
+        placeholder="请选择区域" class="seachInput" no-children-text="暂无数据">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+          {{ node.label }}
+        </label>
+      </treeselect>
       <span v-if="!computedRoleBoolean">
         运维组：
       </span>
       <treeselect v-if="!computedRoleBoolean" v-model="groupId" :multiple="false" :options="groupList"
-        :normalizer="normalizer2" placeholder="请选择运维组" class="seachInput" />
+        :normalizer="normalizer2" placeholder="请选择运维组" class="seachInput">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+          {{ node.label }}
+        </label>
+      </treeselect>
 
       是否传送数据：
       <el-select v-model="isDataSend" placeholder="是否传送数据" clearable class="seachInput">
@@ -169,7 +181,12 @@
       <el-form ref="form1" :model="form" :inline="true" label-width="120px" :rules="rules" label-position="top">
         <el-form-item v-if="futitle=='新增点位'" label="企业名称" prop="companyId" class="formWidth2">
           <treeselect v-model="form.companyId" :multiple="false" :options="comlist" :normalizer="normalizer"
-            placeholder="请选择企业" @input="riskPersonDeptChangeValue" />
+            placeholder="请选择企业" @input="riskPersonDeptChangeValue">
+            <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName"
+              :title="node.label">
+              {{ node.label }}
+            </label>
+          </treeselect>
         </el-form-item>
         <el-form-item v-if="futitle!='新增点位'" label="企业名称" prop="companyId" class="formWidth2">
           <el-input v-model="form.comName" placeholder="请输入点位名称" readonly="" />
@@ -212,7 +229,12 @@
           <el-popover placement="right" title="" width="200" trigger="hover" :content="computedLabel">
             <treeselect slot="reference" v-model="form.dischargeStandardId" :multiple="false"
               :options="dischargeStandardIdList" :normalizer="normalizer3" placeholder="请选择排放标准" :clearable="false"
-              class="fuSelect" @select="changeDischargeStandardId" />
+              class="fuSelect" @select="changeDischargeStandardId">
+              <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName"
+                :title="node.label">
+                {{ node.label }}
+              </label>
+            </treeselect>
           </el-popover>
         </el-form-item>
 
@@ -277,7 +299,12 @@
         </el-form-item>
         <el-form-item label="运维组" class="formWidth2">
           <treeselect v-model="form.groupId" :multiple="false" :options="groupList" :normalizer="normalizer2"
-            placeholder="请选择运维组" />
+            placeholder="请选择运维组">
+            <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName"
+              :title="node.label">
+              {{ node.label }}
+            </label>
+          </treeselect>
         </el-form-item>
 
         <el-form-item label="烟道截面积" prop="flueCrossArea" class="formWidth4">

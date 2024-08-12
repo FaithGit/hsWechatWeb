@@ -16,7 +16,8 @@
         故障处理 <el-button type="primary" style="margin-left:20px" @click="addTree">添加</el-button>
       </div>
       <div class="chooseBox" style="padding-top:20px">
-        <el-tree :data="treeList" node-key="id" default-expand-all :expand-on-click-node="false" :show-checkbox="false" draggable>
+        <el-tree :data="treeList" node-key="id" default-expand-all :expand-on-click-node="false" :show-checkbox="false"
+          draggable>
           <span class="custom-tree-node" slot-scope="{ node, data }">
             <el-input v-model="node.data.content" placeholder="请输入内容"></el-input>
             <span>
@@ -39,7 +40,13 @@
         </el-form-item>
         <el-form-item label="父级">
           <treeselect v-model="form.pid" :multiple="false" :options="treeList" :normalizer="normalizer"
-            :defaultExpandLevel='2' placeholder="请选择父级" class="seachInput" />
+            :defaultExpandLevel='2' placeholder="请选择父级" class="seachInput">
+
+            <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName"
+              :title="node.label">
+              {{ node.label }}
+            </label>
+          </treeselect>
         </el-form-item>
         <el-form-item label="排序号" prop="orderNum">
           <el-input v-model="form.orderNum" placeholder="请输入排序号" />
@@ -244,7 +251,7 @@
     overflow: auto;
   }
 
-   
+
 
   .chooseItem {
     height: 40px;

@@ -4,13 +4,25 @@
     <div class="headClass">
       企业名称：
       <treeselect v-model="companyId" :multiple="false" :options="comlist" :normalizer="normalizer" placeholder="请选择企业"
-        class="seachInput" style="width:300px" @input="changeCom" />
+        class="seachInput" style="width:300px" @input="changeCom">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+          {{ node.label }}
+        </label>
+      </treeselect>
       点位名称：
       <treeselect v-model="pointId" :multiple="false" :options="dianweiList" :normalizer="normalizer2"
-        placeholder="请选择点位" class="seachInput" style="width:300px" />
+        placeholder="请选择点位" class="seachInput" style="width:300px">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+          {{ node.label }}
+        </label>
+      </treeselect>
       因子名称：
       <treeselect v-model="factorId" :multiple="false" :options="factorList" :normalizer="normalizer3"
-        placeholder="请选择因子" class="seachInput" style="width:300px" />
+        placeholder="请选择因子" class="seachInput" style="width:300px">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+          {{ node.label }}
+        </label>
+      </treeselect>
 
       污染源种类：
       <el-select v-model="pollutionType" placeholder="请选择污染源种类" clearable class="seachInput">
@@ -113,15 +125,30 @@
       <el-form ref="form1" :model="form" label-width="200px" :rules="rules">
         <el-form-item label="企业名称" prop="companyId">
           <treeselect v-model="form.companyId" :multiple="false" :options="comlist" :normalizer="normalizer"
-            placeholder="请选择企业" :clearable="false" @input="changeCom2" />
+            placeholder="请选择企业" :clearable="false" @input="changeCom2">
+            <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName"
+              :title="node.label">
+              {{ node.label }}
+            </label>
+          </treeselect>
         </el-form-item>
         <el-form-item label="点位名称" prop="pointId">
           <treeselect v-model="form.pointId" :multiple="false" :options="dianweiList2" :normalizer="normalizer2"
-            placeholder="请选择点位名称" @input="changePointId" />
+            placeholder="请选择点位名称" @input="changePointId">
+            <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName"
+              :title="node.label">
+              {{ node.label }}
+            </label>
+          </treeselect>
         </el-form-item>
         <el-form-item label="因子名称" prop="factorCode">
           <treeselect v-model="form.factorCode" :multiple="false" :options="factorList" :normalizer="normalizer3"
-            placeholder="请选择因子" @input="changeFactorCode" />
+            placeholder="请选择因子" @input="changeFactorCode">
+            <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName"
+              :title="node.label">
+              {{ node.label }}
+            </label>
+          </treeselect>
         </el-form-item>
 
         <el-form-item label="单位">

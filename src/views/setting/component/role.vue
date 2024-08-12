@@ -37,7 +37,12 @@
         </el-form-item>
         <el-form-item label="部门" prop="departmentId">
           <treeselect v-model="form.departmentId" :multiple="false" :options="groupList" :normalizer="normalizer4"
-            placeholder="请选择部门" class="seachInput" no-children-text="暂无数据" @input="parentgroupIdChange" />
+            placeholder="请选择部门" class="seachInput" no-children-text="暂无数据" @input="parentgroupIdChange">
+            <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName"
+              :title="node.label">
+              {{ node.label }}
+            </label>
+          </treeselect>
         </el-form-item>
         <el-form-item label="是否属于海晟公司" prop="isHaisheng">
           <el-radio-group v-model="form.isHaisheng">

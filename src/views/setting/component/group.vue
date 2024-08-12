@@ -43,14 +43,24 @@
         </el-form-item>
         <el-form-item label="组长" prop="leaderId">
           <treeselect v-model="form.leaderId" :multiple="false" :options="userlist" :normalizer="normalizer2"
-            :clearable="false" placeholder="请选择用户" class="seachInput" no-children-text="暂无数据" @select="chooseUser" />
+            :clearable="false" placeholder="请选择用户" class="seachInput" no-children-text="暂无数据" @select="chooseUser" >
+                        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName"
+              :title="node.label">
+              {{ node.label }}
+            </label>
+          </treeselect>
         </el-form-item>
         <el-form-item label="车牌号" prop="licensePlate">
           <el-input v-model="form.licensePlate" placeholder="请输入车牌号" />
         </el-form-item>
         <el-form-item label="部门" prop="departmentId">
           <treeselect v-model="form.departmentId" :multiple="false" :options="groupList" :normalizer="normalizer4"
-            placeholder="请选择部门" class="seachInput" no-children-text="暂无数据" @input="parentgroupIdChange" />
+            placeholder="请选择部门" class="seachInput" no-children-text="暂无数据" @input="parentgroupIdChange" >
+                        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName"
+              :title="node.label">
+              {{ node.label }}
+            </label>
+          </treeselect>
         </el-form-item>
         <el-form-item label="是否属于在线运维" prop="isOnlineOperation">
           <el-radio-group v-model="form.isOnlineOperation">

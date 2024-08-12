@@ -61,7 +61,12 @@
         </el-form-item>
         <el-form-item label="父级菜单">
           <treeselect v-model="form.upMenuId" :multiple="false" :options="tableData" :normalizer="normalizer"
-            placeholder="请选择父级菜单" class="seachInput" no-children-text="暂无数据" />
+            placeholder="请选择父级菜单" class="seachInput" no-children-text="暂无数据">
+            <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName"
+              :title="node.label">
+              {{ node.label }}
+            </label>
+          </treeselect>
         </el-form-item>
         <el-form-item label="是否隐藏">
           <el-radio-group v-model="form.hidden">

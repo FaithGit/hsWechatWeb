@@ -4,10 +4,18 @@
     <div class="headClass">
       企业名称：
       <treeselect v-model="companyId" :multiple="false" :options="comlist" :normalizer="normalizer" placeholder="请选择企业"
-        class="seachInput" style="width:300px" @input="changeCom" />
+        class="seachInput" style="width:300px" @input="changeCom">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+          {{ node.label }}
+        </label>
+      </treeselect>
       点位名称：
       <treeselect v-model="pointId" :multiple="false" :options="dianweiList" :normalizer="normalizer2"
-        placeholder="请选择点位" class="seachInput" style="width:200px" />
+        placeholder="请选择点位" class="seachInput" style="width:200px">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
+          {{ node.label }}
+        </label>
+      </treeselect>
 
       是否已登记：
       <el-select v-model="isRegistered" placeholder="请选择" clearable class="seachInput" style="width:100px">
