@@ -11,8 +11,8 @@
       </div>
       <div class="buttomInfo">
         <div class="buttomInfoBox">
-          <img src="http://47.96.147.99:9000/haisheng/static/img/cheliangTelphone.png" class="cheliangTelphone" />
-          {{pointObj.telephone!= null?pointObj.telephone:'未绑定'}}
+          <img src="http://47.96.147.99:9000/haisheng/static/img/ywgroup.png" class="cheliangTelphone" />
+          {{pointObj.driverList[0].groupName}}
         </div>
         <div class="buttomInfoBox">
           <img src="http://47.96.147.99:9000/haisheng/static/img/cheliangAcc.png" class="cheliangTelphone" />
@@ -28,7 +28,12 @@
     <div class="carinfoBox" v-if="pointObj">
       <div class="infoBox" style="margin-top: 0.63vw;">
         <img src="http://47.96.147.99:9000/haisheng/static/img/cheliangStatus.png" class="cheliangSpeed" />
-        {{pointObj.name}}
+        <div v-for="item in pointObj.driverList" :key="item.telephone" @click=" navigator.clipboard.writeText(`${item.telephone}`);"
+          style="margin-right: 20px; display: flex;align-items: center;">
+          <img src="http://47.96.147.99:9000/haisheng/static/img/phone.png" style="width:0.8vw;margin-right:3px" alt=""
+            srcset="">
+          {{item.userName}}
+        </div>
       </div>
       <div class="infoBox">
         <img src="http://47.96.147.99:9000/haisheng/static/img/cheliangSpeed.png" class="cheliangSpeed" />

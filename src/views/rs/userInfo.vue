@@ -9,6 +9,12 @@
         <el-option v-for="item in departmentList" :key="item.departmentId" :label="item.departmentName"
           :value="item.departmentId" />
       </el-select>
+      状态：
+      <el-select v-model="status" class="seachInput" style="width:120px" clearable>
+        <el-option label="在职" :value="1" />
+        <el-option label="离职" :value="2" />
+      </el-select>
+
       <el-button type="primary" @click="seach">搜索</el-button>
       <el-button type="primary" @click="daochu" style="margin-left:10px" icon="el-icon-download">导出</el-button>
       <!-- <el-button type="primary" @click="addPeople">新增用户</el-button> -->
@@ -217,7 +223,7 @@
         userImages: [],
         comName: '',
         areaCode: null,
-        status: '',
+        status: 1,
         visible: false,
         editVisible: false,
         listLoading: false,
@@ -422,6 +428,7 @@
         listUserInfoPage({
           userName: this.userName,
           departmentId: this.departmentId,
+          status: this.status,
           pageIndex: this.pageIndex,
           pageSize: this.pageSize
         }).then(res => {

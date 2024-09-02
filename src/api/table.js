@@ -845,6 +845,8 @@ export function getRecentExam(data) { // 获取所有因子
 export function listVehicle(data) { // 获取所有因子
   return request({
     url: setting.baseUrl + '/gps/listVehicle',
+    // url:'http://192.168.2.36:9003/haisheng/gps/listVehicle',
+    
     method: 'post',
     data
   })

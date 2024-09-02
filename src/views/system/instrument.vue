@@ -206,6 +206,7 @@
   import {
     mapGetters
   } from 'vuex'
+import moment from 'moment'
   // import moment from 'moment'
   export default {
     name: 'Instrument',
@@ -594,6 +595,7 @@
           console.log(res)
           this.editVisible = true
           this.form = res.retData
+          this.form.startYear=this.form.startYear.toString()
         })
 
         console.log('🚀 ~ editPoint ~   this.form:', this.form)
@@ -624,6 +626,8 @@
         // }
         this.$refs.form1.validate((valid) => {
           if (valid) {
+            this.form.startYear=moment(this.form.startYear).format("YYYY")
+
             addInstrument(this.form).then(res => {
               console.log(res)
               this.$notify({
