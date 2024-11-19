@@ -58,6 +58,16 @@
         </template>
       </el-table-column>
 
+      <el-table-column align="center" label="正常下限">
+        <template slot-scope="scope">
+          {{ computedNull(scope.row.normalLowerLimit) }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="正常上限">
+        <template slot-scope="scope">
+          {{ computedNull(scope.row.normalUpperLimit) }}
+        </template>
+      </el-table-column>
       <el-table-column align="center" label="超标下限">
         <template slot-scope="scope">
           {{ computedNull(scope.row.alarmLowerLimit) }}
@@ -97,6 +107,11 @@
           {{ computedNull(scope.row.isCorrectedName) }}
         </template>
       </el-table-column>
+      <el-table-column align="center" label="超正常范围预警">
+        <template slot-scope="scope">
+          {{scope.row.isAboveNormal===1?"是":'否' }}
+        </template>
+      </el-table-column>
 
       <el-table-column align="center" label="小程序展示">
         <template slot-scope="scope">
@@ -116,12 +131,12 @@
     <!-- 分页 -->
     <div class="buttonPagination">
       <el-pagination :current-page="pageIndex" :page-sizes="[10,20,30,40,50]" :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
+        layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange" 
         @current-change="handleCurrentChange" />
     </div>
 
     <el-dialog v-if="addVisible" title="新增因子" :append-to-body="true" :visible="addVisible" width="40%"
-      :close-on-click-modal="false" @close="addVisible=false">
+      :close-on-click-modal="false" @close="addVisible=false" top="2vh">
       <el-form ref="form1" :model="form" label-width="200px" :rules="rules">
         <el-form-item label="企业名称" prop="companyId">
           <treeselect v-model="form.companyId" :multiple="false" :options="comlist" :normalizer="normalizer"
@@ -154,6 +169,12 @@
         <el-form-item label="单位">
           {{computedNull(form.unit)}}
         </el-form-item>
+        <el-form-item label="正常下限值">
+          <el-input v-model="form.normalLowerLimit" placeholder="请输入正常下限值" />
+        </el-form-item>
+        <el-form-item label="正常上限值">
+          <el-input v-model="form.normalUpperLimit" placeholder="请输入正常上限值" />
+        </el-form-item>
         <el-form-item label="浓度报警下限值" prop="alarmLowerLimit">
           <el-input-number v-model="form.alarmLowerLimit" placeholder="报警下限值" />
         </el-form-item>
@@ -181,6 +202,10 @@
           <el-switch v-model="form.isCorrected" active-text="是" inactive-text="否" :active-value="1"
             :inactive-value="0" />
         </el-form-item>
+        <el-form-item label="是否参与正常范围限值预警" prop="isAboveNormal">
+          <el-switch v-model="form.isAboveNormal" active-text="是" inactive-text="否" :active-value="1"
+            :inactive-value="0" />
+        </el-form-item>
         <div style="text-align:center;margin-top:80px">
           <el-button @click="addVisible=false">取 消</el-button>
           <el-button type="primary" @click="sumbitPoint">确 定</el-button>
@@ -189,7 +214,7 @@
     </el-dialog>
 
     <el-dialog v-if="editVisible" title="编辑因子" :append-to-body="true" :visible="editVisible" width="40%"
-      :close-on-click-modal="false" @close="editVisible=false">
+      :close-on-click-modal="false" @close="editVisible=false" top="2vh">
 
       <el-form ref="form1" :model="form" label-width="200px" :rules="rules">
         <el-form-item label="企业名称">
@@ -204,6 +229,12 @@
         <el-form-item label="单位">
           {{computedNull(form.unit)}}
         </el-form-item>
+        <el-form-item label="正常下限值">
+          <el-input v-model="form.normalLowerLimit" placeholder="请输入正常下限值" />
+        </el-form-item>
+        <el-form-item label="正常上限值">
+          <el-input v-model="form.normalUpperLimit" placeholder="请输入正常上限值" />
+        </el-form-item>
         <el-form-item label="浓度报警下限值" prop="alarmLowerLimit">
           <el-input-number v-model="form.alarmLowerLimit" placeholder="报警下限值" />
         </el-form-item>
@@ -229,6 +260,10 @@
         </el-form-item>
         <el-form-item label="是否参与折算判断" prop="isCorrected">
           <el-switch v-model="form.isCorrected" active-text="是" inactive-text="否" :active-value="1"
+            :inactive-value="0" />
+        </el-form-item>
+        <el-form-item label="是否参与正常范围限值预警" prop="isAboveNormal">
+          <el-switch v-model="form.isAboveNormal" active-text="是" inactive-text="否" :active-value="1"
             :inactive-value="0" />
         </el-form-item>
         <div style="text-align:center;margin-top:80px">
@@ -540,7 +575,11 @@
           isZeroOut: 1,
           isCorrected: 1,
           alarmLowerLimit: 0,
-          alarmUpperLimit: 0
+          alarmUpperLimit: 0,
+          isAboveNormal: 0,
+          normalLowerLimit: "",
+          normalUpperLimit: "",
+          isAboveNormal: 0
 
 
           // isAbnormalFluctuation: 1,

@@ -148,7 +148,7 @@ export default {
       // }
 
       listVehicle({
-        departmentId: '',
+        departmentId: 1,
         pointId: ''
       }).then(res => {
         console.log('listVehicle', res.retData)
@@ -159,7 +159,6 @@ export default {
           iconAnchor: new T.Point(30 * 0.6 / 2, 50 * 0.6)
         })
         res.retData.forEach(e => {
-          if (e.departmentId === 1) {
             console.log(gcj02towgs84(e.lng, e.lat))
             var label = new T.Label({
               text: e.licensePlate, // 文本标注的内容
@@ -172,7 +171,6 @@ export default {
             })
             this.mapTD.addOverLay(label)
             this.mapTD.addOverLay(marker)
-          }
         })
       })
     }
