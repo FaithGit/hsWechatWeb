@@ -242,7 +242,8 @@
   // import the styles
   import '@riophae/vue-treeselect/dist/vue-treeselect.css'
   import {
-    moblie
+    moblie,
+    socialCreditCodeAv
   } from '@/utils/asyncValidator'
 
   import {
@@ -334,7 +335,7 @@
           // }],
           socialCreditCode: [{
             required: true,
-            message: '请输入统一社会信用代码',
+            validator: socialCreditCodeAv,
             trigger: 'blur'
           }],
           areaCode: [{

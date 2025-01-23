@@ -34,6 +34,7 @@ const mutations = {
   },
   SET_userInfo: (state, userInfo) => {
     state.userId = userInfo.userId
+    state.userName = userInfo.userName
     state.roleId = userInfo.roleId
     state.groupId = userInfo.groupId
   }

@@ -85,6 +85,9 @@
         immediate: true
       }
     },
+    destroyed() {
+      window.clearInterval(this.time1)
+    },
     mounted() {
       this.getVerificationCode()
       this.time1 = setInterval(() => {

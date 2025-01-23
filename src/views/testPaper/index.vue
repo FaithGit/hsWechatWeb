@@ -289,6 +289,9 @@
         }, {
           value: 3,
           label: '考核'
+        }, {
+          value: 4,
+          label: '每日推送'
         }],
         status: '',
         examType: '',

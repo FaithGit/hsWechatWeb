@@ -31,6 +31,20 @@ export function moblie(rule, value, callback) {
     }
   }
 }
+
+export function socialCreditCodeAv(rule, value, callback) {
+  var reg = new RegExp(/^([0-9A-HJ-NP-RT-UW-Y]){2}([0-9]){6}([0-9A-HJ-NP-RT-UW-Y]{10})$/)
+
+  if (!reg.test(value)) {
+    console.log(reg.test(value))
+    return callback(new Error('请检查企业信用代码'))
+  } else {
+    callback()
+  }
+}
+
+
+
 export function password(rule, value, callback) {
   var reg = new RegExp(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,14}$/)
 

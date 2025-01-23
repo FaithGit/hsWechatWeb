@@ -846,7 +846,7 @@ export function listVehicle(data) { // 获取所有因子
   return request({
     url: setting.baseUrl + '/gps/listVehicle',
     // url:'http://192.168.2.36:9003/haisheng/gps/listVehicle',
-    
+
     method: 'post',
     data
   })
@@ -1303,7 +1303,6 @@ export function listLatestComparisonByPointPage(data) { // 获取所有因子
   })
 }
 
-
 export function getWorkloadPdf(data) { // 获取所有因子
   return request({
     url: setting.baseUrl + '/instrument/getWorkloadPdf',
@@ -1421,4 +1420,52 @@ export function updateRealSamplingQuantity(data) { // 获取所有因子
     data
   })
 }
-
+export function bottleInfoList(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/reagent/bottleInfoList',
+    method: 'post',
+    data
+  })
+}
+export function pagePushResultVO(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/pushRecord/pagePushResultVO',
+    method: 'post',
+    data
+  })
+}
+export function savePushRecord(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/pushRecord/savePushRecord',
+    method: 'post',
+    data
+  })
+}
+export function removePushRecord(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/pushRecord/removePushRecord',
+    method: 'post',
+    data
+  })
+}
+export function updatePushRecord(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/pushRecord/updatePushRecord',
+    method: 'post',
+    data
+  })
+}
+export function savePointStopRecord(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/point/savePointStopRecord',
+    method: 'post',
+    data
+  })
+}
+export function updatePointStopRecord(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/point/updatePointStopRecord',
+    method: 'post',
+    data
+  })
+}

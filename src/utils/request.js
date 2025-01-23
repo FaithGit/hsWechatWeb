@@ -46,7 +46,21 @@ service.interceptors.response.use(
     // if the custom code is not 20000, it is judged as an error.
     if (res.retCode === 1000 || res.retCode === 2011) {
       return res
-    } else {
+    } else if (res.retCode === 2001) {
+      Message({
+        message: res.retMsg+'，剩余次数:'+res.retData,
+        type: 'error',
+        duration: 4 * 1000
+      })
+      return Promise.reject(new Error(res.retMsg))
+    } else if (res.retCode === 2009) {
+      Message({
+        message: res.retMsg,
+        type: 'error',
+        duration: 4 * 1000
+      })
+      return Promise.reject(new Error(res.retMsg))
+    }  else {
       Message({
         message: res.retMsg,
         type: 'error',

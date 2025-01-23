@@ -32,6 +32,11 @@
       <el-table-column align="center" label="有效时间" prop="effectTime" />
       <el-table-column align="center" label="主要药剂浓度" prop="concentration" />
       <el-table-column align="center" label="主要含药剂名称" prop="concentrationName" />
+      <el-table-column align="center" label="试剂瓶类型">
+        <template slot-scope="scope">
+          {{scope.row.bottleTypeName||'-'}}
+        </template>
+      </el-table-column>
       <el-table-column align="center" label="操作" width="400">
         <template slot-scope="scope">
           <el-button @click="editShiji(scope.row)">编辑信息</el-button>
@@ -80,6 +85,13 @@
             </label>
           </treeselect>
         </el-form-item>
+        <el-form-item label="试剂瓶类型" prop="bottleTypeName">
+          <el-select v-model="form.bottleTypeName" placeholder="请选择试剂瓶类型">
+            <el-option v-for="item in bootleTypeList" :key="item.bootleTypeName" :label="item.bootleTypeName"
+              :value="item.bootleTypeName">
+            </el-option>
+          </el-select>
+        </el-form-item>
         <div style="padding-left:140px">
           <div v-for="item in form.reagentPharmaceuticalList" :key="item.pharmaceuticalId" class="card">
             <span style="min-width:180px"> {{ item.pharmaceuticalName }}( {{ item.unit }})</span>
@@ -115,6 +127,13 @@
         </el-form-item>
         <el-form-item label="主要含药剂名称" prop="concentrationName">
           <el-input v-model="form.concentrationName" placeholder="请输入主要含药剂名称" />
+        </el-form-item>
+        <el-form-item label="试剂瓶类型" prop="bottleTypeName">
+          <el-select v-model="form.bottleTypeName" placeholder="请选择试剂瓶类型">
+            <el-option v-for="item in bootleTypeList" :key="item.bootleTypeName" :label="item.bootleTypeName"
+              :value="item.bootleTypeName">
+            </el-option>
+          </el-select>
         </el-form-item>
         <div style="text-align:center">
           <el-button @click="editVisible=false">取 消</el-button>
@@ -185,7 +204,8 @@
     updateReagentPharmaceutical,
     removeReagentPharmaceutical,
     addReagentPharmaceutical,
-    exportPreparationReagent
+    exportPreparationReagent,
+    bottleInfoList
   } from '@/api/table'
   import {
     mapGetters
@@ -220,6 +240,7 @@
         form: {},
         allyjList: [], // 全部药剂列表
         yaojiChoose: [], // 全部药剂列表
+        bootleTypeList: [], // 全部药剂列表
         rules: {
           reagentName: [{
             required: true,
@@ -255,6 +276,11 @@
             required: true,
             message: '请选择视频学习开始时间',
             trigger: 'change'
+          }],
+          bottleTypeName: [{
+            required: true,
+            message: '请选择试剂瓶类型',
+            trigger: 'change'
           }]
 
         },
@@ -272,8 +298,15 @@
     mounted() {
       this.reagentList()
       this.listPharmaceutical()
+      this.bottleInfoList()
     },
     methods: {
+      bottleInfoList() {
+        bottleInfoList({}).then(res => {
+          this.bootleTypeList = res.retData
+          console.log(' this.bootleTypeList', this.bootleTypeList)
+        })
+      },
       computedNull(val) {
         if (val === undefined || val === null || val === '' || val === ' ') {
           return '-'
@@ -341,7 +374,8 @@
           effectTime: '',
           concentration: '',
           concentrationName: '',
-          reagentPharmaceuticalList: []
+          reagentPharmaceuticalList: [],
+          bottleTypeName: ""
         }
         this.yaojiChoose = []
       },
@@ -390,7 +424,8 @@
               effectTime: this.form.effectTime,
               concentration: this.form.concentration,
               concentrationName: this.form.concentrationName,
-              volumesBottle: this.form.volumesBottle
+              volumesBottle: this.form.volumesBottle,
+              bottleTypeName: this.form.bottleTypeName,
             }).then(res => {
               console.log(res)
               this.$notify({

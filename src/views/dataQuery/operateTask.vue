@@ -38,12 +38,12 @@
           {{ computedNull(scope.row.operateUsers) }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="运维时间">
+      <el-table-column align="center" label="运维时间" width="180" >
         <template slot-scope="scope">
           {{ computedNull(scope.row.completeTime) }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="完成状态">
+      <el-table-column align="center" label="完成状态" width="120">
         <template slot-scope="scope">
           {{ computedNull(scope.row.completeStatusName) }}
         </template>
@@ -51,12 +51,17 @@
       <el-table-column align="center" label="异常状态">
         <template slot-scope="scope">
           {{ computedNull(scope.row.exceptionStatusName) }}
+          <div v-if="scope.row.exceptionStatusName!='正常'">
+               {{ computedNull(scope.row.exceptionContent) }}
+          </div>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="操作" width="120">
+      <el-table-column align="center" label="操作">
         <template slot-scope="scope">
           <el-button type="primary" @click="openTaskIdDetails(scope.row)">详情</el-button>
+          <el-button v-if="scope.row.completeStatus==2||scope.row.completeStatus==3" type="primary"
+            @click="download(scope.row)" :loading="scope.row.downLoading">运维单pdf</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -119,7 +124,9 @@
     listStepTrees
   } from '@/api/table'
   import moment from 'moment'
-
+  import {
+    getToken
+  } from '@/utils/auth'
   import {
     mapGetters
   } from 'vuex'
@@ -200,6 +207,37 @@
       this.seach()
     },
     methods: {
+      async download(e) {
+        e.downLoading = true
+
+        try {
+          const response = await fetch('https://operate.sea-splendor.com/haisheng/operate/generateOperateTaskPdf', {
+            method: 'post',
+            headers: {
+              'token': getToken(),
+              "content-type": "application/json"
+            },
+            body: '{"operateTaskId": "8814"}'
+
+          });
+
+          if (!response.ok) {
+            throw new Error('网络响应失败');
+          }
+
+          const blob = await response.blob(); // 将响应数据转为 Blob
+          const downloadUrl = URL.createObjectURL(blob); // 创建临时链接
+          const link = document.createElement('a'); // 创建 <a> 元素
+          link.href = downloadUrl;
+          console.log("e", e)
+          e.downLoading = false
+          link.download = e.pointName + e.completeTime.substring(0, 13) + '.pdf';
+          link.click(); // 触发下载
+          URL.revokeObjectURL(downloadUrl); // 释放 URL
+        } catch (error) {
+          console.error('文件下载失败:', error);
+        }
+      },
       listStepTrees(e) {
         this.instrumentName = e.instrumentName
         console.log(e)
@@ -317,7 +355,7 @@
               }
             }
 
-            //judgeType 判断类型 0不做判断1存在否就走子流程2存在是就走子流程
+            //judgeType 判断类型 0不做判断 1存在否就走子流程 2存在是就走子流程
 
           }
         })
@@ -363,7 +401,11 @@
           pageSize: this.pageSize
         }).then(res => {
           console.log(res)
-          this.records = res.retData.records
+          let temp = res.retData.records
+          temp.forEach(e => {
+            e.downLoading = false
+          })
+          this.records = temp
           this.total = res.retData.total
         })
       },
