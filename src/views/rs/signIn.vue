@@ -117,8 +117,6 @@
     addTraining,
     deleteTraining,
     getTraining,
-    listTrainingPage,
-    listUserTree,
     listSignInPage,
     addSignIn
   } from '@/api/table'
@@ -220,7 +218,6 @@
     },
     mounted() {
       // this.listTrainingPage()
-      // this.listUserTree()
       this.listSignInPage()
     },
     methods: {

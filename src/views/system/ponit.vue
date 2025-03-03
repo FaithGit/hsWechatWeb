@@ -154,7 +154,10 @@
                   scope.row.pointStopRecordList[0].endTime
                 "
               >
-                <div slot="reference" style="text-decoration: underline;color: blueviolet;">
+                <div
+                  slot="reference"
+                  style="text-decoration: underline; color: blueviolet"
+                >
                   {{ computedNull(scope.row.pointStatusName) }}
                 </div>
               </el-popover>
@@ -183,7 +186,7 @@
           {{ computedNull(scope.row.concernLevelName) }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="数采仪编码(mn)" width="140">
+      <el-table-column align="center" label="数采仪编码(mn)" width="120">
         <template slot-scope="scope">
           {{ computedNull(scope.row.dciMn) }}
           <div v-if="scope.row.sendStatus === 1" class="xiaolvdian" />
@@ -200,7 +203,7 @@
           {{ computedNull(scope.row.dciIp) }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="参数" width="220">
+      <el-table-column align="center" label="参数" width="200">
         <template slot-scope="scope">
           <div>
             烟道截面积：
@@ -268,6 +271,17 @@
             COD=TOC* {{ computedNull(scope.row.correlationCoefficientK) }} +
             {{ computedNull(scope.row.correlationCoefficientB) }}
           </div>
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" label="地图显示" width="78  ">
+        <template slot-scope="scope">
+          <div
+            style="text-align: center"
+          >
+          {{scope.row.mapShowStatus==1?'显示':'不显示'}}
+          </div>
+
         </template>
       </el-table-column>
 
@@ -522,11 +536,19 @@
         <el-form-item label="数采仪ip" prop="dciIp" class="formWidth4">
           <el-input v-model="form.dciIp" placeholder="请输入数采仪ip" />
         </el-form-item>
-
+        <el-form-item label="地图显示" prop="mapShowStatus" class="formWidth4">
+          <el-switch
+            v-model="form.mapShowStatus"
+            active-text="显示 "
+            inactive-text="不显示"
+            :active-value="1"
+            :inactive-value="0"
+          />
+        </el-form-item>
         <el-form-item label="数采仪编码mn号" prop="dciMn" class="formWidth2">
           <el-input v-model="form.dciMn" placeholder="请输入数采仪编码mn号  " />
         </el-form-item>
-        <el-form-item label="视频Ip" prop="dciMn" class="formWidth2">
+        <el-form-item label="视频Ip" prop="dciMn" class="formWidth4">
           <el-input v-model="form.spIp" placeholder="请输入视频Ip" />
         </el-form-item>
         <el-form-item label="门禁Ip" prop="dciMn" class="formWidth2">
@@ -757,11 +779,10 @@
         </el-table-column>
 
         <el-table-column align="center" label="操作" width="100">
-        <template slot-scope="scope">
-          <el-button @click="editStopDan(scope.row)">编辑</el-button>
-        </template>
-      </el-table-column>
-
+          <template slot-scope="scope">
+            <el-button @click="editStopDan(scope.row)">编辑</el-button>
+          </template>
+        </el-table-column>
       </el-table>
 
       <el-dialog
@@ -797,6 +818,7 @@
                 ></el-date-picker>
               </el-form-item>
             </el-col>
+            <div style="color: #aaa; font-size: 12px">包含选中日期</div>
           </el-form-item>
           <el-form-item label="备注">
             <el-input type="textarea" v-model="form2.remark"></el-input>
@@ -806,8 +828,8 @@
             <el-upload
               action="#"
               accept=".jpg,.jpeg,.png"
-              :on-change="handleChangeID"
-              :on-remove="handleRemoveID"
+              :on-change="handleChangeTY"
+              :on-remove="handleRemoveTY"
               :auto-upload="false"
               :file-list="zhiweiList"
               list-type="picture"
@@ -857,7 +879,7 @@ import {
   listDictionarySel,
   getCompanyById,
   savePointStopRecord,
-  updatePointStopRecord
+  updatePointStopRecord,
 } from "@/api/table";
 import { mapGetters } from "vuex";
 import { getToken } from "@/utils/auth";
@@ -1344,6 +1366,7 @@ export default {
         companyId: null,
         groupId: null,
         isDataSend: 0,
+        mapShowStatus: 1,
       };
       this.IDList = [];
       if (this.companyId) {
@@ -1493,8 +1516,8 @@ export default {
         this.openStoplistVisible = true;
       });
     },
-    handleChangeID(file, fileList) {
-      // 身份附件上传
+    handleChangeTY(file, fileList) {
+      // 停运记录上传
       var formData = new FormData();
       formData.append("file", file.raw);
       formData.append("type", "certificate");
@@ -1510,7 +1533,7 @@ export default {
           this.zhiweiList.push(res.data.retData);
         });
     },
-    handleRemoveID(file, fileList) {
+    handleRemoveTY(file, fileList) {
       // 身份附件删除
       console.log(file, fileList);
       this.zhiweiList = fileList;
@@ -1529,7 +1552,10 @@ export default {
           console.log(moment(this.form2.endTime).format("YYYY-MM-DD"));
 
           if (moment(this.form2.endTime).isBefore(this.form2.startTime)) {
-            this.$notify({ type: "error", message: "结束时间不能早于开始时间" });
+            this.$notify({
+              type: "error",
+              message: "结束时间不能早于开始时间",
+            });
             return;
           }
           if (this.zhiweiList.length == 0) {
@@ -1573,7 +1599,10 @@ export default {
           console.log(moment(this.form2.startTime).format("YYYY-MM-DD"));
           console.log(moment(this.form2.endTime).format("YYYY-MM-DD"));
           if (moment(this.form2.endTime).isBefore(this.form2.startTime)) {
-            this.$notify({ type: "error", message: "结束时间不能早于开始时间" });
+            this.$notify({
+              type: "error",
+              message: "结束时间不能早于开始时间",
+            });
             return;
           }
           if (this.zhiweiList.length == 0) {
@@ -1615,18 +1644,17 @@ export default {
       this.openStoplistVisible = false;
       this.listPointPage();
     },
-    editStopDan(e){
-      console.log(e)
-      this.form2=e
-      this.stoplistVisible=true
-      this.stoplistTitle="更新停运记录"
-      let fileList=[]
-      this.form2.fileList.forEach(e=>{
-        fileList.push({name:e.fileName,url:e.fileUrl})
-      })
-      this.zhiweiList=fileList
-
-    }
+    editStopDan(e) {
+      console.log(e);
+      this.form2 = e;
+      this.stoplistVisible = true;
+      this.stoplistTitle = "更新停运记录";
+      let fileList = [];
+      this.form2.fileList.forEach((e) => {
+        fileList.push({ name: e.fileName, url: e.fileUrl });
+      });
+      this.zhiweiList = fileList;
+    },
   },
 };
 </script>

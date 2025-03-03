@@ -28,7 +28,8 @@
       <el-table-column align="center" label="培训类型" prop="trainingTypeName" width="100" />
       <el-table-column align="center" label="培训内容" prop="trainingContent" />
       <el-table-column align="center" label="培训时间" prop="trainingTime" width="180" />
-      <el-table-column align="center" label="受训人" prop="trainees" />
+      <el-table-column align="center" label="已签到" prop="trainees" />
+      <el-table-column align="center" label="未签到" prop="notTrainees" />
       <el-table-column align="center" label="关联签到">
         <template slot-scope="scope">
           {{ computedNull(scope.row.signInTheme) }}
