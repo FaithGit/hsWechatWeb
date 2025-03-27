@@ -65,6 +65,9 @@ Vue.use(ElementUI, {
 
 Vue.config.productionTip = false
 
+import htmlToPdf from '@/utils/pdf.js'
+Vue.use(htmlToPdf)
+
 new Vue({
   el: '#app',
   router,

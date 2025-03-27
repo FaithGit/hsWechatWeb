@@ -1469,3 +1469,38 @@ export function updatePointStopRecord(data) { // 获取所有因子
     data
   })
 }
+export function exportExamResult(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/exam/exportExamResult',
+    method: 'post',
+    data
+  })
+}
+export function listGasPage(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/gas/listGasPage',
+    method: 'post',
+    data
+  })
+}
+export function saveGas(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/gas/saveGas',
+    method: 'post',
+    data
+  })
+}
+export function updateGas(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/gas/updateGas',
+    method: 'post',
+    data
+  })
+}
+export function removeGas(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/gas/removeGas',
+    method: 'post',
+    data
+  })
+}

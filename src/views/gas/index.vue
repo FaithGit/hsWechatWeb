@@ -2,10 +2,10 @@
   <div class="testPaper">
     <!-- 条件栏 -->
     <div>
-      标液名称：
+      标气名称：
       <el-input v-model="byname" class="seachInput" placeholder="请输入关键字" clearable />
       <el-button type="primary" @click="seach">搜索</el-button>
-      <el-button type="primary" @click="addYaoji">新增标液</el-button>
+      <el-button type="primary" @click="addYaoji">新增标气</el-button>
     </div>
 
     <!-- 表格 -->
@@ -25,10 +25,9 @@
           {{ scope.$index+1 }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="标液名称" prop="name" />
-      <el-table-column align="center" label="每毫升标液需要的量" prop="concentrationCoefficient" />
-      <el-table-column align="center" label="有效天数" prop="effectDay" />
-      <el-table-column align="center" label="标液单位" prop="unit" />
+      <el-table-column align="center" label="标气名称" prop="name" />
+      <el-table-column align="center" label="化学式" prop="chemicalFormula" />
+      <el-table-column align="center" label="标气单位" prop="unit" />
       <el-table-column align="center" label="操作">
         <template slot-scope="scope">
           <el-button @click="editShiji(scope.row)">编辑</el-button>
@@ -51,7 +50,7 @@
 
     <el-dialog
       v-if="addVisible"
-      title="新增标液"
+      title="新增标气"
       :append-to-body="true"
       :visible="addVisible"
       width="40%"
@@ -59,14 +58,14 @@
       @close="addVisible=false"
     >
       <el-form ref="form1" :model="form" label-width="160px" :rules="rules">
-        <el-form-item label="标液名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入标液名称" />
+        <el-form-item label="标气名称" prop="name">
+          <el-input v-model="form.name" placeholder="请输入标气名称" />
         </el-form-item>
-        <el-form-item label="每毫升标液需要的量" prop="concentrationCoefficient">
-          <el-input v-model="form.concentrationCoefficient" placeholder="请输入每毫升标液需要的量" />
+        <el-form-item label="化学式" prop="chemicalFormula">
+          <el-input v-model="form.chemicalFormula" placeholder="请输入化学式" />
         </el-form-item>
-        <el-form-item label="有效天数" prop="effectDay">
-          <el-input v-model="form.effectDay" placeholder="请输入有效天数" />
+        <el-form-item label="单位">
+          <el-input v-model="form.unit" placeholder="请输入单位" />
         </el-form-item>
         <div style="text-align:center;margin-top:80px">
           <el-button @click="addVisible=false">取 消</el-button>
@@ -76,7 +75,7 @@
     </el-dialog>
     <el-dialog
       v-if="editVisible"
-      title="编辑标液"
+      title="编辑标气"
       :append-to-body="true"
       :visible="editVisible"
       width="40%"
@@ -84,14 +83,14 @@
       @close="editVisible=false"
     >
       <el-form ref="form1" :model="form" label-width="160px" :rules="rules">
-        <el-form-item label="标液名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入标液名称" />
+        <el-form-item label="标气名称" prop="name">
+          <el-input v-model="form.name" placeholder="请输入标气名称" />
         </el-form-item>
-        <el-form-item label="每毫升标液需要的量" prop="concentrationCoefficient">
-          <el-input v-model="form.concentrationCoefficient" placeholder="请输入每毫升标液需要的量" />
+        <el-form-item label="化学式" prop="chemicalFormula">
+          <el-input v-model="form.chemicalFormula" placeholder="请输入化学式" />
         </el-form-item>
-        <el-form-item label="有效天数" prop="effectDay">
-          <el-input v-model="form.effectDay" placeholder="请输入有效天数" />
+        <el-form-item label="单位" >
+          <el-input v-model="form.unit" placeholder="请输入单位" />
         </el-form-item>
         <div style="text-align:center;margin-top:80px">
           <el-button @click="editVisible=false">取 消</el-button>
@@ -108,17 +107,17 @@ import {
   getReagent,
   addPharmaceutical,
   updatePharmaceutical,
-  updateStandardSolution,
-  listStandardSolution,
-  addStandardSolution,
-  removeStandardSolution
+  updateGas,
+  listGasPage,
+  saveGas,
+  removeGas
 } from '@/api/table'
 import {
   mapGetters
 } from 'vuex'
 // import moment from 'moment'
 export default {
-  name: 'Biaoye',
+  name: 'Gas',
   computed: {
     ...mapGetters([
       'userId'
@@ -141,17 +140,17 @@ export default {
       rules: {
         name: [{
           required: true,
-          message: '请输入标液名称',
+          message: '请输入标气名称',
           trigger: 'blur'
         }],
-        concentrationCoefficient: [{
+        chemicalFormula: [{
           required: true,
-          message: '请输入每毫升标液需要的量',
+          message: '请输入化学式',
           trigger: 'blur'
         }],
-        effectDay: [{
+        unit: [{
           required: true,
-          message: '请输入有效天数',
+          message: '请输入单位',
           trigger: 'blur'
         }]
       }
@@ -159,20 +158,20 @@ export default {
     }
   },
   mounted() {
-    this.listStandardSolution()
+    this.listGasPage()
   },
   methods: {
     handleSizeChange(val) {
       this.pageSize = val
-      this.listStandardSolution()
+      this.listGasPage()
     },
     handleCurrentChange(val) {
       this.pageIndex = val
-      this.listStandardSolution()
+      this.listGasPage()
     },
     seach() {
       this.pageIndex = 1
-      this.listStandardSolution()
+      this.listGasPage()
     },
     editShiji(e) {
       this.editVisible = true
@@ -184,14 +183,14 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        removeStandardSolution({
+        removeGas({
           id: e.id
         }).then(res => {
           this.$notify({
             type: 'success',
             message: res.retMsg
           })
-          this.listStandardSolution()
+          this.listGasPage()
         })
       })
     },
@@ -202,14 +201,14 @@ export default {
     sumbityaoji() {
       this.$refs.form1.validate((valid) => {
         if (valid) {
-          addStandardSolution(this.form).then(res => {
+          saveGas(this.form).then(res => {
             console.log(res)
             this.$notify({
               type: 'success',
               message: res.retMsg
             })
             this.addVisible = false
-            this.listStandardSolution()
+            this.listGasPage()
           })
         }
       })
@@ -217,23 +216,23 @@ export default {
     editSubmit() {
       this.$refs.form1.validate((valid) => {
         if (valid) {
-          updateStandardSolution(this.form).then(res => {
+          updateGas(this.form).then(res => {
             console.log(res)
             this.$notify({
               type: 'success',
               message: res.retMsg
             })
             this.editVisible = false
-            this.listStandardSolution()
+            this.listGasPage()
           })
         }
       })
     },
-    listStandardSolution() { // 全部试剂 新增使用
-      listStandardSolution({
+    listGasPage() { // 全部试剂 新增使用
+      listGasPage({
         pageIndex: this.pageIndex,
         pageSize: this.pageSize,
-        name: this.byname
+        gasName: this.byname
       }).then(res => {
         console.log(res)
         this.records = res.retData.records
