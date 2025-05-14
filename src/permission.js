@@ -47,6 +47,7 @@ router.beforeEach(async (to, from, next) => {
           var accessRoutes = ''
           accessRoutes = await store.dispatch('permission/generateRoutes', [roleId])
           router.addRoutes(accessRoutes) // 动态添加可访问路由表
+          //这里添加异步路由
           router.options.routes = store.getters.permission_routes
           next({
             ...to,

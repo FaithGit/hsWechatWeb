@@ -106,6 +106,30 @@
               :label="item.instrumentTypeName" :value="item.instrumentType" />
           </el-select>
         </el-form-item>
+
+        <el-form-item prop="correlationCoefficientK" v-if="form.instrumentType==2">
+          <div slot="label" class="fulabel">
+            相关性系数-K
+            <el-popover placement="top-start" width="200" trigger="hover" content="相关性系数使用计算说明: COD = TOC * K + B">
+              <i slot="reference" class="el-icon-question" />
+            </el-popover>
+          </div>
+          <el-input v-model="form.correlationCoefficientK" placeholder="相关性系数-K" />
+        </el-form-item>
+
+        <el-form-item prop="correlationCoefficientB" v-if="form.instrumentType==2">
+          <div slot="label" class="fulabel">
+            相关性系数-B
+            <el-popover placement="top-start" width="200" trigger="hover" content="相关性系数使用计算说明: COD = TOC * K + B">
+              <i slot="reference" class="el-icon-question" />
+            </el-popover>
+          </div>
+          <el-input v-model="form.correlationCoefficientB" placeholder="相关性系数-B" />
+        </el-form-item>
+
+
+
+
         <el-form-item label="设备名称" prop="instrumentName">
           <el-input v-model="form.instrumentName" placeholder="请输入设备名称" />
         </el-form-item>
@@ -150,6 +174,25 @@
             <el-option v-for="item in shebeilist" :key="'2' + item.instrumentType + item.instrumentTypeName"
               :label="item.instrumentTypeName" :value="item.instrumentType" />
           </el-select>
+        </el-form-item>
+        <el-form-item prop="correlationCoefficientK" v-if="form.instrumentType==2">
+          <div slot="label" class="fulabel">
+            相关性系数-K
+            <el-popover placement="top-start" width="200" trigger="hover" content="相关性系数使用计算说明: COD = TOC * K + B">
+              <i slot="reference" class="el-icon-question" />
+            </el-popover>
+          </div>
+          <el-input v-model="form.correlationCoefficientK" placeholder="相关性系数-K" />
+        </el-form-item>
+
+        <el-form-item prop="correlationCoefficientB" v-if="form.instrumentType==2">
+          <div slot="label" class="fulabel">
+            相关性系数-B
+            <el-popover placement="top-start" width="200" trigger="hover" content="相关性系数使用计算说明: COD = TOC * K + B">
+              <i slot="reference" class="el-icon-question" />
+            </el-popover>
+          </div>
+          <el-input v-model="form.correlationCoefficientB" placeholder="相关性系数-B" />
         </el-form-item>
         <el-form-item label="设备名称" prop="instrumentName">
           <el-input v-model="form.instrumentName" placeholder="请输入设备名称" />
@@ -277,6 +320,16 @@ export default {
           required: true,
           message: '请输入设备类型',
           trigger: 'change'
+        }],
+        correlationCoefficientK: [{
+          required: true,
+          message: '请输入相关性系数-K',
+          trigger: 'input'
+        }],
+        correlationCoefficientB: [{
+          required: true,
+          message: '请输入相关性系数-B',
+          trigger: 'input'
         }],
 
         companyId: [{
@@ -415,8 +468,8 @@ export default {
         return i.instrumentType === e
       })
       console.log(findObj)
-      this.form.instrumentName = findObj.instrumentTypeName
-      this.form.instrumentRealName = findObj.instrumentTypeName
+      this.$set(this.form, 'instrumentName', findObj.instrumentTypeName);
+      this.$set(this.form, 'instrumentRealName', findObj.instrumentTypeName);
       this.form.workload = findObj.workload
     },
     riskPersonDeptChangeValue() {
@@ -715,6 +768,17 @@ export default {
 .headClass {
   display: flex;
   align-items: center;
+}
+
+.fulabel {
+  text-align: right;
+  vertical-align: middle;
+  float: right;
+  font-size: 14px;
+  color: #606266;
+  line-height: 40px;
+  padding: 0 12px 0 0;
+  box-sizing: border-box;
 }
 </style>
 <style>

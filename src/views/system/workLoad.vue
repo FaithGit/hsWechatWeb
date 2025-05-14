@@ -262,6 +262,7 @@ import {
   updateInstrumentWorkload,
   getWorkloadPdf,
   uploadWorkloadPdf,
+  exportWorkload
 } from "@/api/table";
 import { mapGetters } from "vuex";
 
