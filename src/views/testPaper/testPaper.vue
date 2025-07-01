@@ -15,7 +15,23 @@
         <el-option v-for="item in userExamStatusList" :key="item.label" :label="item.label" :value="item.value" />
       </el-select>
       <el-button type="primary" style="margin-left: 10px" @click="seach">搜索</el-button>
-      <el-button type="primary" icon="el-icon-download" style="margin-left: 10px" @click="daochuAjax" v-loading="loading">导出</el-button>
+      <el-button type="primary" icon="el-icon-download" style="margin-left: 10px" @click="daochuAjax"
+        v-loading="loading">导出</el-button>
+
+      <el-popover placement="top" v-model="visible">
+        <div style="margin-bottom: 10px;">请选择导出月份</div>
+        <el-date-picker v-model="month2" type="month" placeholder="选择月" :clearable="false">
+        </el-date-picker>
+        <div style="text-align: right; margin-top: 10px">
+          <el-button size="mini" type="text" @click="visible = false">取消</el-button>
+          <el-button type="primary" size="mini" @click="daochu2">确定</el-button>
+        </div>
+        <el-button slot="reference" type="primary" icon="el-icon-download" style="margin-left: 10px"
+          v-loading="loading">导出每日推送月统计</el-button>
+      </el-popover>
+
+
+
     </div>
     <!-- 表格 -->
     <el-table :data="records" element-loading-text="加载中" border fit stripe highlight-current-row
@@ -52,12 +68,8 @@
     </div>
 
     <el-dialog :visible="dialogVisible" width="700px" @close="dialogVisible = false" top="2%">
-
-
-
       <div class="queBox" id="queBox">
         <div v-for="(item, index) in questions" :key="item.questionId" class="timu">
-
           <div class="checkExamName" v-if="index == 0">
             {{ checkExamName }} - {{ zuotiren }}
             <div class="score">
@@ -107,7 +119,8 @@
 </template>
 
 <script>
-import { listUserExamPage, exportUserExam, getExam, exportExamResult } from "@/api/table";
+import { listUserExamPage, exportUserExam, getExam, exportExamResult, exportStatisticsUserMonthDayPush } from "@/api/table";
+import moment from "moment/moment";
 import { mapGetters } from "vuex";
 // import moment from 'moment'
 export default {
@@ -130,8 +143,10 @@ export default {
       time: "",
       examType: "",
       dialogVisible: false,
+      visible: false,
       loading: false,
       questions: [],
+      month2: moment().format("YYYY-MM-DD HH:mm:ss"),
       examTypeOptions: [
         {
           value: 1,
@@ -209,8 +224,20 @@ export default {
     this.listUserExamPage();
   },
   methods: {
+    daochu2() {
+      console.log("??", moment(this.month2).startOf('months').format("YYYY-MM-DD HH:mm:ss"))
+      exportStatisticsUserMonthDayPush({
+        startTime: moment(this.month2).startOf('months').format("YYYY-MM-DD HH:mm:ss"),
+        endTime: moment(this.month2).startOf('month').subtract('month', -1).format("YYYY-MM-DD HH:mm:ss"),
+      }).then((res) => {
+        console.log(res);
+        this.visible = false
+        this.$message.success("导出成功");
+        window.open(res.retData);
+      });
+    },
     daochuAjax() {
-      this.loading=true
+      this.loading = true
       exportExamResult({
         examName: this.examName || "",
         userName: this.userName || "",
@@ -218,7 +245,7 @@ export default {
         userExamStatus: this.userExamStatus || "",
       }).then((res) => {
         console.log(res);
-        this.loading=false
+        this.loading = false
         this.$message.success("导出成功");
         window.open(res.retData);
       });

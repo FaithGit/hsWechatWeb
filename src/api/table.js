@@ -1504,3 +1504,31 @@ export function removeGas(data) { // 获取所有因子
     data
   })
 }
+export function exportInstrument(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/instrument/exportInstrument',
+    method: 'post',
+    data
+  })
+}
+export function exportStatisticsUserMonthDayPush(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/exam/exportStatisticsUserMonthDayPush',
+    method: 'post',
+    data
+  })
+}
+export function pagePartReplaceRecord(data) { // 获取所有因子
+  return request({
+    url: setting.baseUrl + '/partReplace/pagePartReplaceRecord',
+    method: 'post',
+    data
+  })
+}
+export function exportPartReplaceRecord(data) { // 导出
+  return request({
+    url: setting.baseUrl + '/partReplace/exportPartReplaceRecord',
+    method: 'post',
+    data
+  })
+}

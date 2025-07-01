@@ -36,6 +36,7 @@
       <el-button type="primary" @click="seach">搜索</el-button>
       <el-button type="primary" @click="addShebei">新增设备</el-button>
       <el-button type="primary" @click="sdType = true">设备类型</el-button>
+      <el-button type="primary" @click="daochu">导出</el-button>
     </div>
 
     <!-- 表格 -->
@@ -62,6 +63,16 @@
       <el-table-column align="center" label="工作量">
         <template slot-scope="scope">
           {{ computedNull(scope.row.workload) }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="质保时间">
+        <template slot-scope="scope">
+          {{ computedNull(scope.row.warranty) }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="开始年份">
+        <template slot-scope="scope">
+          {{ computedNull(scope.row.startYear) }}
         </template>
       </el-table-column>
 
@@ -254,7 +265,8 @@ import {
   listInstrumentTypeSel,
   addInstrument,
   deleteInstrument,
-  getInstrumentById
+  getInstrumentById,
+  exportInstrument
 } from '@/api/table'
 import {
   mapGetters
@@ -426,6 +438,20 @@ export default {
     // this.listShortPointSel()
   },
   methods: {
+    daochu(){
+      exportInstrument({
+        companyId: this.companyId || '',
+        pointId: this.pointId || '',
+        instrumentType: this.pointStatus,
+        pollutionType: this.pollutionType,
+        existInstrument: this.existInstrument,
+        roleId: this.roleId,
+        groupId: this.userGroupId,
+      }).then(res=>{
+        console.log(res)
+        window.open(res.retData, "_self")
+      })
+    },
     computedNull(val) {
       if (val === undefined || val === null || val === '' || val === ' ') {
         return '-'
@@ -573,6 +599,8 @@ export default {
               checkStatusName: '-',
               checkStatus: '-',
               workload: '-',
+              warranty: '-',
+              startYear: '-',
             })
             comNum++
             pointIndex.push(1)
@@ -591,6 +619,8 @@ export default {
                   checkStatusName: '-',
                   checkStatus: '-',
                   workload: '-',
+                  warranty: '-',
+                  startYear: '-',
                 })
                 comNum++
                 pointIndex.push(1)
@@ -608,6 +638,8 @@ export default {
                     checkStatusName: iiner.checkStatusName,
                     checkStatus: iiner.checkStatus,
                     workload: iiner.workload,
+                    warranty: iiner.warranty,
+                    startYear: iiner.startYear,
                   })
                   comNum++
                   pointNum++

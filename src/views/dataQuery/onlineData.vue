@@ -317,9 +317,9 @@
 
               if (temp[i].dataList[j].signalCode == "w00000") {
                 if (temp[i].dataList[j].flag == '' || temp[i].dataList[j].flag == null) { //处理空null
-                  tableData[j][temp[i].factorCode] = temp[i].dataList[j].signalCouValue
+                  tableData[j][temp[i].factorCode] = temp[i].dataList[j].signalAvgValue
                 } else {
-                  tableData[j][temp[i].factorCode] = temp[i].dataList[j].signalCouValue + '(' + temp[i].dataList[j]
+                  tableData[j][temp[i].factorCode] = temp[i].dataList[j].signalAvgValue + '(' + temp[i].dataList[j]
                     .flag + ')'
                 }
 
