@@ -107,20 +107,16 @@
 
       <el-table-column align="center" label="附件">
         <template slot-scope="scope">
-          <div>
-            <viewer>
-              <template v-for="item in scope.row.files">
-                <img
-                  :src="item.url"
-                  alt=""
-                  srcset=""
-                  :title="item.name"
-                  style="width: 100px; height: 100px"
-                  :key="item.fileId"
-                />
-              </template>
-            </viewer>
-          </div>
+          <el-image
+            v-for="item in scope.row.files"
+            :src="item"
+            alt=""
+            srcset=""
+            :title="item.name"
+            :preview-src-list="scope.row.files"
+            style="width: 100px; height: 100px"
+            :key="item"
+          />
         </template>
       </el-table-column>
 
@@ -448,7 +444,7 @@ export default {
           } else {
             e.certificates.forEach((i) => {
               peopleNum++;
-              // console.log(i)
+              const urls = i.files.map((item) => item.url);
               newArr.push({
                 userName: e.userName,
                 certificateName: i.certificateName,
@@ -456,7 +452,7 @@ export default {
                 userCertificateId: i.userCertificateId,
                 uploadStatus: i.uploadStatus,
                 expireStatus: i.expireStatus,
-                files: i.files,
+                files: urls,
                 index: index,
               });
             });
@@ -474,6 +470,11 @@ export default {
         console.log(newArr);
 
         this.records = newArr;
+        console.log(
+          "🚀 ~ listUserCertificatePage ~  this.records:",
+          this.records
+        );
+
         this.total = res.retData.total;
       });
     },

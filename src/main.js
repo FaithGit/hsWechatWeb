@@ -32,7 +32,8 @@ Vue.use(Viewer)
 Viewer.setDefaults({
   // 需要配置的属性 注意属性并没有引号
   title: false,
-  zIndex:9999
+  zIndex:9999,
+  crossOrigin: 'anonymous'
   // toolbar: false
 })
 

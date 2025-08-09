@@ -53,6 +53,7 @@
       </el-table-column>
 
       <el-table-column align="center" label="试卷发布时间" prop="examPublishTime" />
+      <el-table-column align="center" label="用户答题时间" prop="submitTime" />
       <el-table-column align="center" label="操作">
         <template slot-scope="scope">
           <!-- <el-button type="primary" @click="daochu(scope.row)">导出</el-button> -->
