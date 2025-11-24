@@ -1532,3 +1532,10 @@ export function exportPartReplaceRecord(data) { // 导出
     data
   })
 }
+export function messagePage(data) { // 导出
+  return request({
+    url: setting.baseUrl + '/online/messagePage',
+    method: 'post',
+    data
+  })
+}

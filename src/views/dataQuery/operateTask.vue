@@ -209,7 +209,6 @@
     methods: {
       async download(e) {
         e.downLoading = true
-
         try {
           const response = await fetch('https://operate.sea-splendor.com/haisheng/operate/generateOperateTaskPdf', {
             method: 'post',
@@ -217,7 +216,7 @@
               'token': getToken(),
               "content-type": "application/json"
             },
-            body: '{"operateTaskId": "8814"}'
+            body: `{"operateTaskId": ${e.operateTaskId}}}`
 
           });
 
