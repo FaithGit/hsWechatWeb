@@ -1539,3 +1539,45 @@ export function messagePage(data) { // 导出
     data
   })
 }
+export function queryDayList(data) { // 导出
+  return request({
+    url: setting.baseUrl + '/supDate/queryDayList',
+    method: 'post',
+    data
+  })
+}
+export function updateDate(data) { // 导出
+  return request({
+    url: setting.baseUrl + '/supDate/updateDate',
+    method: 'post',
+    data
+  })
+}
+export function pageStandardSolutionUsedVO(data) { // 导出
+  return request({
+    url: setting.baseUrl + '/standardSolution/pageStandardSolutionUsedVO',
+    method: 'post',
+    data
+  })
+}
+export function exportStandardSolutionUsed(data) { // 导出
+  return request({
+    url: setting.baseUrl + '/standardSolution/exportStandardSolutionUsed',
+    method: 'post',
+    data
+  })
+}
+export function pageStandard(data) { // 导出
+  return request({
+    url: setting.baseUrl + '/dischargeStandard/pageStandard',
+    method: 'post',
+    data
+  })
+}
+export function addDischargeStandard(data) { // 导出
+  return request({
+    url: setting.baseUrl + '/dischargeStandard/addDischargeStandard',
+    method: 'post',
+    data
+  })
+}

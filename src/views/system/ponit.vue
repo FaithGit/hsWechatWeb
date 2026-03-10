@@ -111,6 +111,16 @@
         <el-option label="传送" :value="1" />
         <el-option label="不传送" :value="0" />
       </el-select>
+
+      关注程度：
+      <el-select v-model="concernLevel" placeholder="请选择关注程度" clearable>
+            <el-option
+              v-for="item in concernLevelList"
+              :key="'关注程度' + item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
     </div>
 
     <!-- 表格 -->
@@ -702,6 +712,20 @@
           </el-upload>
         </el-form-item>
 
+
+        <el-form-item label="备注" style="display: block">
+          <el-input
+            v-model="form.remark"
+            placeholder="请输入备注"
+            type="textarea"
+          />
+        </el-form-item>
+
+
+
+
+
+
         <div style="text-align: center; margin-top: 80px">
           <el-button @click="addVisible = false">取 消</el-button>
           <el-button
@@ -917,6 +941,7 @@ export default {
       pointName: "",
       status: "",
       pollutionType: "",
+      concernLevel:"",
       addVisible: false,
       editVisible: false,
       listLoading: false,
@@ -1310,6 +1335,7 @@ export default {
         isDataSend: this.isDataSend,
         groupId: this.computedRoleBoolean ? this.roleId : this.groupId || "",
         pollutionType: this.pollutionType || "",
+        concernLevel: this.concernLevel || "",
         roleId: this.roleId,
         pointStatus: this.pointStatus,
         pageIndex: this.pageIndex,

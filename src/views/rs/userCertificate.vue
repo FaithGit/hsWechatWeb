@@ -3,40 +3,16 @@
     <!-- 条件栏 -->
     <div class="headClass">
       用户名称：
-      <treeselect
-        v-model="userIdShow"
-        :multiple="false"
-        :options="userlist"
-        :normalizer="normalizer2"
-        placeholder="请选择用户"
-        class="seachInput"
-        no-children-text="暂无数据"
-      >
-        <label
-          slot="option-label"
-          slot-scope="{ node, labelClassName }"
-          :class="labelClassName"
-          :title="node.label"
-        >
+      <treeselect v-model="userIdShow" :multiple="false" :options="userlist" :normalizer="normalizer2"
+        placeholder="请选择用户" class="seachInput" no-children-text="暂无数据">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
           {{ node.label }}
         </label>
       </treeselect>
       证书名称：
-      <treeselect
-        v-model="certificateId"
-        :multiple="false"
-        :options="zhengshuList"
-        :normalizer="normalizer"
-        placeholder="请选择证书"
-        class="seachInput"
-        no-children-text="暂无数据"
-      >
-        <label
-          slot="option-label"
-          slot-scope="{ node, labelClassName }"
-          :class="labelClassName"
-          :title="node.label"
-        >
+      <treeselect v-model="certificateId" :multiple="false" :options="zhengshuList" :normalizer="normalizer"
+        placeholder="请选择证书" class="seachInput" no-children-text="暂无数据">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
           {{ node.label }}
         </label>
       </treeselect>
@@ -52,29 +28,15 @@
     </div>
 
     <!-- 表格 -->
-    <el-table
-      v-loading="listLoading"
-      :data="records"
-      element-loading-text="加载中"
-      border
-      fit
-      highlight-current-row
-      style="margin-top: 1.04vw"
-      :span-method="arraySpanMethod"
-      :row-class-name="tableRowClassName"
-      height="calc(100vh - 84px - 60px - 40px - 32px - 1.04vw - 17px)"
-    >
+    <el-table v-loading="listLoading" :data="records" element-loading-text="加载中" border fit highlight-current-row
+      style="margin-top: 1.04vw" :span-method="arraySpanMethod" :row-class-name="tableRowClassName"
+      height="calc(100vh - 84px - 60px - 40px - 32px - 1.04vw - 17px)">
       <el-table-column align="center" label="序号" width="95">
         <template slot-scope="scope">
           {{ scope.row.index + 1 }}
         </template>
       </el-table-column>
-      <el-table-column
-        align="center"
-        label="用户名"
-        prop="userName"
-        width="95"
-      />
+      <el-table-column align="center" label="用户名" prop="userName" width="95" />
       <el-table-column align="center" label="证书名称" prop="certificateName" />
       <el-table-column align="center" label="是否已上传证书">
         <template slot-scope="scope">
@@ -83,176 +45,96 @@
               scope.row.uploadStatus == 1
                 ? "已上传"
                 : scope.row.uploadStatus == 0
-                ? "未上传"
-                : "-"
+                  ? "未上传"
+                  : "-"
             }}
           </span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="到期时间">
         <template slot-scope="scope">
-          <span
-            :class="[
-              scope.row.expireStatus == 1
-                ? 'jijiang'
-                : scope.row.expireStatus == 2
+          <span :class="[
+            scope.row.expireStatus == 1
+              ? 'jijiang'
+              : scope.row.expireStatus == 2
                 ? 'guoqi'
                 : '',
-            ]"
-          >
-            {{ scope.row.expireDate }}</span
-          >
+          ]">
+            {{ scope.row.expireDate }}</span>
         </template>
       </el-table-column>
 
       <el-table-column align="center" label="附件">
         <template slot-scope="scope">
-          <el-image
-            v-for="item in scope.row.files"
-            :src="item"
-            alt=""
-            srcset=""
-            :title="item.name"
-            :preview-src-list="scope.row.files"
-            style="width: 100px; height: 100px"
-            :key="item"
-          />
+          <el-image v-for="item in scope.row.files" :src="item" alt="" srcset="" :title="item.name"
+            :preview-src-list="scope.row.files" style="width: 100px; height: 100px" :key="item" />
         </template>
       </el-table-column>
 
       <el-table-column align="center" label="操作" width="280">
         <template slot-scope="scope">
-          <el-button
-            v-if="scope.row.userCertificateId != ''"
-            @click="edit(scope.row)"
-            >编辑</el-button
-          >
-          <el-button
-            v-if="scope.row.userCertificateId != ''"
-            type="danger"
-            @click="remove(scope.row)"
-            >删除</el-button
-          >
+          <el-button v-if="scope.row.userCertificateId != ''" @click="edit(scope.row)">编辑</el-button>
+          <el-button v-if="scope.row.userCertificateId != ''" type="danger" @click="remove(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
     <!-- 分页 -->
     <div class="buttonPagination">
-      <el-pagination
-        :current-page="pageIndex"
-        :page-sizes="[10, 20, 30, 40, 50]"
-        :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
+      <el-pagination :current-page="pageIndex" :page-sizes="[10, 20, 30, 40, 50]" :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
+        @current-change="handleCurrentChange" />
     </div>
 
-    <el-dialog
-      v-if="visible"
-      :title="visibleTitle"
-      :append-to-body="true"
-      :visible="visible"
-      width="40%"
-      :close-on-click-modal="false"
-      @close="visible = false"
-    >
+    <el-dialog v-if="visible" :title="visibleTitle" :append-to-body="true" :visible="visible" width="40%"
+      :close-on-click-modal="false" @close="visible = false">
       <el-form ref="form1" :model="form" label-width="140px" :rules="rules">
         <el-form-item label="用户名称" prop="userId">
-          <treeselect
-            v-model="form.userId"
-            :multiple="false"
-            :options="userlist"
-            :normalizer="normalizer2"
-            placeholder="请选择用户"
-            no-children-text="暂无数据"
-          >
-            <label
-              slot="option-label"
-              slot-scope="{ node, labelClassName }"
-              :class="labelClassName"
-              :title="node.label"
-            >
+          <treeselect v-model="form.userId" :multiple="false" :options="userlist" :normalizer="normalizer2"
+            placeholder="请选择用户" no-children-text="暂无数据">
+            <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName"
+              :title="node.label">
               {{ node.label }}
             </label>
           </treeselect>
         </el-form-item>
         <el-form-item label="证书名称" prop="certificateId">
-          <treeselect
-            v-model="form.certificateId"
-            :multiple="false"
-            :options="zhengshuList"
-            :normalizer="normalizer"
-            placeholder="请选择证书"
-            no-children-text="暂无数据"
-          >
-            <label
-              slot="option-label"
-              slot-scope="{ node, labelClassName }"
-              :class="labelClassName"
-              :title="node.label"
-            >
+          <treeselect v-model="form.certificateId" :multiple="false" :options="zhengshuList" :normalizer="normalizer"
+            placeholder="请选择证书" no-children-text="暂无数据">
+            <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName"
+              :title="node.label">
               {{ node.label }}
             </label>
           </treeselect>
         </el-form-item>
         <el-form-item label="证书编号">
-          <el-input
-            v-model="form.userCertificateCode"
-            placeholder="请填写证书编号"
-          />
+          <el-input v-model="form.userCertificateCode" placeholder="请填写证书编号" />
         </el-form-item>
 
         <el-form-item label="过期日期" prop="expireDate">
-          <el-date-picker
-            v-model="form.expireDate"
-            type="date"
-            placeholder="请选择过期日期"
-          />
+          <el-date-picker v-model="form.expireDate" type="date" placeholder="请选择过期日期" />
         </el-form-item>
 
         <el-form-item label="证书附件">
-          <el-upload
-            action="#"
-            accept=".jpg,.jpeg,.png"
-            :on-change="handleChangeID"
-            :on-remove="handleRemoveID"
-            :auto-upload="false"
-            :file-list="zhiweiList"
-            list-type="picture"
-          >
+          <el-upload action="#" accept=".jpg,.jpeg,.png" :on-change="handleChangeID" :on-remove="handleRemoveID"
+            :auto-upload="false" :file-list="zhiweiList" list-type="picture">
             <el-button size="small" type="primary">点击上传</el-button>
           </el-upload>
         </el-form-item>
 
+        <el-form-item label="是否发送通知">
+          <el-switch v-model="form.noticeFlag" :active-value="1" :inactive-value="0" active-text="开" inactive-text="关" />
+        </el-form-item>
+
         <div style="text-align: center; margin-top: 80px">
           <el-button @click="visible = false">取 消</el-button>
-          <el-button
-            v-if="visibleTitle == '新增用户证书'"
-            type="primary"
-            @click="sumbitCom"
-            >确 定</el-button
-          >
-          <el-button
-            v-if="visibleTitle == '编辑用户证书'"
-            type="primary"
-            @click="editSubmit"
-            >更 改</el-button
-          >
+          <el-button v-if="visibleTitle == '新增用户证书'" type="primary" @click="sumbitCom">确 定</el-button>
+          <el-button v-if="visibleTitle == '编辑用户证书'" type="primary" @click="editSubmit">更 改</el-button>
         </div>
       </el-form>
     </el-dialog>
 
-    <el-dialog
-      v-if="zsVisible"
-      title="证书管理"
-      :append-to-body="true"
-      :visible="zsVisible"
-      width="60%"
-      :close-on-click-modal="false"
-      @close="zsVisible = false"
-    >
+    <el-dialog v-if="zsVisible" title="证书管理" :append-to-body="true" :visible="zsVisible" width="60%"
+      :close-on-click-modal="false" @close="zsVisible = false">
       <certificate></certificate>
     </el-dialog>
   </div>
@@ -540,7 +422,9 @@ export default {
     },
     addCom(e) {
       this.visible = true;
-      this.form = {};
+      this.form = {
+        noticeFlag:1
+      };
       this.visibleTitle = "新增用户证书";
       this.zhiweiList = [];
     },
@@ -591,6 +475,7 @@ export default {
             userCertificateCode: this.form.userCertificateCode,
             expireDate: moment(this.form.expireDate).format("YYYY-MM-DD"),
             files: _zhiweiList,
+            noticeFlag:this.form.noticeFlag
           };
           updateUserCertificate(newObj).then((res) => {
             console.log(res);

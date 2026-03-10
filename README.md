@@ -8,3 +8,4 @@ http://47.98.149.51:8083/fluxweb/#/login 测试
 http://111.3.69.35:8888/tongliang/#/login
 amdin Hskj_2023
 
+dist目录 47.96.147.99服务器 D:\software\nginx-window\webapp\haisheng

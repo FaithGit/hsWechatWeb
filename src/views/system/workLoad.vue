@@ -481,7 +481,9 @@ export default {
     },
     exportWorkload() {
       this.loading = true;
-      exportWorkload({}).then((res) => {
+      exportWorkload({
+        month: moment(this.month).format("YYYY-MM"),
+      }).then((res) => {
         console.log(res);
         this.loading = false;
         window.open(res.retData);
