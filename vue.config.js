@@ -119,5 +119,10 @@ module.exports = {
           config.optimization.runtimeChunk('single')
         }
       )
-  }
+  },
+  transpileDependencies: [
+    'jspdf',
+    'fast-png',
+    'iobuffer'
+  ]
 }

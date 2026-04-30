@@ -3,116 +3,45 @@
     <!-- 条件栏 -->
     <div class="headClass">
       运维组：
-      <treeselect
-        v-model="groupId"
-        :multiple="false"
-        :options="groupList"
-        :normalizer="normalizer2"
-        placeholder="请选择运维组"
-        :clearable="true"
-        class="seachInput"
-      >
-        <label
-          slot="option-label"
-          slot-scope="{ node, labelClassName }"
-          :class="labelClassName"
-          :title="node.label"
-        >
+      <treeselect v-model="groupId" :multiple="false" :options="groupList" :normalizer="normalizer2"
+        placeholder="请选择运维组" :clearable="true" class="seachInput">
+        <label slot="option-label" slot-scope="{ node, labelClassName }" :class="labelClassName" :title="node.label">
           {{ node.label }}
         </label>
       </treeselect>
 
       月份：
-      <el-date-picker
-        v-model="month"
-        type="month"
-        placeholder="选择月"
-        :picker-options="pickerOptions"
-        class="seachInput"
-      >
+      <el-date-picker v-model="month" type="month" placeholder="选择月" :picker-options="pickerOptions" class="seachInput">
       </el-date-picker>
 
       <el-button type="primary" @click="seach">搜索</el-button>
-      <el-button plain :type="mode == 1 ? 'primary' : ''" @click="toggleMode(1)"
-        >简略</el-button
-      >
-      <el-button plain :type="mode == 2 ? 'primary' : ''" @click="toggleMode(2)"
-        >详细(点位)</el-button
-      >
-      <el-button plain :type="mode == 3 ? 'primary' : ''" @click="toggleMode(3)"
-        >详细(设备)</el-button
-      >
+      <el-button plain :type="mode == 1 ? 'primary' : ''" @click="toggleMode(1)">简略</el-button>
+      <el-button plain :type="mode == 2 ? 'primary' : ''" @click="toggleMode(2)">详细(点位)</el-button>
+      <el-button plain :type="mode == 3 ? 'primary' : ''" @click="toggleMode(3)">详细(设备)</el-button>
 
-      <el-button
-        type="primary"
-        @click="exportWorkload"
-        v-loading="loading"
-        style="margin-left: 10px"
-        icon="el-icon-download"
-        >导出</el-button
-      >
-      <el-button type="primary" @click="openGzl" style="margin-left: 10px"
-        >查看工作量记分规则</el-button
-      >
-      <el-button type="primary" @click="openXiugai" style="margin-left: 10px"
-        >上传记分规则</el-button
-      >
+      <el-button type="primary" @click="exportWorkload" v-loading="loading" style="margin-left: 10px"
+        icon="el-icon-download">导出</el-button>
+      <el-button type="primary" @click="openGzl" style="margin-left: 10px">查看工作量记分规则</el-button>
+      <el-button type="primary" @click="openXiugai" style="margin-left: 10px">上传记分规则</el-button>
     </div>
 
     <!-- 表格 -->
-    <el-table
-      v-if="listLoading"
-      :data="newRecords"
-      element-loading-text="加载中"
-      border
-      fit
-      :span-method="arraySpanMethod"
-      :row-class-name="tableRowClassName"
-      style="margin-top: 1.04vw"
-      height="calc(100vh - 84px - 60px - 40px  - 1.04vw )"
-    >
-      <el-table-column
-        v-if="mode == 1 || mode == 2 || mode == 3"
-        align="center"
-        label="组名称"
-        prop="groupName"
-      />
-      <el-table-column
-        v-if="mode == 1 || mode == 2 || mode == 3"
-        align="center"
-        label="组成员"
-        prop="groupUserNames"
-      />
-      <el-table-column
-        v-if="mode == 1 || mode == 2 || mode == 3"
-        align="center"
-        label="总工作量(无系数)"
-        prop="allWorkload"
-      />
-      <el-table-column
-        v-if="mode == 1 || mode == 2 || mode == 3"
-        align="center"
-        label="总工作量(系数)"
-        prop="zsAllWorkload"
-      />
+    <el-table v-if="listLoading" :data="newRecords" element-loading-text="加载中" border fit :span-method="arraySpanMethod"
+      :row-class-name="tableRowClassName" style="margin-top: 1.04vw"
+      height="calc(100vh - 84px - 60px - 40px  - 1.04vw )">
+      <el-table-column v-if="mode == 1 || mode == 2 || mode == 3" align="center" label="组名称" prop="groupName"
+        width="100" />
+      <el-table-column v-if="mode == 1 || mode == 2 || mode == 3" align="center" label="组成员" prop="groupUserNames"
+        width="120" />
+      <el-table-column v-if="mode == 1 || mode == 2 || mode == 3" align="center" label="总工作量(无系数)" prop="allWorkload"
+        width="140" />
+      <el-table-column v-if="mode == 1 || mode == 2 || mode == 3" align="center" label="总工作量(系数)" width="140"
+        prop="zsAllWorkload" />
 
-      <el-table-column
-        v-if="mode == 2 || mode == 3"
-        align="center"
-        label="点位名称"
-        prop="pointName"
-      />
-      <el-table-column
-        v-if="mode == 2 || mode == 3"
-        align="center"
-        label="点位工作量(无系数)"
-        prop="pointWorkload"
-      />
-      <el-table-column
-        v-if="mode == 2 || mode == 3"
-        align="center"
-        label="点位系数"
-      >
+      <el-table-column v-if="mode == 2 || mode == 3" align="center" label="点位名称" prop="pointName" />
+      <el-table-column v-if="mode == 2 || mode == 3" align="center" label="点位工作量(无系数)" prop="pointWorkload"
+        width="160" />
+      <el-table-column v-if="mode == 2 || mode == 3" align="center" label="点位系数" width="120">
         <template slot-scope="scope">
           <div class="editFont" @click="editPointxs(scope.row)">
             {{ scope.row.workloadCoefficient }}
@@ -120,24 +49,21 @@
         </template>
       </el-table-column>
 
-      <el-table-column
-        v-if="mode == 2 || mode == 3"
-        align="center"
-        label="点位工作量(系数)"
-        prop="zsPointWorkload"
-      />
+      <el-table-column v-if="mode == 2 || mode == 3" align="center" label="点位备注" width="120">
+        <template slot-scope="scope">
+          <div class="editFont" @click="editPointbz(scope.row)">
+            {{ scope.row.pointRemark }}
+          </div>
+        </template>
+      </el-table-column>
 
-      <el-table-column
-        v-if="mode == 3"
-        align="center"
-        label="设备名称"
-        prop="instrumentName"
-      />
-      <el-table-column
-        v-if="mode == 3"
-        align="center"
-        label="设备工作量(无系数)"
-      >
+      <el-table-column v-if="mode == 2 || mode == 3" align="center" label="点位系数备注" prop="workloadCoefficientRemark" />
+
+      <el-table-column v-if="mode == 2 || mode == 3" align="center" label="点位工作量(系数)" prop="zsPointWorkload"
+        width="160" />
+
+      <el-table-column v-if="mode == 3" align="center" label="设备名称" prop="instrumentName" />
+      <el-table-column v-if="mode == 3" align="center" label="设备工作量(无系数)">
         <template slot-scope="scope">
           <div class="editFont" @click="editsbxs(scope.row)">
             {{ scope.row.instrumentWorkload }}
@@ -145,12 +71,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column
-        v-if="mode == 3"
-        align="center"
-        label="设备工作量(系数)"
-        prop="zsInstrumentWorkload"
-      />
+      <el-table-column v-if="mode == 3" align="center" label="设备工作量(系数)" prop="zsInstrumentWorkload" width="160" />
 
       <!-- <el-table-column align="center" label="是否需要维护">
         <template slot-scope="scope">
@@ -159,14 +80,8 @@
       </el-table-column> -->
     </el-table>
 
-    <el-dialog
-      :title="editTitle"
-      :visible.sync="editPointVisible"
-      :append-to-body="true"
-      :close-on-click-modal="false"
-      width="30%"
-      center
-    >
+    <el-dialog :title="editTitle" :visible.sync="editPointVisible" :append-to-body="true" :close-on-click-modal="false"
+      width="40%" center>
       <el-form ref="form1" :model="form" label-width="140px" :rules="rules">
         <el-form-item label="旧值" prop="oldValue">
           <el-input v-model="form.oldValue" placeholder="请输入旧值" disabled />
@@ -176,57 +91,38 @@
           <el-input v-model="form.newValue" placeholder="请输入修改值" />
         </el-form-item>
 
-        <div style="text-align: center; margin-top: 80px">
+        <el-form-item label="生效月份" prop="monthList" v-if="form.type == 1">
+          <el-date-picker v-model="form.monthList" type="months" value-format="yyyy-MM" placeholder="选择一个或多个月份"
+            style="width: 100%" />
+        </el-form-item>
+
+        <el-form-item label="工作量系数备注" prop="workloadCoefficientRemark" v-if="form.type == 1">
+          <el-input v-model="form.workloadCoefficientRemark" type="textarea" :rows="3" placeholder="请输入备注信息" />
+        </el-form-item>
+
+        <div style="text-align: center; margin-top: 40px">
           <el-button @click="editPointVisible = false">取 消</el-button>
           <el-button type="primary" @click="updata">更 新</el-button>
         </div>
       </el-form>
     </el-dialog>
 
-    <el-dialog
-      v-if="pdfVisible"
-      title="预览pdf"
-      :append-to-body="true"
-      :visible.sync="pdfVisible"
-      width="70%"
-      :close-on-click-modal="true"
-      @close="pdfVisible = false"
-    >
+    <el-dialog v-if="pdfVisible" title="预览pdf" :append-to-body="true" :visible.sync="pdfVisible" width="70%"
+      :close-on-click-modal="true" @close="pdfVisible = false">
       <div style="height: 70vh; overflow: auto">
         <pdf v-for="item in pageTotal" :src="pdfUrl" :key="item" :page="item">
         </pdf>
       </div>
-      <img
-        src="@/assets/dwfile.png"
-        class="dwfile"
-        alt=""
-        srcset=""
-        @click="dwFile"
-      />
+      <img src="@/assets/dwfile.png" class="dwfile" alt="" srcset="" @click="dwFile" />
     </el-dialog>
 
     <!-- 导入题目 -->
-    <el-dialog
-      v-if="jifenVisible"
-      title="导入计分规则"
-      :append-to-body="true"
-      :visible="jifenVisible"
-      width="30%"
-      :close-on-click-modal="false"
-      @close="jifenVisible = false"
-    >
+    <el-dialog v-if="jifenVisible" title="导入计分规则" :append-to-body="true" :visible="jifenVisible" width="30%"
+      :close-on-click-modal="false" @close="jifenVisible = false">
       <el-form ref="form" label-width="80px">
         <el-form-item label="文件">
-          <el-upload
-            class="upload-demo"
-            action="#"
-            :on-remove="upRemove"
-            :limit="1"
-            :file-list="uplist"
-            accept=".pdf"
-            :auto-upload="false"
-            :on-change="upChangeFile"
-          >
+          <el-upload class="upload-demo" action="#" :on-remove="upRemove" :limit="1" :file-list="uplist" accept=".pdf"
+            :auto-upload="false" :on-change="upChangeFile">
             <el-button size="small" type="primary">点击上传</el-button>
             <div slot="tip" class="el-upload__tip">限单个pdf文件</div>
           </el-upload>
@@ -234,9 +130,7 @@
       </el-form>
       <div style="text-align: center">
         <el-button @click="jifenVisible = false">取消</el-button>
-        <el-button type="primary" :loading="loading2" @click="upFile"
-          >确认</el-button
-        >
+        <el-button type="primary" :loading="loading2" @click="upFile">确认</el-button>
       </div>
     </el-dialog>
   </div>
@@ -262,7 +156,8 @@ import {
   updateInstrumentWorkload,
   getWorkloadPdf,
   uploadWorkloadPdf,
-  exportWorkload
+  exportWorkload,
+  getPointById
 } from "@/api/table";
 import { mapGetters } from "vuex";
 
@@ -472,7 +367,7 @@ export default {
             this.pageTotal = pdf.numPages;
             this.pdfVisible = true;
           })
-          .catch((error) => {});
+          .catch((error) => { });
       });
     },
     dwFile() {
@@ -494,9 +389,12 @@ export default {
       console.log(this.form);
 
       if (this.form.type == 1) {
+        console.log(this.form.monthList)
         updateWorkloadCoefficient({
           pointId: this.form.pointId,
           workloadCoefficient: this.form.newValue,
+          monthList: this.form.monthList,
+          workloadCoefficientRemark: this.form.workloadCoefficientRemark,
         }).then((res) => {
           console.log(res);
           this.$notify({
@@ -533,6 +431,8 @@ export default {
         oldValue: row.workloadCoefficient,
         newValue: "",
         pointId: row.pointId,
+        monthList: [],
+        workloadCoefficientRemark: row.workloadCoefficientRemark || '-',
         type: 1, //点位
       };
 
@@ -548,7 +448,7 @@ export default {
         oldValue: row.instrumentWorkload,
         newValue: "",
         instrumentId: row.instrumentId,
-        type: 2, //点位
+        type: 2, //设备
       };
 
       this.editPointVisible = true;
@@ -587,6 +487,8 @@ export default {
               zsAllWorkload: this.computedNull(e.zsAllWorkload),
               pointName: "-",
               pointWorkload: "-",
+              pointRemark: "-",
+              workloadCoefficientRemark: "-",
               workloadCoefficient: "-",
               zsPointWorkload: "-",
               instrumentName: "-",
@@ -610,6 +512,8 @@ export default {
                   pointName: this.computedNull(i.pointName),
                   pointId: this.computedNull(i.pointId),
                   pointWorkload: this.computedNull(i.pointWorkload),
+                  workloadCoefficientRemark: this.computedNull(i.workloadCoefficientRemark),
+                  pointRemark: this.computedNull(i.pointRemark),
                   workloadCoefficient: this.computedNull(i.workloadCoefficient),
                   zsPointWorkload: this.computedNull(i.zsPointWorkload),
                   instrumentName: "-",
@@ -632,6 +536,8 @@ export default {
                     pointId: this.computedNull(i.pointId),
                     pointName: this.computedNull(i.pointName),
                     pointWorkload: this.computedNull(i.pointWorkload),
+                    workloadCoefficientRemark: this.computedNull(i.workloadCoefficientRemark),
+                    pointRemark: this.computedNull(i.pointRemark),
                     workloadCoefficient: this.computedNull(
                       i.workloadCoefficient
                     ),
@@ -697,7 +603,9 @@ export default {
         columnIndex === 4 ||
         columnIndex === 5 ||
         columnIndex === 6 ||
-        columnIndex === 7
+        columnIndex === 7 ||
+        columnIndex === 8 ||
+        columnIndex === 9
       ) {
         if (row.pointIndex) {
           // 如果有值,说明需要合并
@@ -806,6 +714,14 @@ export default {
       });
 
       console.log("🚀 ~ editPoint ~   this.form:", this.form);
+    },
+    editPointbz(e) {
+      console.log(e.pointId);
+      getPointById({
+        pointId: e.pointId,
+      }).then((res) => {
+        console.log(res);
+      });
     },
     addShebei(e) {
       this.addVisible = true;

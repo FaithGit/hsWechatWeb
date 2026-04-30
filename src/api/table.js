@@ -1581,3 +1581,17 @@ export function addDischargeStandard(data) { // 导出
     data
   })
 }
+export function reagentApplyListPage(data) { // 导出
+  return request({
+    url: setting.baseUrl + '/reagent/reagentApplyListPage',
+    method: 'post',
+    data
+  })
+}
+export function groupTreeList(data) { // 导出
+  return request({
+    url: setting.baseUrl + '/group/groupTreeList',
+    method: 'post',
+    data
+  })
+}
