@@ -41,11 +41,11 @@
     </el-tabs>
 
     <!-- 表格 -->
-    <el-table v-loading="listLoading" :data="records" element-loading-text="加载中" border fit highlight-current-row stripe
-      v-if="activeName=='first'">
+    <el-table v-loading="listLoading" ref="firstTable" :data="records" element-loading-text="加载中" border fit highlight-current-row stripe
+      v-if="activeName == 'first'">
       <el-table-column align="center" label="#" width="95">
         <template slot-scope="scope">
-          {{ scope.$index+1 }}
+          {{ scope.$index + 1 }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="标液浓度名称	">
@@ -53,7 +53,7 @@
           {{ computedNull(scope.row.standardSolutionName) }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="配置数量">
+      <el-table-column align="center" label="配置数量" sortable :sort-method="sortNumWithTotal">
         <template slot-scope="scope">
           {{ computedNull(scope.row.num) }}
         </template>
@@ -71,10 +71,10 @@
     </el-table>
     <!-- 表格 -->
     <el-table v-loading="listLoading" :data="records" element-loading-text="加载中" border fit highlight-current-row stripe
-      v-if="activeName=='second'">
+      v-if="activeName == 'second'">
       <el-table-column align="center" label="#" width="95">
         <template slot-scope="scope">
-          {{ scope.$index+1 }}
+          {{ scope.$index + 1 }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="标液物质名称	">
@@ -100,10 +100,10 @@
     </el-table>
     <!-- 表格 -->
     <el-table v-loading="listLoading" :data="records" element-loading-text="加载中" border fit highlight-current-row stripe
-      v-if="activeName=='third'">
+      v-if="activeName == 'third'">
       <el-table-column align="center" label="#" width="95">
         <template slot-scope="scope">
-          {{ (pageIndex-1)*10+scope.$index+1 }}
+          {{ (pageIndex - 1) * 10 + scope.$index + 1 }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="申请人">
@@ -130,8 +130,8 @@
 
 
     <!-- 分页 -->
-    <div class="buttonPagination" v-if="activeName=='third'">
-      <el-pagination :current-page="pageIndex" :page-sizes="[10,20,30,40,50,100,500,1000]" :page-size="pageSize"
+    <div class="buttonPagination" v-if="activeName == 'third'">
+      <el-pagination :current-page="pageIndex" :page-sizes="[10, 20, 30, 40, 50, 100, 500, 1000]" :page-size="pageSize"
         layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
         @current-change="handleCurrentChange" />
     </div>
@@ -140,348 +140,357 @@
 </template>
 
 <script>
-  import Treeselect from '@riophae/vue-treeselect'
-  import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+import Treeselect from '@riophae/vue-treeselect'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
-  import {
-    listFactorPage,
-    addFactor,
-    getFactorById,
-    updateFactor,
-    listReagentDepartment,
-    listGroupByDepartment,
-    getReagentStatement,
-    getPharmaceuticalStatement,
-    reagentStatementDetail,
-    getStandardSolutionStatement,
-    getStandardLiquidStatement,
-    listStandardSolutionStatementDetail,
-    exportStandardSolutionStatement,
-    exportStandardLiquidStatement,
-    exportStandardSolutionStatementDetail,
-    listUserSelChoose
-  } from '@/api/table'
-  import {
-    mapGetters
-  } from 'vuex'
-  import moment from 'moment'
-  export default {
-    name: 'Bybb',
-    components: {
-      Treeselect
+import {
+  listFactorPage,
+  addFactor,
+  getFactorById,
+  updateFactor,
+  listReagentDepartment,
+  listGroupByDepartment,
+  getReagentStatement,
+  getPharmaceuticalStatement,
+  reagentStatementDetail,
+  getStandardSolutionStatement,
+  getStandardLiquidStatement,
+  listStandardSolutionStatementDetail,
+  exportStandardSolutionStatement,
+  exportStandardLiquidStatement,
+  exportStandardSolutionStatementDetail,
+  listUserSelChoose
+} from '@/api/table'
+import {
+  mapGetters
+} from 'vuex'
+import moment from 'moment'
+export default {
+  name: 'Bybb',
+  components: {
+    Treeselect
+  },
+  data() {
+    return {
+      activeName: "first",
+      factorCode: '',
+      factorName: '',
+      factorType: '',
+      pageIndex: 1,
+      pageSize: 10,
+      listLoading: false,
+      addVisible: false,
+      digTitle: '新增因子',
+      total: 0,
+      departmentId: null,
+      preparationPeople: null,
+      records: [],
+      bumenList: [],
+      groupIds: [],
+      zuList: [],
+      userList: [],
+      time: null,
+      normalizer(node) {
+        return {
+          id: node.id,
+          label: node.name,
+          children: node.children && node.children.length ? node.children : 0
+        }
+      },
+      normalizer2(node) {
+        return {
+          id: node.id,
+          label: node.groupName,
+          children: node.children && node.children.length ? node.children : 0
+        }
+      },
+      normalizer3(node) {
+        return {
+          id: node.userId,
+          label: node.userName,
+          children: node.children && node.children.length ? node.children : 0
+        }
+      },
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'userId'
+    ])
+  },
+  mounted() {
+    this.listReagentDepartment()
+    this.listGroupByDepartment()
+    this.getStandardSolutionStatement()
+    this.listUserSelChoose()
+  },
+  methods: {
+
+    sortNumWithTotal(a, b) { // 自定义排序方法，确保“总计”始终在最下方
+      if (a.standardSolutionName === '总计') {
+        return this.$refs.firstTable?.table?.order === 'descending' ? -1 : 1;
+      }
+      if (b.standardSolutionName === '总计') {
+        return this.$refs.firstTable?.table?.order === 'descending' ? 1 : -1;
+      }
+      return a.num - b.num;
     },
-    data() {
-      return {
-        activeName: "first",
-        factorCode: '',
-        factorName: '',
-        factorType: '',
-        pageIndex: 1,
-        pageSize: 10,
-        listLoading: false,
-        addVisible: false,
-        digTitle: '新增因子',
-        total: 0,
-        departmentId: null,
-        preparationPeople: null,
-        records: [],
-        bumenList: [],
-        groupIds: [],
-        zuList: [],
-        userList: [],
-        time: null,
-        normalizer(node) {
-          return {
-            id: node.id,
-            label: node.name,
-            children: node.children && node.children.length ? node.children : 0
-          }
-        },
-        normalizer2(node) {
-          return {
-            id: node.id,
-            label: node.groupName,
-            children: node.children && node.children.length ? node.children : 0
-          }
-        },
-        normalizer3(node) {
-          return {
-            id: node.userId,
-            label: node.userName,
-            children: node.children && node.children.length ? node.children : 0
-          }
-        },
+    listUserSelChoose() {
+      listUserSelChoose({
+        roleId: "syy"
+      }).then(res => {
+        console.log(res)
+        this.userList = res.retData
+        this.userList.shift()
+      })
+    },
+    handleClick() { //avtiveClick
+      console.log(this.activeName)
+      if (this.activeName == 'first') {
+        this.getStandardSolutionStatement()
+      } else if (this.activeName == 'second') {
+        this.getStandardLiquidStatement()
+      } else {
+        this.listStandardSolutionStatementDetail()
       }
     },
-    computed: {
-      ...mapGetters([
-        'userId'
-      ])
-    },
-    mounted() {
-      this.listReagentDepartment()
-      this.listGroupByDepartment()
-      this.getStandardSolutionStatement()
-      this.listUserSelChoose()
-    },
-    methods: {
-      listUserSelChoose() {
-        listUserSelChoose({
-          roleId: "syy"
-        }).then(res => {
-          console.log(res)
-          this.userList = res.retData
-          this.userList.shift()
-        })
-      },
-      handleClick() { //avtiveClick
-        console.log(this.activeName)
-        if (this.activeName == 'first') {
-          this.getStandardSolutionStatement()
-        } else if (this.activeName == 'second') {
-          this.getStandardLiquidStatement()
-        } else {
-          this.listStandardSolutionStatementDetail()
-        }
-      },
-      daochu() {
-        var startTime = ''
-        var endTime = ''
-        if (this.time !== null) {
-          startTime = moment(this.time[0]).format("YYYY/MM/DD")
-          endTime = moment(this.time[1]).format("YYYY/MM/DD 23:59:59")
-        }
-        if (this.activeName == 'first') {
+    daochu() {
+      var startTime = ''
+      var endTime = ''
+      if (this.time !== null) {
+        startTime = moment(this.time[0]).format("YYYY/MM/DD")
+        endTime = moment(this.time[1]).format("YYYY/MM/DD 23:59:59")
+      }
+      if (this.activeName == 'first') {
 
-          exportStandardSolutionStatement({
-            groupIds: this.groupIds,
-            preparationPeople: this.preparationPeople,
-            startTime: startTime,
-            endTime: endTime,
-          }).then(res => {
-            console.log(res)
-            window.open(res.retData, "_self")
-
-          })
-        } else if (this.activeName == 'second') {
-          exportStandardLiquidStatement({
-            preparationPeople: this.preparationPeople,
-            groupIds: this.groupIds,
-            startTime: startTime,
-            endTime: endTime,
-          }).then(res => {
-            console.log(res)
-            window.open(res.retData, "_self")
-          })
-        } else {
-          exportStandardSolutionStatementDetail({
-            preparationPeople: this.preparationPeople,
-            groupIds: this.groupIds,
-            startTime: startTime,
-            endTime: endTime,
-          }).then(res => {
-            console.log(res)
-            window.open(res.retData, "_self")
-          })
-        }
-      },
-
-      changeDepartId(e) { //改变部门ID
-        console.log(e)
-        this.listGroupByDepartment()
-      },
-      listReagentDepartment() { //部门
-        listReagentDepartment({}).then(res => {
-          console.log("listReagentDepartment", res)
-          this.bumenList = res.retData
-        })
-      },
-      listGroupByDepartment() { //组
-        listGroupByDepartment({
-          departmentId: this.departmentId || ''
-        }).then(res => {
-          console.log("listGroupByDepartment", res)
-          this.zuList = res.retData
-          let groupIds = []
-          this.zuList.forEach(e => {
-            groupIds.push(e.id)
-          })
-          this.groupIds = groupIds
-        })
-      },
-      getStandardSolutionStatement() { //试剂报表
-        var startTime = ''
-        var endTime = ''
-        if (this.time !== null) {
-          startTime = moment(this.time[0]).format("YYYY/MM/DD")
-          endTime = moment(this.time[1]).format("YYYY/MM/DD 23:59:59")
-        }
-        getStandardSolutionStatement({
+        exportStandardSolutionStatement({
           groupIds: this.groupIds,
-          startTime: startTime,
-          endTime: endTime,
-          preparationPeople: this.preparationPeople
-        }).then(res => {
-          console.log(res)
-
-          let temp = res.retData
-          let pzsl = 0
-          let _totalVolume = 0
-
-          temp.forEach(e => {
-            pzsl += e.num
-            _totalVolume += e.totalVolume
-          })
-          temp.push({
-
-            num: pzsl,
-            standardSolutionName: "总计",
-            unit: "瓶",
-            totalVolume: _totalVolume.toFixed(0),
-          })
-          this.records = res.retData
-
-
-        })
-      },
-      getStandardLiquidStatement() { //药剂使用报表
-        var startTime = ''
-        var endTime = ''
-        if (this.time !== null) {
-          startTime = moment(this.time[0]).format("YYYY/MM/DD")
-          endTime = moment(this.time[1]).format("YYYY/MM/DD 23:59:59")
-        }
-        getStandardLiquidStatement({
-          groupIds: this.groupIds,
-          startTime: startTime,
-          endTime: endTime,
-          preparationPeople: this.preparationPeople
-        }).then(res => {
-          console.log(res)
-          this.records = res.retData
-        })
-      },
-      listStandardSolutionStatementDetail() { //试剂配置明细
-        var startTime = ''
-        var endTime = ''
-        if (this.time !== null) {
-          startTime = moment(this.time[0]).format("YYYY/MM/DD")
-          endTime = moment(this.time[1]).format("YYYY/MM/DD 23:59:59")
-        }
-        listStandardSolutionStatementDetail({
-          groupIds: this.groupIds,
-          startTime: startTime,
-          endTime: endTime,
           preparationPeople: this.preparationPeople,
-          pageIndex: this.pageIndex,
-          pageSize: this.pageSize
+          startTime: startTime,
+          endTime: endTime,
         }).then(res => {
           console.log(res)
-          this.records = res.retData.records
-          this.total = res.retData.total
+          window.open(res.retData, "_self")
+
         })
-      },
-
-
-      handleSizeChange(val) {
-        this.pageSize = val
-        this.listStandardSolutionStatementDetail()
-
-      },
-      handleCurrentChange(val) {
-        this.pageIndex = val
-        this.listStandardSolutionStatementDetail()
-      },
-
-      seach() {
-        this.pageIndex = 1
-        console.log(this.time)
-        this.handleClick()
-      },
-      editPoint(e) {
-        this.addVisible = true
-        this.digTitle = '编辑因子'
-
-        getFactorById({
-          factorId: e.factorId
+      } else if (this.activeName == 'second') {
+        exportStandardLiquidStatement({
+          preparationPeople: this.preparationPeople,
+          groupIds: this.groupIds,
+          startTime: startTime,
+          endTime: endTime,
         }).then(res => {
-          this.form = res.retData
+          console.log(res)
+          window.open(res.retData, "_self")
         })
+      } else {
+        exportStandardSolutionStatementDetail({
+          preparationPeople: this.preparationPeople,
+          groupIds: this.groupIds,
+          startTime: startTime,
+          endTime: endTime,
+        }).then(res => {
+          console.log(res)
+          window.open(res.retData, "_self")
+        })
+      }
+    },
 
-        console.log('🚀 ~ editPoint ~   this.form:', this.form)
-      },
-      sumbitPoint() {
-        this.$refs.form1.validate((valid) => {
-          if (valid) {
-            addFactor(this.form).then(res => {
-              console.log(res)
-              this.$notify({
-                type: 'success',
-                message: res.retMsg
-              })
-              this.addVisible = false
-              this.listFactorPage()
-            })
-          }
+    changeDepartId(e) { //改变部门ID
+      console.log(e)
+      this.listGroupByDepartment()
+    },
+    listReagentDepartment() { //部门
+      listReagentDepartment({}).then(res => {
+        console.log("listReagentDepartment", res)
+        this.bumenList = res.retData
+      })
+    },
+    listGroupByDepartment() { //组
+      listGroupByDepartment({
+        departmentId: this.departmentId || ''
+      }).then(res => {
+        console.log("listGroupByDepartment", res)
+        this.zuList = res.retData
+        let groupIds = []
+        this.zuList.forEach(e => {
+          groupIds.push(e.id)
         })
-      },
-      editSubmit() {
-        this.$refs.form1.validate((valid) => {
-          if (valid) {
-            updateFactor(this.form).then(res => {
-              console.log(res)
-              this.$notify({
-                type: 'success',
-                message: res.retMsg
-              })
-              this.addVisible = false
-              this.listFactorPage()
-            })
-          }
+        this.groupIds = groupIds
+      })
+    },
+    getStandardSolutionStatement() { //试剂报表
+      var startTime = ''
+      var endTime = ''
+      if (this.time !== null) {
+        startTime = moment(this.time[0]).format("YYYY/MM/DD")
+        endTime = moment(this.time[1]).format("YYYY/MM/DD 23:59:59")
+      }
+      getStandardSolutionStatement({
+        groupIds: this.groupIds,
+        startTime: startTime,
+        endTime: endTime,
+        preparationPeople: this.preparationPeople
+      }).then(res => {
+        console.log(res)
+
+        let temp = res.retData
+        let pzsl = 0
+        let _totalVolume = 0
+
+        temp.forEach(e => {
+          pzsl += e.num
+          _totalVolume += e.totalVolume
         })
-      },
-      computedNull(val) {
-        if (val === undefined || val === null || val === '' || val === ' ') {
-          return '-'
-        } else {
-          return val
+        temp.push({
+
+          num: pzsl,
+          standardSolutionName: "总计",
+          unit: "瓶",
+          totalVolume: _totalVolume.toFixed(0),
+        })
+        this.records = res.retData
+
+
+      })
+    },
+    getStandardLiquidStatement() { //药剂使用报表
+      var startTime = ''
+      var endTime = ''
+      if (this.time !== null) {
+        startTime = moment(this.time[0]).format("YYYY/MM/DD")
+        endTime = moment(this.time[1]).format("YYYY/MM/DD 23:59:59")
+      }
+      getStandardLiquidStatement({
+        groupIds: this.groupIds,
+        startTime: startTime,
+        endTime: endTime,
+        preparationPeople: this.preparationPeople
+      }).then(res => {
+        console.log(res)
+        this.records = res.retData
+      })
+    },
+    listStandardSolutionStatementDetail() { //试剂配置明细
+      var startTime = ''
+      var endTime = ''
+      if (this.time !== null) {
+        startTime = moment(this.time[0]).format("YYYY/MM/DD")
+        endTime = moment(this.time[1]).format("YYYY/MM/DD 23:59:59")
+      }
+      listStandardSolutionStatementDetail({
+        groupIds: this.groupIds,
+        startTime: startTime,
+        endTime: endTime,
+        preparationPeople: this.preparationPeople,
+        pageIndex: this.pageIndex,
+        pageSize: this.pageSize
+      }).then(res => {
+        console.log(res)
+        this.records = res.retData.records
+        this.total = res.retData.total
+      })
+    },
+
+
+    handleSizeChange(val) {
+      this.pageSize = val
+      this.listStandardSolutionStatementDetail()
+
+    },
+    handleCurrentChange(val) {
+      this.pageIndex = val
+      this.listStandardSolutionStatementDetail()
+    },
+
+    seach() {
+      this.pageIndex = 1
+      console.log(this.time)
+      this.handleClick()
+    },
+    editPoint(e) {
+      this.addVisible = true
+      this.digTitle = '编辑因子'
+
+      getFactorById({
+        factorId: e.factorId
+      }).then(res => {
+        this.form = res.retData
+      })
+
+      console.log('🚀 ~ editPoint ~   this.form:', this.form)
+    },
+    sumbitPoint() {
+      this.$refs.form1.validate((valid) => {
+        if (valid) {
+          addFactor(this.form).then(res => {
+            console.log(res)
+            this.$notify({
+              type: 'success',
+              message: res.retMsg
+            })
+            this.addVisible = false
+            this.listFactorPage()
+          })
         }
+      })
+    },
+    editSubmit() {
+      this.$refs.form1.validate((valid) => {
+        if (valid) {
+          updateFactor(this.form).then(res => {
+            console.log(res)
+            this.$notify({
+              type: 'success',
+              message: res.retMsg
+            })
+            this.addVisible = false
+            this.listFactorPage()
+          })
+        }
+      })
+    },
+    computedNull(val) {
+      if (val === undefined || val === null || val === '' || val === ' ') {
+        return '-'
+      } else {
+        return val
       }
     }
   }
+}
 
 </script>
 
 <style lang="scss" scoped>
-  .testPaper {
-    margin: 30px;
-  }
+.testPaper {
+  margin: 30px;
+}
 
-  .buttonPagination {
-    text-align: center;
-    margin-top: 15px;
-  }
+.buttonPagination {
+  text-align: center;
+  margin-top: 15px;
+}
 
-  .seachInput {
-    width: 200px;
-    margin: 0 10px;
-  }
+.seachInput {
+  width: 200px;
+  margin: 0 10px;
+}
 
-  .testDetails {
-    font-size: 16px;
-    line-height: 26px;
-  }
+.testDetails {
+  font-size: 16px;
+  line-height: 26px;
+}
 
-  .card {
-    display: flex;
-    margin: 20px 0;
-    align-items: center;
-    justify-content: space-between;
-  }
+.card {
+  display: flex;
+  margin: 20px 0;
+  align-items: center;
+  justify-content: space-between;
+}
 
-  .headClass {
-    display: flex;
-    align-items: center;
-  }
-
+.headClass {
+  display: flex;
+  align-items: center;
+}
 </style>

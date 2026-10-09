@@ -1595,3 +1595,17 @@ export function groupTreeList(data) { // 导出
     data
   })
 }
+export function listVStandardSolutionApplyInfoPage(data) { // 导出
+  return request({
+    url: setting.baseUrl + '/standardSolution/listVStandardSolutionApplyInfoPage',
+    method: 'post',
+    data
+  })
+}
+export function pagePreparationEnvironment(data) { // 导出
+  return request({
+    url: setting.baseUrl + '/reagent/pagePreparationEnvironment',
+    method: 'post',
+    data
+  })
+}
