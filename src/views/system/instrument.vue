@@ -138,9 +138,6 @@
           <el-input v-model="form.correlationCoefficientB" placeholder="相关性系数-B" />
         </el-form-item>
 
-
-
-
         <el-form-item label="设备名称" prop="instrumentName">
           <el-input v-model="form.instrumentName" placeholder="请输入设备名称" />
         </el-form-item>
@@ -157,6 +154,7 @@
         <el-form-item label="设备厂家型号" prop="instrumentFactoryModel">
           <el-input v-model="form.instrumentFactoryModel" placeholder="请输入设备厂家型号" />
         </el-form-item>
+
         <el-form-item label="质保时间">
           <el-date-picker v-model="form.warranty" type="date" placeholder="选择质保时间" :clearable="false">
           </el-date-picker>
@@ -167,6 +165,10 @@
             <el-option label="不需要运维" :value="0" />
             <el-option label="需要运维" :value="1" />
           </el-select>
+        </el-form-item>
+
+        <el-form-item label="设备唯一码" prop="instrumentCode">
+          <el-input v-model="form.instrumentCode" placeholder="请输入设备唯一码" />
         </el-form-item>
 
         <div style="text-align:center;margin-top:80px">
@@ -232,6 +234,9 @@
             <el-option label="不需要运维" :value="0" />
             <el-option label="需要运维" :value="1" />
           </el-select>
+        </el-form-item>
+        <el-form-item label="设备唯一码" prop="instrumentCode">
+          <el-input v-model="form.instrumentCode" placeholder="请输入设备唯一码" />
         </el-form-item>
         <div style="text-align:center;margin-top:80px">
           <el-button @click="editVisible = false">取 消</el-button>
@@ -706,7 +711,8 @@ export default {
         pointId: null,
         checkStatus: 1,
         startYear: '',
-        warranty: ''
+        warranty: '',
+        instrumentCode:""
       }
       if (this.companyId) {
         this.form.companyId = this.companyId
